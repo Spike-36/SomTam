@@ -1,39 +1,44 @@
 class Flashcard {
-  final int id;                 // if you have it
-  final String term;
-  final String meaning;
-  final String image;           // asset path
-  final String audio;           // asset path
-  final String? video;          // nullable
+  final String id;
+  final String scottish;                 // e.g., "aye"
+  final String meaning;                  // English meaning (for now)
+  final String phonetic;                 // e.g., "eye"
+  final String context;                  // e.g., sentence
+  final String grammarType;              // e.g., "interjection"
+  final String audioScottish;            // filename only, e.g., "Z005.aye.scottish.mp3"
+  final String audioScottishContext;     // filename only
+  final String audioScottishSlow;        // filename only
+
+  // Optional fields if they exist in the JSON (safe defaults)
+  final String ipa;
 
   Flashcard({
     required this.id,
-    required this.term,
+    required this.scottish,
     required this.meaning,
-    required this.image,
-    required this.audio,
-    this.video,
+    required this.phonetic,
+    required this.context,
+    required this.grammarType,
+    required this.audioScottish,
+    required this.audioScottishContext,
+    required this.audioScottishSlow,
+    this.ipa = '',
   });
 
   factory Flashcard.fromJson(Map<String, dynamic> j) {
-    // tolerate missing/null/mistyped values
-    int _toInt(dynamic v, {int fallback = 0}) {
-      if (v is int) return v;
-      if (v is String) return int.tryParse(v) ?? fallback;
-      return fallback;
-    }
-
-    String _toStr(dynamic v, {String fallback = ''}) {
-      return (v is String && v.isNotEmpty) ? v : fallback;
-    }
+    String s(dynamic v) => (v ?? '').toString().trim();
 
     return Flashcard(
-      id: _toInt(j['id'], fallback: 0),
-      term: _toStr(j['term']),
-      meaning: _toStr(j['meaning']),
-      image: _toStr(j['image']),
-      audio: _toStr(j['audio']),
-      video: j['video'] == null || j['video'] == '' ? null : j['video'] as String,
+      id: s(j['id']),
+      scottish: s(j['scottish']),
+      meaning: s(j['meaning']),
+      phonetic: s(j['phonetic']),
+      context: s(j['context']),
+      grammarType: s(j['grammarType']),
+      audioScottish: s(j['audioScottish']),
+      audioScottishContext: s(j['audioScottishContext']),
+      audioScottishSlow: s(j['audioScottishSlow']),
+      ipa: s(j['ipa']),
     );
   }
 }

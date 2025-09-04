@@ -4,9 +4,23 @@ import 'card.dart';
 
 class DeckRepository {
   Future<List<Flashcard>> loadBundled() async {
-    // Corrected path to match pubspec.yaml and actual folder
-    final jsonStr = await rootBundle.loadString('assets/data/cards.json');
-    final list = (json.decode(jsonStr) as List);
-    return list.map((e) => Flashcard.fromJson(e)).toList();
+    final raw = await rootBundle.loadString('assets/data/cards.json');
+    final data = json.decode(raw);
+
+    if (data is List) {
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map(Flashcard.fromJson)
+          .toList();
+    }
+
+    // If your cards.json is { "cards": [ ... ] }
+    if (data is Map<String, dynamic> && data['cards'] is List) {
+      final list = (data['cards'] as List).whereType<Map<String, dynamic>>();
+      return list.map(Flashcard.fromJson).toList();
+    }
+
+    // Fallback: empty
+    return <Flashcard>[];
   }
 }
