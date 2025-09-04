@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Coffee",
+    "description": "A hot drink",
+    "image": "assets/images/0180.coffee.jpg",
+    "audio": "assets/audio/0180.coffee.thai.mp3",
+    "video": "assets/video/IMG_9899.mp4"
+  },
+  {
+    "id": 2,
+    "title": "Water",
+    "description": "Essential for life",
+    "image": "assets/images/0145.water.jpg",
+    "audio": "assets/audio/0145.water.thai.mp3",
+    "video": "assets/video/IMG_9900.mp4"
+  },
+  {
+    "id": 3,
+    "title": "Orange",
+    "description": "A fruit",
+    "image": "assets/images/0081.orange.jpg",
+    "audio": "assets/audio/0081.orange.thai.mp3",
+    "video": "assets/video/IMG_9897.mp4"
+  },
+  {
+    "id": 4,
+    "title": "Beer",
+    "description": "A cold drink",
+    "image": "assets/images/0232.beer.jpg",
+    "audio": "assets/audio/0232.beer.thai.mp3",
+    "video": "assets/video/IMG_9901.mp4"
+  },
+  {
+    "id": 5,
+    "title": "Rice",
+    "description": "A staple food",
+    "image": "assets/images/0423.rice.jpg",
+    "audio": "assets/audio/0423.rice.thai.mp3",
+    "video": "assets/video/IMG_9898.mp4"
+  }
+]
