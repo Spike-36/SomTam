@@ -1,45 +1,73 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
 # Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
-.flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
-/build/
-/coverage/
+build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+coverage/
+.dart_tool/
 
-# Symbolication related
-app.*.symbols
+# Android
+**/android/**/gradle-wrapper.jar
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
 
-# Obfuscation related
-app.*.map.json
+# iOS
+**/ios/Flutter/.last_build_id
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/build/
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Xcode
+**/ios/Runner.xcworkspace/
+**/ios/Runner.xcodeproj/project.xcworkspace/
+**/ios/Runner.xcodeproj/xcuserdata/
+**/ios/Runner.xcworkspace/xcuserdata/
+**/ios/DerivedData/
+
+# macOS
+**/macos/Flutter/ephemeral/
+**/macos/Flutter/Flutter.podspec
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Pods/
+**/macos/build/
+
+# Windows
+**/windows/flutter/ephemeral/
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugin_registrant.h
+**/windows/flutter/CMakeFiles/
+**/windows/build/
+
+# Linux
+**/linux/flutter/ephemeral/
+**/linux/flutter/generated_plugin_registrant.cc
+**/linux/flutter/generated_plugin_registrant.h
+**/linux/flutter/CMakeFiles/
+**/linux/build/
+
+# VS Code
+.vscode/
+.history/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+
+# Other
+*.lock
+*.log
+*.DS_Store
