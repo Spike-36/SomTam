@@ -9,7 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  just_audio: ^0.10.5
+  audioplayers: ^5.2.1     # <-- added for AudioService
+  just_audio: ^0.10.5      # (remove if truly unused)
   video_player: ^2.8.6
   shared_preferences: ^2.3.2
   file_picker: ^10.3.2
@@ -21,6 +22,7 @@ flutter:
     - assets/data/cards.json
     - assets/audio/
     - assets/audio/scottish/
+    - assets/audio/context/
     - assets/images/
     - assets/video/
-    - assets/i18n/   # ✅ include all JSON translation files
+    - assets/i18n/   # include all JSON translation files
