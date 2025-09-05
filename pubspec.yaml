@@ -23,3 +23,4 @@ flutter:
     - assets/audio/scottish/
     - assets/images/
     - assets/video/
+    - assets/i18n/   # ✅ include all JSON translation files

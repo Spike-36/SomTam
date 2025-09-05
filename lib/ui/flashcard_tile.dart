@@ -1,13 +1,14 @@
+// lib/ui/flashcard_tile.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
-import '../ui/flashcard_detail_screen.dart';
 
 class FlashcardTile extends StatelessWidget {
   final List<Flashcard> cards;
   final int index;
   final AudioService audio;
-  final void Function(int)? onCardSelected; // ✅ new callback
+  final void Function(int)? onCardSelected;
+  final String languageCode; // 👈 add this
 
   const FlashcardTile({
     super.key,
@@ -15,13 +16,14 @@ class FlashcardTile extends StatelessWidget {
     required this.index,
     required this.audio,
     this.onCardSelected,
+    this.languageCode = 'en',
   });
 
   Flashcard get card => cards[index];
 
   String _wordPath(String filename) {
     if (filename.trim().isEmpty) return '';
-    if (filename.contains('/')) return filename; // already a full path
+    if (filename.contains('/')) return filename;
     return 'assets/audio/scottish/$filename';
   }
 
@@ -40,9 +42,11 @@ class FlashcardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final meaning = card.meaningFor(languageCode); // 👈 localized
+
     return ListTile(
       title: Text(card.scottish),
-      subtitle: Text(card.meaning.isEmpty ? '—' : card.meaning),
+      subtitle: Text(meaning.isEmpty ? '—' : meaning),
       trailing: IconButton(
         icon: const Icon(Icons.volume_up),
         tooltip: 'Play word',
@@ -50,20 +54,9 @@ class FlashcardTile extends StatelessWidget {
       ),
       onTap: () {
         if (onCardSelected != null) {
-          // ✅ Let MainScreen handle switching to Word tab
           onCardSelected!(index);
         } else {
-          // fallback: push detail screen directly
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => FlashcardDetailScreen(
-                cards: cards,
-                index: index,
-                audio: audio,
-                autoAudio: false, // ✅ must supply required param
-              ),
-            ),
-          );
+          // ...fallback push detail if you like
         }
       },
     );

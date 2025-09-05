@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../data/repository.dart';
 import '../services/audio_service.dart';
+import '../i18n/i18n.dart'; // i18n helper
 import 'deck_screen.dart';
 import 'flashcard_detail_screen.dart';
 import 'settings_screen.dart';
@@ -15,15 +16,28 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  int _currentIndex = 0;               // shared card index
-  bool _autoAudio = false;             // ✅ default OFF each launch
+  int _currentIndex = 0;        // shared card index
+  bool _autoAudio = false;      // default OFF each launch
+  String _languageCode = 'en';  // selected UI/content language
+
   final audio = AudioService();
   List<Flashcard> cards = [];
+  bool _i18nReady = false;      // ✅ wait until JSONs are loaded
 
   @override
   void initState() {
     super.initState();
-    DeckRepository().loadBundled().then((c) => setState(() => cards = c));
+
+    // ✅ Load i18n dictionaries and cards in parallel
+    Future.wait([
+      I18n.load(),
+      DeckRepository().loadBundled(),
+    ]).then((results) {
+      setState(() {
+        _i18nReady = true;
+        cards = results[1] as List<Flashcard>;
+      });
+    });
   }
 
   @override
@@ -45,8 +59,15 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_i18nReady) {
+      // ✅ Prevents crash / key fallback before translations load
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final pages = [
-      const Center(child: Text('🏠 Home')),
+      Center(child: Text('🏠 ${I18n.t("home", lang: _languageCode)}')),
       DeckScreen(
         cards: cards,
         audio: audio,
@@ -58,13 +79,16 @@ class _MainScreenState extends State<MainScreen> {
           index: _currentIndex,
           audio: audio,
           onIndexChange: _onIndexChange,
-          autoAudio: _autoAudio,        // ✅ pass setting to Word tab
+          autoAudio: _autoAudio,
+          languageCode: _languageCode, // pass language into Word tab
         )
       else
-        const Center(child: Text('No cards yet')),
-      SettingsScreen(                       // ✅ settings tab
+        Center(child: Text(I18n.t('words', lang: _languageCode))),
+      SettingsScreen(
         autoAudio: _autoAudio,
         onAutoAudioChanged: (v) => setState(() => _autoAudio = v),
+        languageCode: _languageCode,
+        onLanguageChanged: (c) => setState(() => _languageCode = c),
       ),
     ];
 
@@ -73,11 +97,23 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (i) => setState(() => _selectedIndex = i),
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'List'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Word'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home),
+            label: I18n.t('home', lang: _languageCode),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.list),
+            label: I18n.t('list', lang: _languageCode),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.book),
+            label: I18n.t('words', lang: _languageCode),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings),
+            label: I18n.t('settings', lang: _languageCode),
+          ),
         ],
         type: BottomNavigationBarType.fixed,
       ),

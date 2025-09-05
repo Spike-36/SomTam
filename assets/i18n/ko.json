@@ -1,0 +1,14 @@
+{
+  "home": "홈",
+  "settings": "설정",
+  "list": "목록",
+  "words": "단어",
+  "start_word": "시작 단어",
+  "open_list": "목록 열기",
+  "close": "닫기",
+  "language": "언어",
+  "autoplay": "자동 재생 (듣기 모드)",
+  "autoplay_description": "오디오를 자동 재생하고 다음으로 진행합니다.",
+  "audio": "오디오",
+  "scotspeak": "스코틀랜드어 말하기"
+}

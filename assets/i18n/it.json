@@ -1,0 +1,15 @@
+{
+  "home": "Home",
+  "settings": "Impostazioni",
+  "list": "Elenco",
+  "words": "Parole",
+  "start_word": "Parola iniziale",
+  "open_list": "Apri elenco",
+  "close": "Chiudi",
+  "language": "Lingua",
+  "autoplay": "Riproduzione automatica (modalità Ascolto)",
+  "autoplay_description": "Riproduci automaticamente l'audio e prosegui.",
+  "audio": "Audio",
+  "scotspeak": "parlare scozzese"
+
+}

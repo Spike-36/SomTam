@@ -1,0 +1,15 @@
+{
+  "home": "Accueil",
+  "settings": "Paramètres",
+  "list": "Liste",
+  "words": "Mots",
+  "start_word": "Commencer le mot",
+  "open_list": "Ouvrir la liste",
+  "close": "Fermer",
+  "language": "Langue",
+  "autoplay": "Lecture automatique (mode écoute)",
+  "autoplay_description": "Lit l’audio automatiquement et passe au suivant.",
+  "audio": "Audio",
+  "scotspeak": "parler écossais"
+
+}

@@ -1,0 +1,14 @@
+{
+  "home": "首页",
+  "settings": "设置",
+  "list": "列表",
+  "words": "单词",
+  "start_word": "起始词",
+  "open_list": "打开列表",
+  "close": "关闭",
+  "language": "语言",
+  "autoplay": "自动播放（听力模式）",
+  "autoplay_description": "自动播放音频并继续。",
+  "audio": "音频",
+  "scotspeak": "苏格兰语会话"
+}

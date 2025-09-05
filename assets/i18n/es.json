@@ -1,0 +1,14 @@
+{
+  "home": "Inicio",
+  "settings": "Configuración",
+  "list": "Lista",
+  "words": "Palabras",
+  "start_word": "Palabra inicial",
+  "open_list": "Abrir lista",
+  "close": "Cerrar",
+  "language": "Idioma",
+  "autoplay": "Reproducción automática (modo Escuchar)",
+  "autoplay_description": "Reproduce el audio y avanza automáticamente.",
+  "audio": "Audio",
+  "scotspeak": "hablar escocés"
+}

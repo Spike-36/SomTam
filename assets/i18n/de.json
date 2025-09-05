@@ -1,0 +1,14 @@
+{
+  "home": "Startseite",
+  "settings": "Einstellungen",
+  "list": "Liste",
+  "words": "Wörter",
+  "start_word": "Startwort",
+  "open_list": "Liste öffnen",
+  "close": "Schließen",
+  "language": "Sprache",
+  "autoplay": "Automatische Wiedergabe (Hörmodus)",
+  "autoplay_description": "Audio automatisch abspielen und fortfahren.",
+  "audio": "Audio",
+  "scotspeak": "Schottisch sprechen"
+}

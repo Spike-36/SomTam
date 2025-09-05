@@ -1,0 +1,15 @@
+{
+  "home": "ホーム",
+  "settings": "設定",
+  "list": "リスト",
+  "words": "単語",
+  "start_word": "単語を開始",
+  "open_list": "リストを開く",
+  "close": "閉じる",
+  "language": "言語",
+  "autoplay": "自動再生（リスンモード）",
+  "autoplay_description": "音声を自動再生して次へ進みます。",
+  "audio": "オーディオ",
+  "scotspeak": "スコットランド語会話"
+
+}

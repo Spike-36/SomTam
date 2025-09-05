@@ -1,0 +1,14 @@
+{
+  "home": "Home",
+  "settings": "Settings",
+  "list": "List",
+  "words": "Words",
+  "start_word": "Start Word",
+  "open_list": "Open List",
+  "close": "Close",
+  "language": "Language",
+  "autoplay": "Autoplay (Listen mode)",
+  "autoplay_description": "Automatically play audio and advance.",
+   "audio": "Audio",
+   "scotspeak": "scotspeak"
+}
