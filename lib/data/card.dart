@@ -13,9 +13,10 @@ class Flashcard {
   final String audioScottishSlow;
   final String ipa;
 
-  // NEW: built from legacy keys like "French", "French_Context"
+  // i18n maps built from keys like "French", "French_Context", "French_Info"
   final Map<String, String>? meaningI18n;
   final Map<String, String>? contextI18n;
+  final Map<String, String>? infoI18n; // per-language info text
 
   Flashcard({
     required this.id,
@@ -30,46 +31,28 @@ class Flashcard {
     this.ipa = '',
     this.meaningI18n,
     this.contextI18n,
+    this.infoI18n,
   });
 
   factory Flashcard.fromJson(Map<String, dynamic> j) {
     String s(dynamic v) => (v ?? '').toString().trim();
 
-    // 1) Collect i18n maps from your legacy fields:
-    final Map<String, String> mMap = {};
-    final Map<String, String> cMap = {};
+    final Map<String, String> mMap = {}; // meaning
+    final Map<String, String> cMap = {}; // context
+    final Map<String, String> iMap = {}; // info
 
-    // Pull from "meaning"/"context" if they’re plain strings
     final rawMeaning = j['meaning'];
     final rawContext = j['context'];
-    if (rawMeaning is String && rawMeaning.trim().isNotEmpty) mMap['en'] = rawMeaning.trim();
-    if (rawContext is String && rawContext.trim().isNotEmpty) cMap['en'] = rawContext.trim();
 
-    // Scan every entry like "French", "French_Context"
-    for (final entry in j.entries) {
-      final key = entry.key.toString();
-      final val = (entry.value ?? '').toString().trim();
-      if (val.isEmpty) continue;
-
-      // e.g., "French", "Spanish", "Arabic", etc.
-      if (I18n.labelToCode.containsKey(key)) {
-        final code = I18n.labelToCode[key]!;
-        mMap[code] = val;
-        continue;
-      }
-
-      // e.g., "French_Context"
-      const suffix = '_Context';
-      if (key.endsWith(suffix)) {
-        final base = key.substring(0, key.length - suffix.length);
-        if (I18n.labelToCode.containsKey(base)) {
-          final code = I18n.labelToCode[base]!;
-          cMap[code] = val;
-        }
-      }
+    // Legacy EN strings
+    if (rawMeaning is String && rawMeaning.trim().isNotEmpty) {
+      mMap['en'] = rawMeaning.trim();
+    }
+    if (rawContext is String && rawContext.trim().isNotEmpty) {
+      cMap['en'] = rawContext.trim();
     }
 
-    // 2) If "meaning"/"context" were provided as { "en": "...", "fr": "..." } maps, merge them in.
+    // Map-style { "en": "...", "fr": "..." }
     if (rawMeaning is Map) {
       rawMeaning.forEach((k, v) => mMap[k.toString()] = (v ?? '').toString());
     }
@@ -77,7 +60,48 @@ class Flashcard {
       rawContext.forEach((k, v) => cMap[k.toString()] = (v ?? '').toString());
     }
 
-    // 3) Build the object (legacy fields keep EN/fallback so old UI still works)
+    // Scan all entries for "Label", "Label_Context", "Label_Info"
+    for (final entry in j.entries) {
+      final key = entry.key.toString();
+      final val = (entry.value ?? '').toString().trim();
+      if (val.isEmpty) continue;
+
+      // "French" / "Spanish" -> meaning
+      if (I18n.labelToCode.containsKey(key)) {
+        final code = I18n.labelToCode[key]!;
+        mMap[code] = val;
+        continue;
+      }
+
+      // "..._Context" -> context
+      const ctxSuffix = '_Context';
+      if (key.endsWith(ctxSuffix)) {
+        final base = key.substring(0, key.length - ctxSuffix.length);
+        if (I18n.labelToCode.containsKey(base)) {
+          final code = I18n.labelToCode[base]!;
+          cMap[code] = val;
+        } else {
+          // allow ISO like "fr_Context"
+          final code = I18n.normalize(base);
+          if (code.isNotEmpty) cMap[code] = val;
+        }
+        continue;
+      }
+
+      // "..._Info" -> info
+      const infoSuffix = '_Info';
+      if (key.endsWith(infoSuffix)) {
+        final base = key.substring(0, key.length - infoSuffix.length);
+        // Accept either labels (English) or ISO codes (en)
+        String? code = I18n.labelToCode[base];
+        code ??= I18n.normalize(base); // handles e.g. "fr"
+        if (code.isNotEmpty) {
+          iMap[code] = val;
+        }
+        continue;
+      }
+    }
+
     final legacyMeaning = mMap['en'] ?? s(rawMeaning);
     final legacyContext = cMap['en'] ?? s(rawContext);
 
@@ -94,23 +118,57 @@ class Flashcard {
       ipa: s(j['ipa']),
       meaningI18n: mMap.isEmpty ? null : mMap,
       contextI18n: cMap.isEmpty ? null : cMap,
+      infoI18n: iMap.isEmpty ? null : iMap,
     );
   }
 
-  // ----- helpers -----
+  // ----------------- helpers (empty-string aware fallbacks) -----------------
+
+  String _pick(Map<String, String>? map, String code, String legacyEn, String legacy) {
+    if (map == null) return legacy;
+    final sel = (map[code] ?? '').trim();
+    if (sel.isNotEmpty) return sel;
+
+    // Try language region collapse (e.g., fr-FR -> fr) if not already a primary code
+    if (code.contains('-') || code.contains('_')) {
+      final base = code.split(RegExp(r'[-_]')).first;
+      final baseVal = (map[base] ?? '').trim();
+      if (baseVal.isNotEmpty) return baseVal;
+    }
+
+    final en = (map['en'] ?? legacyEn).trim();
+    if (en.isNotEmpty) return en;
+
+    return legacy;
+  }
+
   String meaningFor(String lang) {
     final code = I18n.normalize(lang);
-    if (meaningI18n != null) {
-      return meaningI18n![code] ?? meaningI18n!['en'] ?? meaning;
-    }
-    return meaning;
+    return _pick(meaningI18n, code, meaningI18n?['en'] ?? '', meaning);
   }
 
   String contextFor(String lang) {
     final code = I18n.normalize(lang);
-    if (contextI18n != null) {
-      return contextI18n![code] ?? contextI18n!['en'] ?? context;
+    return _pick(contextI18n, code, contextI18n?['en'] ?? '', context);
+  }
+
+  /// Per-language info text.
+  /// Rule: chosen language → English → else empty.
+  String infoFor(String lang) {
+    final code = I18n.normalize(lang);
+    final m = infoI18n;
+    if (m == null) return '';
+    final sel = (m[code] ?? '').trim();
+    if (sel.isNotEmpty) return sel;
+
+    if (code.contains('-') || code.contains('_')) {
+      final base = code.split(RegExp(r'[-_]')).first;
+      final baseVal = (m[base] ?? '').trim();
+      if (baseVal.isNotEmpty) return baseVal;
     }
-    return context;
+
+    final en = (m['en'] ?? '').trim();
+    if (en.isNotEmpty) return en;
+    return '';
   }
 }

@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
-import '../I18n/i18n.dart';
-import '../I18n/grammar_i18n.dart'; // ← for tGrammar()
+// 🔧 Use the lowercase path you standardized elsewhere
+import '../i18n/i18n.dart';
+import '../I18n/grammar_i18n.dart'; // tGrammar()
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
@@ -113,31 +114,86 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     final lang = widget.languageCode;
     final isRtl = I18n.isRTL(lang);
 
+    // i18n fields
     final displayMeaning = card.meaningFor(lang);
     final displayContext = card.contextFor(lang);
     final englishContext = card.contextFor('en');
     final displayInfo = card.infoFor(lang);
 
+    // availability flags
     final hasPhonetic = card.phonetic.trim().isNotEmpty;
     final hasGrammar = card.grammarType.trim().isNotEmpty;
     final hasForeignContext = displayContext.trim().isNotEmpty;
     final hasEnglishContext = englishContext.trim().isNotEmpty;
     final hasInfo = displayInfo.trim().isNotEmpty;
 
-    final grammarLabel = hasGrammar ? tGrammar(card.grammarType, langCode: lang) : '';
+    // grammar label via table
+    final grammarLabel =
+        hasGrammar ? tGrammar(card.grammarType, langCode: lang) : '';
+
+    // --- Typography (uses your pubspec-registered families) ---
+    const headwordStyle = TextStyle(
+      fontFamily: 'EBGaramond',
+      fontWeight: FontWeight.w600, // SemiBold
+      fontSize: 34,
+      height: 1.08,
+    );
+
+    final phoneticStyle = TextStyle(
+      fontFamily: 'CharisSIL',
+      fontSize: 18,
+      height: 1.2,
+      color: Theme.of(context).colorScheme.primary,
+    );
+
+    const meaningStyle = TextStyle(
+      fontFamily: 'SourceSerif4',
+      fontSize: 20,
+      height: 1.35,
+      color: Colors.black54,
+    );
+
+    const grammarStyle = TextStyle(
+      fontFamily: 'SourceSerif4',
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.2,
+    );
+
+    const contextEnStyle = TextStyle(
+      fontFamily: 'SourceSerif4',
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      height: 1.3,
+      color: Colors.white, // stronger contrast if used on dark bg; adjust if needed
+    );
+
+    const contextForeignStyle = TextStyle(
+      fontFamily: 'SourceSerif4',
+      fontSize: 16,
+      height: 1.3,
+    );
+
+    const infoStyle = TextStyle(
+      fontFamily: 'SourceSerif4',
+      fontSize: 16,
+      height: 1.35,
+      color: Colors.black87,
+    );
 
     final list = Padding(
+      // keep the top gap so content clears the bottom nav + looks airy
       padding: const EdgeInsets.only(top: 100, left: 24, right: 24, bottom: 24),
       child: ListView(
         children: [
-          // Main word row with play button
+          // Headword + play
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Text(
                   card.scottish,
-                  style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  style: headwordStyle,
                   textAlign: isRtl ? TextAlign.right : TextAlign.left,
                 ),
               ),
@@ -149,37 +205,38 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             ],
           ),
 
+          // Phonetic (Charis SIL)
           if (hasPhonetic) ...[
             const SizedBox(height: 8),
             Text(
               card.phonetic,
-              style: TextStyle(
-                fontSize: 18,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+              style: phoneticStyle,
               textAlign: isRtl ? TextAlign.right : TextAlign.left,
             ),
           ],
 
+          // Meaning (Source Serif 4)
           const SizedBox(height: 16),
           Text(
             displayMeaning.isEmpty ? '—' : displayMeaning,
-            style: const TextStyle(fontSize: 20, color: Colors.black54),
+            style: meaningStyle,
             textAlign: isRtl ? TextAlign.right : TextAlign.left,
           ),
 
+          // Grammar label (translated)
           if (hasGrammar && grammarLabel.isNotEmpty) ...[
             const SizedBox(height: 16),
             Align(
               alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
               child: Text(
                 grammarLabel,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                style: grammarStyle,
                 textAlign: isRtl ? TextAlign.right : TextAlign.left,
               ),
             ),
           ],
 
+          // Context (EN/Scottish) + speaker
           if (hasEnglishContext) ...[
             const SizedBox(height: 24),
             Row(
@@ -188,7 +245,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 Expanded(
                   child: Text(
                     englishContext,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    style: contextEnStyle,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -202,19 +259,21 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             ),
           ],
 
+          // Foreign context
           if (hasForeignContext) ...[
             const SizedBox(height: 8),
             Text(
               displayContext,
-              style: const TextStyle(fontSize: 16),
+              style: contextForeignStyle,
             ),
           ],
 
+          // Info block
           if (hasInfo) ...[
             const SizedBox(height: 24),
             Text(
               displayInfo,
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              style: infoStyle,
               textAlign: TextAlign.center,
             ),
           ],
@@ -231,6 +290,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
             child: list,
           ),
+          // Nav arrows (unchanged)
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(

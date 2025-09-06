@@ -9,8 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  audioplayers: ^5.2.1     # <-- added for AudioService
-  just_audio: ^0.10.5      # (remove if truly unused)
+  audioplayers: ^5.2.1
+  just_audio: ^0.10.5
   video_player: ^2.8.6
   shared_preferences: ^2.3.2
   file_picker: ^10.3.2
@@ -25,4 +25,27 @@ flutter:
     - assets/audio/context/
     - assets/images/
     - assets/video/
-    - assets/i18n/   # include all JSON translation files
+    - assets/i18n/
+
+  fonts:
+    - family: EBGaramond
+      fonts:
+        - asset: assets/fonts/EBGaramond/EBGaramond-Regular.ttf
+        - asset: assets/fonts/EBGaramond/EBGaramond-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/EBGaramond/EBGaramond-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/EBGaramond/EBGaramond-Italic.ttf
+          style: italic
+
+    - family: CharisSIL
+      fonts:
+        - asset: assets/fonts/CharisSIL/CharisSIL-Regular.ttf
+        - asset: assets/fonts/CharisSIL/CharisSIL-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/CharisSIL/CharisSIL-Italic.ttf
+          style: italic
+
+    - family: SourceSerif4
+      fonts:
+        - asset: assets/fonts/SourceSerif4/SourceSerif4-Regular.ttf

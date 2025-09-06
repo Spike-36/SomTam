@@ -1,14 +1,16 @@
+// lib/ui/deck_screen.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import '../I18n/i18n.dart';
 import 'flashcard_tile.dart';
+import 'flashcard_detail_screen.dart'; // ← add this
 
 class DeckScreen extends StatefulWidget {
   final List<Flashcard> cards;
   final AudioService audio;
   final void Function(int)? onCardSelected;
-  final String languageCode; // 👈 add this
+  final String languageCode;
 
   const DeckScreen({
     super.key,
@@ -27,6 +29,13 @@ class _DeckScreenState extends State<DeckScreen> {
   Widget build(BuildContext context) {
     final lang = widget.languageCode;
 
+    // TEMP: prove what we're passing down
+    assert(() {
+      // ignore: avoid_print
+      print('[DeckScreen] lang=$lang cards=${widget.cards.length}');
+      return true;
+    }());
+
     return Scaffold(
       appBar: AppBar(
         title: Text(I18n.t('list', lang: lang)),
@@ -37,11 +46,24 @@ class _DeckScreenState extends State<DeckScreen> {
               itemCount: widget.cards.length,
               separatorBuilder: (_, __) => const Divider(height: 1),
               itemBuilder: (_, i) => FlashcardTile(
-                cards: widget.cards,      // pass the whole list
-                index: i,                 // pass the index
+                cards: widget.cards,
+                index: i,
                 audio: widget.audio,
-                onCardSelected: widget.onCardSelected,
-                languageCode: lang,       // 👈 forward for localized previews (if your tile uses it)
+                languageCode: lang, // ← selected language shown in list
+                // On tap, push detail and pass the SAME language through
+                onCardSelected: widget.onCardSelected ??
+                    (idx) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => FlashcardDetailScreen(
+                            cards: widget.cards,
+                            index: idx,
+                            audio: widget.audio,
+                            languageCode: lang, // ← critical: keep parity
+                          ),
+                        ),
+                      );
+                    },
               ),
             ),
     );

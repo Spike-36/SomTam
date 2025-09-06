@@ -1,11 +1,13 @@
+// lib/ui/main_screen.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../data/repository.dart';
 import '../services/audio_service.dart';
-import '../i18n/i18n.dart'; // i18n helper
+import '../i18n/i18n.dart';
 import 'deck_screen.dart';
 import 'flashcard_detail_screen.dart';
 import 'settings_screen.dart';
+import 'home_screen.dart'; // 👈 import your HomeScreen
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -16,23 +18,23 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  int _currentIndex = 0;        // shared card index
-  bool _autoAudio = false;      // default OFF each launch
-  String _languageCode = 'en';  // selected UI/content language
+  int _currentIndex = 0;
+  bool _autoAudio = false;
+  String _languageCode = 'en';
 
   final audio = AudioService();
   List<Flashcard> cards = [];
-  bool _i18nReady = false;      // ✅ wait until JSONs are loaded
+  bool _i18nReady = false;
 
   @override
   void initState() {
     super.initState();
 
-    // ✅ Load i18n dictionaries and cards in parallel
     Future.wait([
       I18n.load(),
-      DeckRepository().loadBundled(),
+      DeckRepository().loadBundled(forceRefresh: true),
     ]).then((results) {
+      I18n.setCurrentLang(_languageCode);
       setState(() {
         _i18nReady = true;
         cards = results[1] as List<Flashcard>;
@@ -60,17 +62,25 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_i18nReady) {
-      // ✅ Prevents crash / key fallback before translations load
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
+    assert(() {
+      // ignore: avoid_print
+      print('[MainScreen] lang=$_languageCode  cards=${cards.length}');
+      return true;
+    }());
+
     final pages = [
-      Center(child: Text('🏠 ${I18n.t("home", lang: _languageCode)}')),
+      HomeScreen( // 👈 NOW using your background-based HomeScreen
+        languageCode: _languageCode,
+      ),
       DeckScreen(
         cards: cards,
         audio: audio,
+        languageCode: _languageCode,
         onCardSelected: _onCardSelected,
       ),
       if (cards.isNotEmpty)
@@ -80,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
           audio: audio,
           onIndexChange: _onIndexChange,
           autoAudio: _autoAudio,
-          languageCode: _languageCode, // pass language into Word tab
+          languageCode: _languageCode,
         )
       else
         Center(child: Text(I18n.t('words', lang: _languageCode))),
@@ -88,7 +98,12 @@ class _MainScreenState extends State<MainScreen> {
         autoAudio: _autoAudio,
         onAutoAudioChanged: (v) => setState(() => _autoAudio = v),
         languageCode: _languageCode,
-        onLanguageChanged: (c) => setState(() => _languageCode = c),
+        onLanguageChanged: (code) {
+          setState(() {
+            _languageCode = code;
+            I18n.setCurrentLang(code);
+          });
+        },
       ),
     ];
 
