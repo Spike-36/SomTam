@@ -1,7 +1,9 @@
+// lib/ui/flashcard_detail_screen.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
-import '../I18n/i18n.dart'; // ← match your actual folder casing
+import '../I18n/i18n.dart';
+import '../I18n/grammar_i18n.dart'; // ← for tGrammar()
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
@@ -26,8 +28,7 @@ class FlashcardDetailScreen extends StatefulWidget {
 }
 
 class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
-  int? _lastAutoPlayedIndex; // ensure one auto-play per word
-
+  int? _lastAutoPlayedIndex;
   Flashcard get card => widget.cards[widget.index];
 
   String _wordPath(String filename) {
@@ -72,19 +73,17 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   @override
   void didUpdateWidget(covariant FlashcardDetailScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Re-run auto play when index/autoAudio/language changes
     if (oldWidget.index != widget.index ||
         oldWidget.autoAudio != widget.autoAudio ||
         oldWidget.languageCode != widget.languageCode) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _autoPlayIfNeeded());
-      // No setState() here — rebuild happens anyway when widget updates.
     }
   }
 
   void _goTo(int newIndex) {
     final n = widget.cards.length;
     if (n == 0) return;
-    final wrapped = (newIndex % n + n) % n; // loop both directions
+    final wrapped = (newIndex % n + n) % n;
     if (widget.onIndexChange != null) {
       widget.onIndexChange!(wrapped);
     } else {
@@ -98,11 +97,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             languageCode: widget.languageCode,
           ),
           transitionsBuilder: (_, animation, __, child) {
-            final isNext = wrapped > (oldIndex ?? widget.index) ||
-                ((oldIndex ?? widget.index) == n - 1 && wrapped == 0);
-            const left = Offset(-1, 0), right = Offset(1, 0);
             final tween = Tween(
-              begin: isNext ? right : left,
+              begin: const Offset(1, 0),
               end: Offset.zero,
             ).chain(CurveTween(curve: Curves.easeInOut));
             return SlideTransition(position: animation.drive(tween), child: child);
@@ -112,128 +108,147 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     }
   }
 
-  int? get oldIndex => _lastAutoPlayedIndex;
-
   @override
   Widget build(BuildContext context) {
     final lang = widget.languageCode;
     final isRtl = I18n.isRTL(lang);
 
-    // Localized meaning/context with EN fallback (helpers on Flashcard)
     final displayMeaning = card.meaningFor(lang);
     final displayContext = card.contextFor(lang);
+    final englishContext = card.contextFor('en');
+    final displayInfo = card.infoFor(lang);
 
     final hasPhonetic = card.phonetic.trim().isNotEmpty;
-    final hasGrammar  = card.grammarType.trim().isNotEmpty;
-    final hasContext  = displayContext.trim().isNotEmpty;
+    final hasGrammar = card.grammarType.trim().isNotEmpty;
+    final hasForeignContext = displayContext.trim().isNotEmpty;
+    final hasEnglishContext = englishContext.trim().isNotEmpty;
+    final hasInfo = displayInfo.trim().isNotEmpty;
 
-    Widget contextRow() {
-      final text = Expanded(child: Text(displayContext));
-      final icon = IconButton(
-        tooltip: 'Play context',
-        icon: const Icon(Icons.play_circle_outline),
-        onPressed: () => _safePlay(context, _contextPath(card.audioScottishContext)),
-      );
+    final grammarLabel = hasGrammar ? tGrammar(card.grammarType, langCode: lang) : '';
 
-      // In RTL, put text first, icon after (mirrors LTR visually)
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: isRtl
-            ? [text, const SizedBox(width: 8), icon]
-            : [
-                const Padding(
-                  padding: EdgeInsets.only(right: 12, top: 2),
-                  child: Icon(Icons.chat_bubble_outline),
-                ),
-                text,
-                const SizedBox(width: 8),
-                icon,
-              ],
-      );
-    }
-
-    final list = ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        Text(
-          card.scottish,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          textAlign: isRtl ? TextAlign.right : TextAlign.left,
-        ),
-        if (hasPhonetic) ...[
-          const SizedBox(height: 8),
-          Text(
-            card.phonetic,
-            style: TextStyle(
-              fontSize: 18,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            textAlign: isRtl ? TextAlign.right : TextAlign.left,
-          ),
-        ],
-        const SizedBox(height: 16),
-        Text(
-          displayMeaning.isEmpty ? '—' : displayMeaning,
-          style: const TextStyle(fontSize: 20, color: Colors.black54),
-          textAlign: isRtl ? TextAlign.right : TextAlign.left,
-        ),
-        if (hasGrammar) ...[
-          const SizedBox(height: 16),
+    final list = Padding(
+      padding: const EdgeInsets.only(top: 100, left: 24, right: 24, bottom: 24),
+      child: ListView(
+        children: [
+          // Main word row with play button
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Icon(Icons.category, size: 20),
-              const SizedBox(width: 8),
-              Text(card.grammarType, textAlign: isRtl ? TextAlign.right : TextAlign.left),
+              Expanded(
+                child: Text(
+                  card.scottish,
+                  style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                ),
+              ),
+              IconButton(
+                tooltip: 'Play word',
+                icon: const Icon(Icons.volume_up),
+                onPressed: () => _safePlay(context, _wordPath(card.audioScottish)),
+              ),
             ],
           ),
+
+          if (hasPhonetic) ...[
+            const SizedBox(height: 8),
+            Text(
+              card.phonetic,
+              style: TextStyle(
+                fontSize: 18,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              textAlign: isRtl ? TextAlign.right : TextAlign.left,
+            ),
+          ],
+
+          const SizedBox(height: 16),
+          Text(
+            displayMeaning.isEmpty ? '—' : displayMeaning,
+            style: const TextStyle(fontSize: 20, color: Colors.black54),
+            textAlign: isRtl ? TextAlign.right : TextAlign.left,
+          ),
+
+          if (hasGrammar && grammarLabel.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Align(
+              alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+              child: Text(
+                grammarLabel,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                textAlign: isRtl ? TextAlign.right : TextAlign.left,
+              ),
+            ),
+          ],
+
+          if (hasEnglishContext) ...[
+            const SizedBox(height: 24),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    englishContext,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  tooltip: 'Play context',
+                  icon: const Icon(Icons.volume_up),
+                  onPressed: () =>
+                      _safePlay(context, _contextPath(card.audioScottishContext)),
+                ),
+              ],
+            ),
+          ],
+
+          if (hasForeignContext) ...[
+            const SizedBox(height: 8),
+            Text(
+              displayContext,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+
+          if (hasInfo) ...[
+            const SizedBox(height: 24),
+            Text(
+              displayInfo,
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              textAlign: TextAlign.center,
+            ),
+          ],
+
+          const SizedBox(height: 100),
         ],
-        if (hasContext) ...[
-          const SizedBox(height: 24),
-          contextRow(),
-        ],
-        const SizedBox(height: 32),
-        ElevatedButton.icon(
-          onPressed: () => _safePlay(context, _wordPath(card.audioScottish)),
-          icon: const Icon(Icons.volume_up),
-          label: const Text('Play audio'),
-        ),
-      ],
+      ),
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(card.scottish),
-        actions: [
-          IconButton(
-            tooltip: 'Play word',
-            icon: const Icon(Icons.volume_up),
-            onPressed: () => _safePlay(context, _wordPath(card.audioScottish)),
-          ),
-        ],
-      ),
       body: Stack(
         children: [
-          // Apply RTL/LTR to the text region only
           Directionality(
             textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
             child: list,
           ),
-
-          // Left arrow (loops)
           Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              icon: const Icon(Icons.chevron_left, size: 40),
-              onPressed: () => _goTo(widget.index - 1),
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8, left: 8),
+              child: IconButton(
+                icon: const Icon(Icons.chevron_left, size: 40),
+                onPressed: () => _goTo(widget.index - 1),
+              ),
             ),
           ),
-
-          // Right arrow (loops)
           Align(
-            alignment: Alignment.centerRight,
-            child: IconButton(
-              icon: const Icon(Icons.chevron_right, size: 40),
-              onPressed: () => _goTo(widget.index + 1),
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8, right: 8),
+              child: IconButton(
+                icon: const Icon(Icons.chevron_right, size: 40),
+                onPressed: () => _goTo(widget.index + 1),
+              ),
             ),
           ),
         ],
