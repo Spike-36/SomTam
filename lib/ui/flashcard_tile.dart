@@ -71,19 +71,34 @@ class FlashcardTile extends StatelessWidget {
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      title: Text(card.scottish, style: _headwordStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
+      title: Text(
+        card.scottish,
+        style: _headwordStyle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (hasPhonetic)
             Padding(
               padding: const EdgeInsets.only(top: 2),
-              child: Text(card.phonetic, style: _phoneticStyle, maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: Text(
+                card.phonetic,
+                style: _phoneticStyle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           if (hasMeaning)
             Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: Text(localized, style: _meaningStyle, maxLines: 2, overflow: TextOverflow.ellipsis),
+              child: Text(
+                localized,
+                style: _meaningStyle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           if (!hasMeaning)
             const Padding(
@@ -92,15 +107,17 @@ class FlashcardTile extends StatelessWidget {
             ),
         ],
       ),
-   trailing: IconButton(
-  icon: const Icon(
-    Icons.volume_up,
-    color: Colors.black38, // faded, less "poppy"
-  ),
-  tooltip: 'Play word',
-  onPressed: () => _playWord(context),
-),
-
+      trailing: Padding(
+        padding: const EdgeInsets.only(right: 24), // 👈 nudges speaker inward
+        child: IconButton(
+          icon: const Icon(
+            Icons.volume_up,
+            color: Colors.black38, // faded, less "poppy"
+          ),
+          tooltip: 'Play word',
+          onPressed: () => _playWord(context),
+        ),
+      ),
       onTap: () {
         if (onCardSelected != null) {
           onCardSelected!(index);

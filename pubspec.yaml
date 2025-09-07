@@ -1,6 +1,6 @@
 name: braw3
-description: Simple flashcard prototype with audio and video
-version: 0.1.0+1
+description: Simple flashcard prototype with audio (and optional video)
+version: 1.0.0+2
 publish_to: "none"
 
 environment:
@@ -10,14 +10,20 @@ dependencies:
   flutter:
     sdk: flutter
   audioplayers: ^5.2.1
-  just_audio: ^0.10.5
   video_player: ^2.8.6
   shared_preferences: ^2.3.2
   file_picker: ^10.3.2
   path_provider: ^2.1.4
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
+
   assets:
     - assets/data/cards.json
     - assets/audio/

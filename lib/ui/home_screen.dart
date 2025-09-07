@@ -9,7 +9,7 @@ class HomeScreen extends StatelessWidget {
   final VoidCallback onAudioTap;
 
   // 🔧 Gap values (adjust these numbers to move things around)
-  static const double topGap = 85;               // space from top → logo
+  static const double topGap = 65;               // space from top → logo
   static const double logoToSubtitleGap = 25;   // space from logo → subtitle
   static const double subtitleToButtonsGap = 170; // space from subtitle → buttons
   static const double betweenButtonsGap = 50;   // space between the two buttons
@@ -54,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                 child: Text(
                   I18n.t("scotspeak", lang: languageCode),
                   style: const TextStyle(
-                    fontSize: 30,
+                    fontSize: 27,
                     letterSpacing: 1,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFFFFBD59), // yellow
@@ -70,33 +70,11 @@ class HomeScreen extends StatelessWidget {
               // --- Buttons (centered & fixed width for consistency) ---
               Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 260),
+                  constraints: const BoxConstraints(maxWidth: 180),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Language button
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: Color(0xFFFFBD59), width: 2),
-                            foregroundColor: const Color(0xFFFFBD59),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            textStyle: const TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'SourceSerif4',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          onPressed: onLanguageTap,
-                          child: Text(I18n.labelFor(languageCode)),
-                        ),
-                      ),
-
-                      SizedBox(height: betweenButtonsGap),
-
-                      // Audio button
+                      // Audio button (moved above)
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton(
@@ -113,6 +91,28 @@ class HomeScreen extends StatelessWidget {
                           ),
                           onPressed: onAudioTap,
                           child: Text(I18n.t("audio", lang: languageCode)),
+                        ),
+                      ),
+
+                      SizedBox(height: betweenButtonsGap),
+
+                      // Language button (now below audio)
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
+                                color: Color(0xFFFFBD59), width: 2),
+                            foregroundColor: const Color(0xFFFFBD59),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            textStyle: const TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'SourceSerif4',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          onPressed: onLanguageTap,
+                          child: Text(I18n.labelFor(languageCode)),
                         ),
                       ),
                     ],

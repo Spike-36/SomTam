@@ -37,9 +37,7 @@ class _DeckScreenState extends State<DeckScreen> {
     }());
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(I18n.t('list', lang: lang)),
-      ),
+      // 👇 removed AppBar
       body: widget.cards.isEmpty
           ? Center(child: Text(I18n.t('loading', lang: lang)))
           : ListView.separated(

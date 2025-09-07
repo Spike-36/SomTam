@@ -77,13 +77,18 @@ class Flashcard {
       const ctxSuffix = '_Context';
       if (key.endsWith(ctxSuffix)) {
         final base = key.substring(0, key.length - ctxSuffix.length);
+
         if (I18n.labelToCode.containsKey(base)) {
           final code = I18n.labelToCode[base]!;
           cMap[code] = val;
         } else {
-          // allow ISO like "fr_Context"
-          final code = I18n.normalize(base);
-          if (code.isNotEmpty) cMap[code] = val;
+          // Accept ISO-like codes only, ignore unknown labels
+          final lower = base.toLowerCase();
+          final iso = lower.split(RegExp(r'[-_]')).first;
+          final looksIso = RegExp(r'^[a-z]{2}$').hasMatch(iso);
+          if (looksIso) {
+            cMap[iso] = val;
+          }
         }
         continue;
       }
@@ -92,11 +97,18 @@ class Flashcard {
       const infoSuffix = '_Info';
       if (key.endsWith(infoSuffix)) {
         final base = key.substring(0, key.length - infoSuffix.length);
-        // Accept either labels (English) or ISO codes (en)
-        String? code = I18n.labelToCode[base];
-        code ??= I18n.normalize(base); // handles e.g. "fr"
-        if (code.isNotEmpty) {
+
+        if (I18n.labelToCode.containsKey(base)) {
+          final code = I18n.labelToCode[base]!;
           iMap[code] = val;
+        } else {
+          // Accept ISO-like codes only, ignore unknown labels
+          final lower = base.toLowerCase();
+          final iso = lower.split(RegExp(r'[-_]')).first;
+          final looksIso = RegExp(r'^[a-z]{2}$').hasMatch(iso);
+          if (looksIso) {
+            iMap[iso] = val;
+          }
         }
         continue;
       }
@@ -129,7 +141,7 @@ class Flashcard {
     final sel = (map[code] ?? '').trim();
     if (sel.isNotEmpty) return sel;
 
-    // Try language region collapse (e.g., fr-FR -> fr) if not already a primary code
+    // Try language region collapse (e.g., fr-FR -> fr)
     if (code.contains('-') || code.contains('_')) {
       final base = code.split(RegExp(r'[-_]')).first;
       final baseVal = (map[base] ?? '').trim();
