@@ -7,7 +7,7 @@ import '../i18n/i18n.dart';
 import 'deck_screen.dart';
 import 'flashcard_detail_screen.dart';
 import 'settings_screen.dart';
-import 'home_screen.dart'; // 👈 import your HomeScreen
+import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -67,15 +67,11 @@ class _MainScreenState extends State<MainScreen> {
       );
     }
 
-    assert(() {
-      // ignore: avoid_print
-      print('[MainScreen] lang=$_languageCode  cards=${cards.length}');
-      return true;
-    }());
-
     final pages = [
-      HomeScreen( // 👈 NOW using your background-based HomeScreen
+      HomeScreen(
         languageCode: _languageCode,
+        onLanguageTap: () => setState(() => _selectedIndex = 3),
+        onAudioTap: () => setState(() => _selectedIndex = 3),
       ),
       DeckScreen(
         cards: cards,
@@ -112,6 +108,19 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (i) => setState(() => _selectedIndex = i),
+        // Try each of these blues and pick the one that looks best:
+        //backgroundColor: const Color(0xFF003F7F), // Option A: Darker than before
+        //backgroundColor: const Color(0xFF004080), // Option B: Slightly deeper navy
+        //backgroundColor: const Color(0xFF002D5C), // Option C: Much darker navy
+        //backgroundColor: const Color(0xFF0A0A0A), // Near-black
+        backgroundColor: const Color(0xFF121212), // Material dark theme black
+
+
+
+        selectedItemColor: const Color(0xFFFFBD59), // Yellow
+        unselectedItemColor: const Color(0xFFFFBD59), // Same yellow
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.home),

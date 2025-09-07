@@ -92,11 +92,15 @@ class FlashcardTile extends StatelessWidget {
             ),
         ],
       ),
-      trailing: IconButton(
-        icon: const Icon(Icons.volume_up),
-        tooltip: 'Play word',
-        onPressed: () => _playWord(context),
-      ),
+   trailing: IconButton(
+  icon: const Icon(
+    Icons.volume_up,
+    color: Colors.black38, // faded, less "poppy"
+  ),
+  tooltip: 'Play word',
+  onPressed: () => _playWord(context),
+),
+
       onTap: () {
         if (onCardSelected != null) {
           onCardSelected!(index);

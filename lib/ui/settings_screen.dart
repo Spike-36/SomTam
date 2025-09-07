@@ -16,26 +16,29 @@ class SettingsScreen extends StatelessWidget {
     required this.onLanguageChanged,
   });
 
-  // --- Typography (all white, tuned for dark bg) ---
+  // --- Colours ---
+  static const _brawYellow = Color(0xFFFFBD59);
+
+  // --- Typography (all yellow) ---
   static const TextStyle _titleStyle = TextStyle(
     fontFamily: 'EBGaramond',
     fontWeight: FontWeight.w600,
     fontSize: 22,
-    color: Colors.white,
+    color: _brawYellow,
   );
 
   static const TextStyle _listTileStyle = TextStyle(
     fontFamily: 'SourceSerif4',
     fontSize: 18,
     height: 1.3,
-    color: Colors.white,
+    color: _brawYellow,
   );
 
   static const TextStyle _subtitleStyle = TextStyle(
     fontFamily: 'SourceSerif4',
     fontSize: 16,
     height: 1.3,
-    color: Colors.white70,
+    color: _brawYellow,
   );
 
   @override
@@ -54,7 +57,7 @@ class SettingsScreen extends StatelessWidget {
               ),
               backgroundColor: Colors.transparent,
               elevation: 0,
-              iconTheme: const IconThemeData(color: Colors.white),
+              iconTheme: const IconThemeData(color: _brawYellow),
             ),
             Expanded(
               child: ListView(
@@ -69,29 +72,36 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // --- Permanent radio list of all supported languages ---
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 48),
-                    child: Column(
-                      children: I18n.supportedLanguages.map((code) {
-                        final display = I18n.combinedLabel(code);
-                        return RadioListTile<String>(
-                          value: code,
-                          groupValue: languageCode,
-                          onChanged: (v) {
-                            if (v != null) onLanguageChanged(v);
-                          },
-                          activeColor: Colors.white,
-                          title: Text(display, style: _listTileStyle),
-                          contentPadding: EdgeInsets.zero,
-                        );
-                      }).toList(),
+                  // --- Radio buttons with yellow theme ---
+                  RadioTheme(
+                    data: RadioThemeData(
+                      fillColor: MaterialStateProperty.all(_brawYellow),
+                      overlayColor: MaterialStateProperty.all(_brawYellow),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 48),
+                      child: Column(
+                        children: I18n.supportedLanguages.map((code) {
+                          final display = I18n.combinedLabel(code);
+                          return RadioListTile<String>(
+                            value: code,
+                            groupValue: languageCode,
+                            onChanged: (v) {
+                              if (v != null) onLanguageChanged(v);
+                            },
+                            title: Text(display, style: _listTileStyle),
+                            contentPadding: EdgeInsets.zero,
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
 
                   const Divider(color: Colors.white54),
 
-                  // --- Autoplay switch BELOW the language list ---
+                  const SizedBox(height: 40),
+
+                  // --- Autoplay switch ---
                   SwitchListTile(
                     title: Text(
                       I18n.t('autoplay', lang: languageCode),
@@ -102,7 +112,7 @@ class SettingsScreen extends StatelessWidget {
                       style: _subtitleStyle,
                     ),
                     value: autoAudio,
-                    activeColor: Colors.white,
+                    activeColor: _brawYellow,
                     onChanged: onAutoAudioChanged,
                   ),
                 ],

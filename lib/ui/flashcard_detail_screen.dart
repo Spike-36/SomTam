@@ -2,8 +2,9 @@
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
-// 🔧 Use the lowercase path you standardized elsewhere
+// lowercase path you standardized elsewhere
 import '../i18n/i18n.dart';
+// grammar helper lives in /lib/I18n
 import '../I18n/grammar_i18n.dart'; // tGrammar()
 
 class FlashcardDetailScreen extends StatefulWidget {
@@ -27,6 +28,35 @@ class FlashcardDetailScreen extends StatefulWidget {
   @override
   State<FlashcardDetailScreen> createState() => _FlashcardDetailScreenState();
 }
+
+// ====================================================
+// 🎛️ STYLE SETTINGS — tweak these to adjust the whole screen
+// ====================================================
+
+// Font sizes
+const double kHeadwordSize = 34;
+const double kIpaSize = 18;        // NEW: IPA line
+const double kPhoneticSize = 18;
+const double kMeaningSize = 20;
+const double kGrammarSize = 14;
+const double kContextSize = 16;
+const double kInfoSize = 16;
+
+// Vertical spacing
+const double kTopPadding = 100;     // space from very top
+const double kIpaGap = 6;           // headword → IPA
+const double kSmallGap = 8;         // IPA → phonetic, etc.
+const double kBlockGap = 16;        // generic block gap
+const double kContextGap = 24;      // before English/Scottish context
+const double kBetweenContexts = 8;  // EN context → foreign context
+const double kBottomSpacer = 100;   // keep arrows off content
+
+// Colors
+const Color kMeaningColor = Colors.black54;
+const Color kInfoColor = Colors.black87;
+const Color kSpeakerColor = Colors.black38; // ← fade both speaker icons
+const Color kContextEnColor = Colors.white; // EN/Scottish bold line
+// ====================================================
 
 class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   int? _lastAutoPlayedIndex;
@@ -98,10 +128,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             languageCode: widget.languageCode,
           ),
           transitionsBuilder: (_, animation, __, child) {
-            final tween = Tween(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).chain(CurveTween(curve: Curves.easeInOut));
+            final tween = Tween(begin: const Offset(1, 0), end: Offset.zero)
+                .chain(CurveTween(curve: Curves.easeInOut));
             return SlideTransition(position: animation.drive(tween), child: child);
           },
         ),
@@ -121,6 +149,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     final displayInfo = card.infoFor(lang);
 
     // availability flags
+    final hasIpa = card.ipa.trim().isNotEmpty;
     final hasPhonetic = card.phonetic.trim().isNotEmpty;
     final hasGrammar = card.grammarType.trim().isNotEmpty;
     final hasForeignContext = displayContext.trim().isNotEmpty;
@@ -132,58 +161,69 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
         hasGrammar ? tGrammar(card.grammarType, langCode: lang) : '';
 
     // --- Typography (uses your pubspec-registered families) ---
-    const headwordStyle = TextStyle(
+    final headwordStyle = const TextStyle(
       fontFamily: 'EBGaramond',
       fontWeight: FontWeight.w600, // SemiBold
-      fontSize: 34,
+      fontSize: kHeadwordSize,
       height: 1.08,
+    );
+
+    final ipaStyle = const TextStyle(
+      fontFamily: 'CharisSIL', // good for IPA glyph coverage
+      fontSize: kIpaSize,
+      height: 1.2,
+      color: Colors.black87,
     );
 
     final phoneticStyle = TextStyle(
       fontFamily: 'CharisSIL',
-      fontSize: 18,
+      fontSize: kPhoneticSize,
       height: 1.2,
       color: Theme.of(context).colorScheme.primary,
     );
 
     const meaningStyle = TextStyle(
       fontFamily: 'SourceSerif4',
-      fontSize: 20,
+      fontSize: kMeaningSize,
       height: 1.35,
-      color: Colors.black54,
+      color: kMeaningColor,
     );
 
     const grammarStyle = TextStyle(
       fontFamily: 'SourceSerif4',
-      fontSize: 14,
+      fontSize: kGrammarSize,
       fontWeight: FontWeight.w500,
       height: 1.2,
     );
 
     const contextEnStyle = TextStyle(
       fontFamily: 'SourceSerif4',
-      fontSize: 16,
+      fontSize: kContextSize,
       fontWeight: FontWeight.w600,
       height: 1.3,
-      color: Colors.white, // stronger contrast if used on dark bg; adjust if needed
+      color: kContextEnColor,
     );
 
     const contextForeignStyle = TextStyle(
       fontFamily: 'SourceSerif4',
-      fontSize: 16,
+      fontSize: kContextSize,
       height: 1.3,
     );
 
     const infoStyle = TextStyle(
       fontFamily: 'SourceSerif4',
-      fontSize: 16,
+      fontSize: kInfoSize,
       height: 1.35,
-      color: Colors.black87,
+      color: kInfoColor,
     );
 
     final list = Padding(
-      // keep the top gap so content clears the bottom nav + looks airy
-      padding: const EdgeInsets.only(top: 100, left: 24, right: 24, bottom: 24),
+      padding: const EdgeInsets.only(
+        top: kTopPadding,
+        left: 24,
+        right: 24,
+        bottom: 24,
+      ),
       child: ListView(
         children: [
           // Headword + play
@@ -199,15 +239,25 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
               ),
               IconButton(
                 tooltip: 'Play word',
-                icon: const Icon(Icons.volume_up),
+                icon: const Icon(Icons.volume_up, color: kSpeakerColor),
                 onPressed: () => _safePlay(context, _wordPath(card.audioScottish)),
               ),
             ],
           ),
 
-          // Phonetic (Charis SIL)
+          // IPA (NEW) — only if present
+          if (hasIpa) ...[
+            const SizedBox(height: kIpaGap),
+            Text(
+              card.ipa,
+              style: ipaStyle,
+              textAlign: isRtl ? TextAlign.right : TextAlign.left,
+            ),
+          ],
+
+          // Phonetic
           if (hasPhonetic) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: kSmallGap),
             Text(
               card.phonetic,
               style: phoneticStyle,
@@ -215,8 +265,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             ),
           ],
 
-          // Meaning (Source Serif 4)
-          const SizedBox(height: 16),
+          // Meaning
+          const SizedBox(height: kBlockGap),
           Text(
             displayMeaning.isEmpty ? '—' : displayMeaning,
             style: meaningStyle,
@@ -225,7 +275,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
 
           // Grammar label (translated)
           if (hasGrammar && grammarLabel.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: kBlockGap),
             Align(
               alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
               child: Text(
@@ -238,22 +288,19 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
 
           // Context (EN/Scottish) + speaker
           if (hasEnglishContext) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: kContextGap),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(
-                    englishContext,
-                    style: contextEnStyle,
-                  ),
+                  child: Text(englishContext, style: contextEnStyle),
                 ),
                 const SizedBox(width: 8),
                 IconButton(
                   tooltip: 'Play context',
-                  icon: const Icon(Icons.volume_up),
-                  onPressed: () =>
-                      _safePlay(context, _contextPath(card.audioScottishContext)),
+                  icon: const Icon(Icons.volume_up, color: kSpeakerColor),
+                  onPressed: () => _safePlay(
+                      context, _contextPath(card.audioScottishContext)),
                 ),
               ],
             ),
@@ -261,24 +308,21 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
 
           // Foreign context
           if (hasForeignContext) ...[
-            const SizedBox(height: 8),
-            Text(
-              displayContext,
-              style: contextForeignStyle,
-            ),
+            const SizedBox(height: kBetweenContexts),
+            Text(displayContext, style: contextForeignStyle),
           ],
 
-          // Info block
+          // Info block (JUSTIFIED)
           if (hasInfo) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: kBlockGap),
             Text(
               displayInfo,
               style: infoStyle,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.justify, // ← justified per your request
             ),
           ],
 
-          const SizedBox(height: 100),
+          const SizedBox(height: kBottomSpacer),
         ],
       ),
     );
@@ -290,7 +334,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
             child: list,
           ),
-          // Nav arrows (unchanged)
+          // Bottom nav arrows (unchanged)
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(
