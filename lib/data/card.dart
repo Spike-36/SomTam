@@ -1,4 +1,3 @@
-// lib/data/card.dart
 import '../I18n/i18n.dart'; // normalize + labelToCode
 
 class Flashcard {
@@ -181,6 +180,32 @@ class Flashcard {
 
     final en = (m['en'] ?? '').trim();
     if (en.isNotEmpty) return en;
+    return '';
+  }
+
+  // ----------------- strict getters for UI layout -----------------
+
+  /// Strict English context: never falls back to another language.
+  String contextEnStrict() {
+    final en = (contextI18n?['en'] ?? '').trim();
+    if (en.isNotEmpty) return en;
+    return context.trim(); // legacy/default EN
+  }
+
+  /// Strict foreign context for a given UI language.
+  /// Returns empty if the requested language is 'en' or if no foreign string exists.
+  String contextForeignStrict(String lang) {
+    final code = I18n.normalize(lang);
+    if (code == 'en') return '';
+    final m = contextI18n;
+    if (m == null) return '';
+    final sel = (m[code] ?? '').trim();
+    if (sel.isNotEmpty) return sel;
+    if (code.contains('-') || code.contains('_')) {
+      final base = code.split(RegExp(r'[-_]')).first;
+      final baseVal = (m[base] ?? '').trim();
+      if (baseVal.isNotEmpty) return baseVal;
+    }
     return '';
   }
 }

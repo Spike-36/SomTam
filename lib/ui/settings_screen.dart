@@ -36,9 +36,15 @@ class SettingsScreen extends StatelessWidget {
   );
 
   // --- Layout constants ---
-  static const double autoplayTopGap = 40;   // top → Autoplay
-  static const double autoplayGap = 40;      // Autoplay → divider
-  static const double dividerBottomGap = 24; // divider → language radios
+  static const double autoplayTopGap = 35;    // top → Autoplay block
+  static const double autoplayGap = 5;       // Autoplay block → divider
+  static const double dividerBottomGap = 24;  // divider → language radios
+
+  // 🔒 Lock the autoplay block so nothing moves
+  static const double autoplayBlockHeight = 140.0;   // tweak to taste (120–160)
+  static const double autoplaySwitchBoxWidth = 80.0; // reserves width for switch
+  static const int autoplayTitleMaxLines = 2;
+  static const int autoplaySubtitleMaxLines = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -50,25 +56,68 @@ class SettingsScreen extends StatelessWidget {
         child: SafeArea(
           child: ListView(
             children: [
-              // Gap at top so Autoplay isn’t jammed into notch
+              // Gap at top so Autoplay isn’t jammed into the notch
               const SizedBox(height: autoplayTopGap),
 
-              // --- Autoplay switch ---
-              SwitchListTile(
-                title: Text(
-                  I18n.t('autoplay', lang: languageCode),
-                  style: _listTileStyle,
+              // --- Autoplay (custom row; toggle locked in place) ---
+              SizedBox(
+                height: autoplayBlockHeight,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Title + subtitle never change the row height or switch position
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              I18n.t('autoplay', lang: languageCode),
+                              style: _listTileStyle,
+                              maxLines: autoplayTitleMaxLines,
+                              overflow: TextOverflow.ellipsis,
+                              textHeightBehavior: const TextHeightBehavior(
+                                applyHeightToFirstAscent: false,
+                                applyHeightToLastDescent: false,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              I18n.t('autoplay_description', lang: languageCode),
+                              style: _subtitleStyle,
+                              maxLines: autoplaySubtitleMaxLines,
+                              overflow: TextOverflow.ellipsis,
+                              textHeightBehavior: const TextHeightBehavior(
+                                applyHeightToFirstAscent: false,
+                                applyHeightToLastDescent: false,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Fixed-width box prevents horizontal jitter across locales/platforms
+                      SizedBox(
+                        width: autoplaySwitchBoxWidth,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Switch.adaptive(
+                            value: autoAudio,
+                            onChanged: onAutoAudioChanged,
+                            activeColor: _brawYellow,
+                            // For slightly smaller touch target on Material:
+                            // materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                subtitle: Text(
-                  I18n.t('autoplay_description', lang: languageCode),
-                  style: _subtitleStyle,
-                ),
-                value: autoAudio,
-                activeColor: _brawYellow,
-                onChanged: onAutoAudioChanged,
               ),
 
-              // Add adjustable space before divider
+              // Consistent spacer before the divider
               const SizedBox(height: autoplayGap),
 
               const Divider(color: Colors.white54),

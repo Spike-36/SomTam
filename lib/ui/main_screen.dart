@@ -17,14 +17,34 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
-  int _currentIndex = 0;
+  int _selectedIndex = 0;   // 0: Home, 1: List, 2: Word, 3: Settings
+  int _currentIndex = 0;    // index in the SORTED list
   bool _autoAudio = false;
   String _languageCode = 'en';
 
   final audio = AudioService();
-  List<Flashcard> cards = [];
+
+  /// Raw cards as loaded from repo (unsorted).
+  List<Flashcard> _cards = [];
+
+  /// Single source of truth for ordering: alphabetical by Scottish headword.
+  List<Flashcard> _sortedCards = [];
+
   bool _i18nReady = false;
+
+  List<Flashcard> _sortByHeadword(List<Flashcard> src) {
+    final copy = List<Flashcard>.from(src);
+    copy.sort((a, b) => a.scottish.toLowerCase().compareTo(b.scottish.toLowerCase()));
+    return copy;
+  }
+
+  void _rebuildSorted() {
+    _sortedCards = _sortByHeadword(_cards);
+    // keep current index in range if list size changed
+    if (_currentIndex >= _sortedCards.length) {
+      _currentIndex = _sortedCards.isEmpty ? 0 : _sortedCards.length - 1;
+    }
+  }
 
   @override
   void initState() {
@@ -35,9 +55,11 @@ class _MainScreenState extends State<MainScreen> {
       DeckRepository().loadBundled(forceRefresh: true),
     ]).then((results) {
       I18n.setCurrentLang(_languageCode);
+      final loaded = results[1] as List<Flashcard>;
       setState(() {
         _i18nReady = true;
-        cards = results[1] as List<Flashcard>;
+        _cards = loaded;
+        _rebuildSorted(); // initialize _sortedCards
       });
     });
   }
@@ -48,15 +70,17 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
   }
 
-  void _onCardSelected(int index) {
+  // Called when user taps a card in the (sorted) list.
+  void _onCardSelected(int indexInSorted) {
     setState(() {
-      _currentIndex = index;
-      _selectedIndex = 2; // jump to Word tab
+      _currentIndex = indexInSorted; // this index refers to _sortedCards
+      _selectedIndex = 2;            // switch to Word tab
     });
   }
 
+  // Called by detail view when user swipes between cards.
   void _onIndexChange(int newIndex) {
-    setState(() => _currentIndex = newIndex);
+    setState(() => _currentIndex = newIndex); // stays in sorted order
   }
 
   @override
@@ -74,15 +98,15 @@ class _MainScreenState extends State<MainScreen> {
         onAudioTap: () => setState(() => _selectedIndex = 3),
       ),
       DeckScreen(
-        cards: cards,
+        cards: _sortedCards,          // ← sorted list for the List tab
         audio: audio,
         languageCode: _languageCode,
         onCardSelected: _onCardSelected,
       ),
-      if (cards.isNotEmpty)
+      if (_sortedCards.isNotEmpty)
         FlashcardDetailScreen(
-          cards: cards,
-          index: _currentIndex,
+          cards: _sortedCards,        // ← the SAME sorted list for detail
+          index: _currentIndex,       // ← index within sorted list
           audio: audio,
           onIndexChange: _onIndexChange,
           autoAudio: _autoAudio,
@@ -98,6 +122,9 @@ class _MainScreenState extends State<MainScreen> {
           setState(() {
             _languageCode = code;
             I18n.setCurrentLang(code);
+            // Sorting is by headword, so language change doesn't affect order,
+            // but if you ever switch to sort-by-meaning, rebuild here.
+            _rebuildSorted();
           });
         },
       ),
@@ -108,17 +135,9 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (i) => setState(() => _selectedIndex = i),
-        // Try each of these blues and pick the one that looks best:
-        //backgroundColor: const Color(0xFF003F7F), // Option A: Darker than before
-        //backgroundColor: const Color(0xFF004080), // Option B: Slightly deeper navy
-        //backgroundColor: const Color(0xFF002D5C), // Option C: Much darker navy
-        //backgroundColor: const Color(0xFF0A0A0A), // Near-black
-        backgroundColor: const Color(0xFF121212), // Material dark theme black
-
-
-
-        selectedItemColor: const Color(0xFFFFBD59), // Yellow
-        unselectedItemColor: const Color(0xFFFFBD59), // Same yellow
+        backgroundColor: const Color(0xFF121212),
+        selectedItemColor: const Color(0xFFFFBD59),
+        unselectedItemColor: const Color(0xFFFFBD59),
         showSelectedLabels: true,
         showUnselectedLabels: true,
         items: [
