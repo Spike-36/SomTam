@@ -26,7 +26,6 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: AppBackground(
-        imageAsset: '',                 // ⛔️ disable tartan bg (kept placeholder)
         blueOverlayOpacity: 1.0,        // 🔵 full saturation
         child: SafeArea(
           child: Column(

@@ -1,50 +1,39 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'card.dart';
 
-class DeckRepository {
+class Repository {
   static const _assetPath = 'assets/data/cards.json';
-  static List<Flashcard>? _cache;
 
-  /// Load cards from bundled asset. Set [forceRefresh] to true to ignore cache.
-  Future<List<Flashcard>> loadBundled({bool forceRefresh = false}) async {
-    if (!forceRefresh && _cache != null) return _cache!;
+  Future<List<Flashcard>> load() async {
+    final raw = await rootBundle.loadString(_assetPath);
+    final list = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
 
-    try {
-      final raw = await rootBundle.loadString(_assetPath);
-      final dynamic data = json.decode(raw);
-      final cards = _decodeToCards(data);
-      _cache = cards;
-      return cards;
-    } catch (e, st) {
-      debugPrint('DeckRepository.loadBundled error: $e\n$st');
-      return const <Flashcard>[];
-    }
+    return list
+        .map(_mapKoreanEnglishToLegacyKeys) // <- only change: remap keys for the UI
+        .map(Flashcard.fromJson)
+        .toList(growable: false);
   }
+}
 
-  List<Flashcard> _decodeToCards(dynamic data) {
-    // Case 1: plain list: [ { ...card... }, ... ]
-    if (data is List) {
-      return data
-          .where((e) => e is Map)
-          .map((e) => Map<String, dynamic>.from(e as Map))
-          .map(Flashcard.fromJson)
-          .toList();
-    }
+/// Remap your new Korean/English JSON shape to the legacy keys the UI/model expect.
+/// We do NOT delete original keys; we just add aliases so Flashcard.fromJson stays unchanged.
+Map<String, dynamic> _mapKoreanEnglishToLegacyKeys(Map<String, dynamic> src) {
+  final m = Map<String, dynamic>.from(src);
 
-    // Case 2: wrapped: { "cards": [ ... ] }
-    if (data is Map && data['cards'] is List) {
-      final list = (data['cards'] as List)
-          .where((e) => e is Map)
-          .map((e) => Map<String, dynamic>.from(e as Map))
-          .map(Flashcard.fromJson)
-          .toList();
-      return list;
-    }
+  // Text fields
+  m['scottish'] = m['korean'];            // display word used across UI
+  m['phonetic'] = m['koreanPhonetic'];    // romanization
+  m['meaning']  = m['english'];           // index-language gloss
+  // No context sentence in your data → leave 'context' null
 
-    // Unexpected shape
-    debugPrint('DeckRepository: unexpected JSON shape in $_assetPath');
-    return const <Flashcard>[];
-    }
+  // Audio fields wired to existing UI expectations
+  m['audioScottish']        = m['audioKorean'];       // main target audio
+  m['audioScottishSlow']    = m['audioKoreanSlow'];   // slow target audio
+  m['audioScottishContext'] = m['audioEnglish'];      // use English as "context" clip
+
+  // Pass through other useful fields unchanged
+  // id, image, showIndex, type, value, etc. are already present
+
+  return m;
 }
