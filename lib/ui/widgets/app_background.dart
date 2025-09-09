@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 class AppBackground extends StatelessWidget {
   final Widget child;
-  final String imageAsset;          // e.g. 'assets/images/brawHome.jpg'
+  final String imageAsset;          // can be '' if no background wanted
   final double blueOverlayOpacity;  // 0.0–1.0
   final Alignment alignment;
 
   const AppBackground({
     super.key,
     required this.child,
-    required this.imageAsset,
-    this.blueOverlayOpacity = 0.75, // match Braw2 default
+    this.imageAsset = '', // default to empty = no background
+    this.blueOverlayOpacity = 0.75,
     this.alignment = Alignment.center,
   });
 
@@ -18,17 +18,18 @@ class AppBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Background image
-        Positioned.fill(
-          child: Image.asset(
-            imageAsset,
-            fit: BoxFit.cover,
-            alignment: alignment,
-            filterQuality: FilterQuality.high,
+        // Background image (only if provided)
+        if (imageAsset.isNotEmpty)
+          Positioned.fill(
+            child: Image.asset(
+              imageAsset,
+              fit: BoxFit.cover,
+              alignment: alignment,
+              filterQuality: FilterQuality.high,
+            ),
           ),
-        ),
 
-        // Blue overlay from Braw2: rgb(0,101,189)
+        // Blue overlay (solid color if opacity=1.0)
         Positioned.fill(
           child: IgnorePointer(
             child: Container(

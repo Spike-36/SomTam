@@ -9,10 +9,10 @@ class HomeScreen extends StatelessWidget {
   final VoidCallback onAudioTap;
 
   // 🔧 Gap values (adjust these numbers to move things around)
-  static const double topGap = 65;               // space from top → logo
-  static const double logoToSubtitleGap = 25;   // space from logo → subtitle
-  static const double subtitleToButtonsGap = 170; // space from subtitle → buttons
-  static const double betweenButtonsGap = 50;   // space between the two buttons
+  static const double topGap = 65;
+  static const double logoToSubtitleGap = 25;
+  static const double subtitleToButtonsGap = 170;
+  static const double betweenButtonsGap = 50;
 
   const HomeScreen({
     super.key,
@@ -26,33 +26,30 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: AppBackground(
-        imageAsset: 'assets/images/brawHome.jpg',
-        blueOverlayOpacity: 0.75,
+        imageAsset: '',                 // ⛔️ disable tartan bg (kept placeholder)
+        blueOverlayOpacity: 1.0,        // 🔵 full saturation
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // --- Gap: top of screen → logo
               SizedBox(height: topGap),
 
-              // --- Braw logo ---
-              Center(
-                child: Image.asset(
-                  'assets/images/brawHeading.png',
-                  width: 300,
-                  height: 120,
-                  fit: BoxFit.contain,
-                ),
-              ),
+              // --- Braw logo (commented out; keep for later replacement) ---
+              // Center(
+              //   child: Image.asset(
+              //     'assets/images/brawHeading.png',
+              //     width: 300,
+              //     height: 120,
+              //     fit: BoxFit.contain,
+              //   ),
+              // ),
 
-              // --- Gap: logo → subtitle
               SizedBox(height: logoToSubtitleGap),
 
-              // --- Subheading ---
               Center(
                 child: Text(
-                  I18n.t("scotspeak", lang: languageCode),
+                  I18n.t("WordKimchi", lang: languageCode),
                   style: const TextStyle(
                     fontSize: 27,
                     letterSpacing: 1,
@@ -64,23 +61,20 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              // --- Gap: subtitle → buttons block
               SizedBox(height: subtitleToButtonsGap),
 
-              // --- Buttons (centered & fixed width for consistency) ---
               Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 180),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Audio button (moved above)
+                      // Audio
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: Color(0xFFFFBD59), width: 2),
+                            side: const BorderSide(color: Color(0xFFFFBD59), width: 2),
                             foregroundColor: const Color(0xFFFFBD59),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             textStyle: const TextStyle(
@@ -96,13 +90,12 @@ class HomeScreen extends StatelessWidget {
 
                       SizedBox(height: betweenButtonsGap),
 
-                      // Language button (now below audio)
+                      // Language
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: Color(0xFFFFBD59), width: 2),
+                            side: const BorderSide(color: Color(0xFFFFBD59), width: 2),
                             foregroundColor: const Color(0xFFFFBD59),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             textStyle: const TextStyle(
