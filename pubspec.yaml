@@ -1,5 +1,5 @@
-name: braw3
-description: Simple flashcard prototype with audio (and optional video)
+name: wordkimchi
+description: WordKimchi – Korean flashcards & phrases
 version: 1.0.0+2
 publish_to: "none"
 
