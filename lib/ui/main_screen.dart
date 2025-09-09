@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   /// Raw cards as loaded from repo (unsorted).
   List<Flashcard> _cards = [];
 
-  /// Single source of truth for ordering: alphabetical by Scottish headword.
+  /// Single source of truth for ordering: alphabetical by headword.
   List<Flashcard> _sortedCards = [];
 
   bool _i18nReady = false;
@@ -40,7 +40,6 @@ class _MainScreenState extends State<MainScreen> {
 
   void _rebuildSorted() {
     _sortedCards = _sortByHeadword(_cards);
-    // keep current index in range if list size changed
     if (_currentIndex >= _sortedCards.length) {
       _currentIndex = _sortedCards.isEmpty ? 0 : _sortedCards.length - 1;
     }
@@ -49,18 +48,26 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    _init(); // async bootstrap
+  }
 
-    Future.wait([
-      I18n.load(),
-      DeckRepository().loadBundled(forceRefresh: true),
-    ]).then((results) {
-      I18n.setCurrentLang(_languageCode);
-      final loaded = results[1] as List<Flashcard>;
-      setState(() {
-        _i18nReady = true;
-        _cards = loaded;
-        _rebuildSorted(); // initialize _sortedCards
-      });
+  Future<void> _init() async {
+    final repo = Repository();
+    // Load i18n and cards in parallel
+    final results = await Future.wait([
+      I18n.load(),       // Future<void>
+      repo.load(),       // Future<List<Flashcard>>
+    ]);
+
+    // Set language and store cards
+    I18n.setCurrentLang(_languageCode);
+    final loaded = results[1] as List<Flashcard>;
+
+    if (!mounted) return;
+    setState(() {
+      _i18nReady = true;
+      _cards = loaded;
+      _rebuildSorted();
     });
   }
 
@@ -73,7 +80,7 @@ class _MainScreenState extends State<MainScreen> {
   // Called when user taps a card in the (sorted) list.
   void _onCardSelected(int indexInSorted) {
     setState(() {
-      _currentIndex = indexInSorted; // this index refers to _sortedCards
+      _currentIndex = indexInSorted; // index refers to _sortedCards
       _selectedIndex = 2;            // switch to Word tab
     });
   }
@@ -98,15 +105,15 @@ class _MainScreenState extends State<MainScreen> {
         onAudioTap: () => setState(() => _selectedIndex = 3),
       ),
       DeckScreen(
-        cards: _sortedCards,          // ← sorted list for the List tab
+        cards: _sortedCards,
         audio: audio,
         languageCode: _languageCode,
         onCardSelected: _onCardSelected,
       ),
       if (_sortedCards.isNotEmpty)
         FlashcardDetailScreen(
-          cards: _sortedCards,        // ← the SAME sorted list for detail
-          index: _currentIndex,       // ← index within sorted list
+          cards: _sortedCards,
+          index: _currentIndex,
           audio: audio,
           onIndexChange: _onIndexChange,
           autoAudio: _autoAudio,
@@ -122,8 +129,6 @@ class _MainScreenState extends State<MainScreen> {
           setState(() {
             _languageCode = code;
             I18n.setCurrentLang(code);
-            // Sorting is by headword, so language change doesn't affect order,
-            // but if you ever switch to sort-by-meaning, rebuild here.
             _rebuildSorted();
           });
         },

@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
-import '../i18n/i18n.dart';
-import '../I18n/grammar_i18n.dart'; // tGrammar()
+import '../I18n/i18n.dart';              // <-- case-correct if your folder is I18n/
+import '../I18n/grammar_i18n.dart';     // tGrammar()
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
@@ -81,16 +81,22 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   int? _lastAutoPlayedIndex;
   Flashcard get card => widget.cards[widget.index];
 
-  String _wordPath(String filename) {
-    if (filename.trim().isEmpty) return '';
-    if (filename.contains('/')) return filename;
-    return 'assets/audio/scottish/$filename';
+  // Use Korean folder for the main word audio (we mapped audioScottish <- audioKorean).
+  String _wordPath(String? filename) {
+    if (filename == null) return '';
+    final f = filename.trim();
+    if (f.isEmpty) return '';
+    if (f.contains('/')) return f;
+    return 'assets/audio/korean/$f';
   }
 
-  String _contextPath(String filename) {
-    if (filename.trim().isEmpty) return '';
-    if (filename.contains('/')) return filename;
-    return 'assets/audio/context/$filename';
+  // English/context clips live under 'context'.
+  String _contextPath(String? filename) {
+    if (filename == null) return '';
+    final f = filename.trim();
+    if (f.isEmpty) return '';
+    if (f.contains('/')) return f;
+    return 'assets/audio/context/$f';
   }
 
   Future<void> _safePlay(BuildContext context, String path) async {

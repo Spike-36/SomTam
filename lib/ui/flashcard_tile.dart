@@ -44,10 +44,13 @@ class FlashcardTile extends StatelessWidget {
     color: Colors.black87,
   );
 
-  String _wordPath(String filename) {
-    if (filename.trim().isEmpty) return '';
-    if (filename.contains('/')) return filename;
-    return 'assets/audio/scottish/$filename';
+  /// Builds a playable asset path for Korean audio.
+  String _wordPath(String? filename) {
+    if (filename == null) return '';
+    final f = filename.trim();
+    if (f.isEmpty) return '';
+    if (f.contains('/')) return f; // already a path
+    return 'assets/audio/korean/$f';
   }
 
   Future<void> _playWord(BuildContext context) async {
@@ -80,25 +83,21 @@ class FlashcardTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (hasPhonetic) const SizedBox(height: 2),
           if (hasPhonetic)
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                card.phonetic,
-                style: _phoneticStyle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+            Text(
+              card.phonetic,
+              style: _phoneticStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
+          if (hasMeaning) const SizedBox(height: 4),
           if (hasMeaning)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                localized,
-                style: _meaningStyle,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+            Text(
+              localized,
+              style: _meaningStyle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           if (!hasMeaning)
             const Padding(
@@ -108,7 +107,7 @@ class FlashcardTile extends StatelessWidget {
         ],
       ),
       trailing: Padding(
-        padding: const EdgeInsets.only(right: 24), // 👈 nudges speaker inward
+        padding: const EdgeInsets.only(right: 24), // nudges speaker inward
         child: IconButton(
           icon: const Icon(
             Icons.volume_up,

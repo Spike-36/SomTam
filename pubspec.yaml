@@ -1,5 +1,5 @@
-name: braw3
-description: Simple flashcard prototype with audio (and optional video)
+name: wordkimchi
+description: WordKimchi – Korean flashcards & phrases
 version: 1.0.0+2
 publish_to: "none"
 
@@ -25,12 +25,24 @@ flutter:
   uses-material-design: true
 
   assets:
+    # Data
     - assets/data/cards.json
-    - assets/audio/
+
+    # UI images
+    - assets/images/ui/
+
+    # Word card images
+    - assets/images/words/
+
+    # Audio
+    - assets/audio/korean/
     - assets/audio/scottish/
     - assets/audio/context/
-    - assets/images/
+
+    # Video
     - assets/video/
+
+    # I18n
     - assets/i18n/
 
   fonts:
