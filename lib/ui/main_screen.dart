@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../data/repository.dart';
 import '../services/audio_service.dart';
-import '../i18n/i18n.dart';
+import '../I18n/i18n.dart';
+import '../utils/sort.dart'; // type+headword sort
 import 'deck_screen.dart';
 import 'flashcard_detail_screen.dart';
 import 'settings_screen.dart';
@@ -17,29 +18,24 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;   // 0: Home, 1: List, 2: Word, 3: Settings
-  int _currentIndex = 0;    // index in the SORTED list
+  // Tabs: 0 Home, 1 List, 2 Word, 3 Settings
+  int _selectedIndex = 0;
+  int _currentIndex = 0;     // index within _sortedCards for Word tab
   bool _autoAudio = false;
   String _languageCode = 'en';
 
   final audio = AudioService();
 
-  /// Raw cards as loaded from repo (unsorted).
+  /// When this increments, DeckScreen resets to the type index view.
+  int _listResetTick = 0;
+
+  // Data
   List<Flashcard> _cards = [];
-
-  /// Single source of truth for ordering: alphabetical by headword.
   List<Flashcard> _sortedCards = [];
-
   bool _i18nReady = false;
 
-  List<Flashcard> _sortByHeadword(List<Flashcard> src) {
-    final copy = List<Flashcard>.from(src);
-    copy.sort((a, b) => a.scottish.toLowerCase().compareTo(b.scottish.toLowerCase()));
-    return copy;
-  }
-
   void _rebuildSorted() {
-    _sortedCards = _sortByHeadword(_cards);
+    _sortedCards = sortByTypeThenHeadword(_cards);
     if (_currentIndex >= _sortedCards.length) {
       _currentIndex = _sortedCards.isEmpty ? 0 : _sortedCards.length - 1;
     }
@@ -48,18 +44,16 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _init(); // async bootstrap
+    _init();
   }
 
   Future<void> _init() async {
     final repo = Repository();
-    // Load i18n and cards in parallel
     final results = await Future.wait([
       I18n.load(),       // Future<void>
       repo.load(),       // Future<List<Flashcard>>
     ]);
 
-    // Set language and store cards
     I18n.setCurrentLang(_languageCode);
     final loaded = results[1] as List<Flashcard>;
 
@@ -77,28 +71,26 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
   }
 
-  // Called when user taps a card in the (sorted) list.
+  // From List tab: user tapped a card in the sorted list
   void _onCardSelected(int indexInSorted) {
     setState(() {
-      _currentIndex = indexInSorted; // index refers to _sortedCards
-      _selectedIndex = 2;            // switch to Word tab
+      _currentIndex = indexInSorted;
+      _selectedIndex = 2; // switch to Word tab
     });
   }
 
-  // Called by detail view when user swipes between cards.
+  // From Word tab: user swiped between cards
   void _onIndexChange(int newIndex) {
-    setState(() => _currentIndex = newIndex); // stays in sorted order
+    setState(() => _currentIndex = newIndex);
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_i18nReady) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final pages = [
+    final pages = <Widget>[
       HomeScreen(
         languageCode: _languageCode,
         onLanguageTap: () => setState(() => _selectedIndex = 3),
@@ -109,6 +101,7 @@ class _MainScreenState extends State<MainScreen> {
         audio: audio,
         languageCode: _languageCode,
         onCardSelected: _onCardSelected,
+        resetTicker: _listResetTick, // 👈 forces DeckScreen to show type index
       ),
       if (_sortedCards.isNotEmpty)
         FlashcardDetailScreen(
@@ -139,10 +132,20 @@ class _MainScreenState extends State<MainScreen> {
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (i) => setState(() => _selectedIndex = i),
-        backgroundColor: const Color(0xFF121212),
-        selectedItemColor: const Color(0xFFFFBD59),
-        unselectedItemColor: const Color(0xFFFFBD59),
+        onTap: (i) {
+          // Always reset the List tab to the type index when the List tab is tapped
+          if (i == 1) {
+            setState(() {
+              _listResetTick++; // triggers DeckScreen to show type index
+              _selectedIndex = i;
+            });
+          } else {
+            setState(() => _selectedIndex = i);
+          }
+        },
+        backgroundColor: const Color(0xFF003478), // Korean flag blue
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
         showSelectedLabels: true,
         showUnselectedLabels: true,
         items: [
@@ -166,5 +169,5 @@ class _MainScreenState extends State<MainScreen> {
         type: BottomNavigationBarType.fixed,
       ),
     );
-  }
+    }
 }

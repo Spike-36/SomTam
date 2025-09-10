@@ -1,29 +1,25 @@
-// lib/ui/deck_screen.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
-import '../I18n/i18n.dart';
 import 'flashcard_tile.dart';
-import 'flashcard_detail_screen.dart';
 
-// ---- Sorting toggles (adjust if you prefer) ----
-const bool kSortAscending = true;
-// If you ever want to sort by the localized meaning instead of the headword,
-// flip this to true:
-const bool kSortByMeaningForLanguage = false;
+enum _DeckViewMode { typeIndex, listView }
 
 class DeckScreen extends StatefulWidget {
   final List<Flashcard> cards;
   final AudioService audio;
-  final void Function(int)? onCardSelected;
   final String languageCode;
+  final void Function(int)? onCardSelected;
+
+  final int resetTicker; // used to reset view when parent changes
 
   const DeckScreen({
     super.key,
     required this.cards,
     required this.audio,
-    this.onCardSelected,
     this.languageCode = 'en',
+    this.onCardSelected,
+    this.resetTicker = 0,
   });
 
   @override
@@ -31,59 +27,119 @@ class DeckScreen extends StatefulWidget {
 }
 
 class _DeckScreenState extends State<DeckScreen> {
-  int _cmpStrings(String a, String b) {
-    final la = a.trim().toLowerCase();
-    final lb = b.trim().toLowerCase();
-    final c = la.compareTo(lb);
-    if (c != 0) return c;
-    // tie-breaker keeps sort stable across platforms
-    return a.trim().compareTo(b.trim());
+  final ScrollController _scroll = ScrollController();
+
+  _DeckViewMode _mode = _DeckViewMode.typeIndex;
+  String? _currentTypeInList;
+
+  @override
+  void didUpdateWidget(covariant DeckScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // when the tick changes, jump back to the index screen
+    if (oldWidget.resetTicker != widget.resetTicker) {
+      setState(() {
+        _mode = _DeckViewMode.typeIndex;
+        _currentTypeInList = null;
+      });
+      if (_scroll.hasClients) {
+        _scroll.jumpTo(0);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final lang = widget.languageCode;
+    if (_mode == _DeckViewMode.typeIndex) {
+      // --- Show the type index (case-insensitive sort) ---
+      final types = widget.cards
+          .map((c) => (c.type ?? '').trim())
+          .where((t) => t.isNotEmpty)
+          .toSet()
+          .toList()
+        ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
-    // Build a sorted copy so we don't mutate the source list.
-    final List<Flashcard> sortedCards = List<Flashcard>.from(widget.cards);
-    final keyFor = (Flashcard c) =>
-        kSortByMeaningForLanguage ? c.meaningFor(lang) : c.scottish;
-
-    sortedCards.sort((a, b) =>
-        _cmpStrings(keyFor(a), keyFor(b)) * (kSortAscending ? 1 : -1));
-
-    // If a parent provided onCardSelected expecting ORIGINAL indices,
-    // map each sorted card back to its original index.
-    final Map<Flashcard, int> originalIndex = {
-      for (int i = 0; i < widget.cards.length; i++) widget.cards[i]: i
-    };
-
-    return Scaffold(
-      body: sortedCards.isEmpty
-          ? Center(child: Text(I18n.t('loading', lang: lang)))
-          : ListView.separated(
-              itemCount: sortedCards.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
-              itemBuilder: (_, i) => FlashcardTile(
-                cards: sortedCards,   // pass the sorted list to the tile
-                index: i,             // index within the sorted list
-                audio: widget.audio,
-                languageCode: lang,
-                onCardSelected: widget.onCardSelected ??
-                    (idxInSorted) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => FlashcardDetailScreen(
-                            cards: sortedCards,    // keep detail view in sorted order
-                            index: idxInSorted,
-                            audio: widget.audio,
-                            languageCode: lang,
-                          ),
-                        ),
-                      );
-                    },
+      return ListView.separated(
+        itemCount: types.length,
+        separatorBuilder: (_, __) => const Divider(height: 1),
+        itemBuilder: (context, i) {
+          final t = types[i];
+          return ListTile(
+            title: Text(
+              t.isNotEmpty ? (t[0].toUpperCase() + t.substring(1)) : t,
+              style: const TextStyle(
+                fontFamily: 'SourceSerif4',
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
               ),
             ),
+            onTap: () {
+              setState(() {
+                _mode = _DeckViewMode.listView;
+                _currentTypeInList = t;
+              });
+            },
+          );
+        },
+      );
+    }
+
+    // --- Show the list of words for the selected type (type-aware sort) ---
+    final selectedType = (_currentTypeInList ?? '').trim().toLowerCase();
+
+    final filtered = widget.cards
+        .where((c) => (c.type ?? '').trim().toLowerCase() == selectedType)
+        .toList(growable: false);
+
+    // Make a sortable copy
+    final sorted = [...filtered];
+
+    final isNumbers = selectedType == 'numbers' || selectedType == 'number';
+
+    if (isNumbers) {
+      sorted.sort((a, b) => _asInt(a.value).compareTo(_asInt(b.value)));
+    } else {
+      sorted.sort((a, b) => _display(a).compareTo(_display(b)));
+    }
+
+    return ListView.builder(
+      controller: _scroll,
+      itemCount: sorted.length,
+      itemBuilder: (context, i) {
+        return FlashcardTile(
+          cards: sorted,
+          index: i,
+          audio: widget.audio,
+          languageCode: widget.languageCode,
+          onCardSelected: (_) {
+            final tappedCard = sorted[i];
+            final globalIndex =
+                widget.cards.indexWhere((c) => c.id == tappedCard.id);
+            if (globalIndex != -1) {
+              widget.onCardSelected?.call(globalIndex);
+            }
+          },
+        );
+      },
     );
+  }
+
+  // ---- Helpers ----
+
+  int _asInt(dynamic v) {
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    final s = v?.toString() ?? '';
+    return int.tryParse(s) ?? 1 << 30; // push unknowns to end
+  }
+
+  String _display(Flashcard c) {
+    // 🔑 Always sort alphabetically by English (meaning)
+    return (c.meaning ?? '').toLowerCase().trim();
   }
 }

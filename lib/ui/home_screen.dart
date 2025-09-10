@@ -1,18 +1,16 @@
 // lib/ui/home_screen.dart
 import 'package:flutter/material.dart';
-import '../i18n/i18n.dart';
-import 'widgets/app_background.dart';
+import '../I18n/i18n.dart';
 
 class HomeScreen extends StatelessWidget {
   final String languageCode;
   final VoidCallback onLanguageTap;
   final VoidCallback onAudioTap;
 
-  // 🔧 Gap values (adjust these numbers to move things around)
+  // 🔧 Gap values (adjust for spacing)
   static const double topGap = 65;
-  static const double logoToSubtitleGap = 25;
-  static const double subtitleToButtonsGap = 170;
-  static const double betweenButtonsGap = 50;
+  static const double headerToButtonsGap = 120;
+  static const double betweenButtonsGap = 40;
 
   const HomeScreen({
     super.key,
@@ -23,96 +21,81 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A single faded color for both text + outline
+    const fadedColor = Colors.black45; // tweak to black45 or black38 if too strong
+
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: AppBackground(
-        blueOverlayOpacity: 1.0,        // 🔵 full saturation
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(height: topGap),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(height: topGap),
 
-              // --- Braw logo (commented out; keep for later replacement) ---
-              // Center(
-              //   child: Image.asset(
-              //     'assets/images/brawHeading.png',
-              //     width: 300,
-              //     height: 120,
-              //     fit: BoxFit.contain,
-              //   ),
-              // ),
+            // --- Combined logo + title image ---
+            Center(
+              child: Image.asset(
+                'assets/images/ui/wordkimchi_logo.png',
+                width: 260,
+                fit: BoxFit.contain,
+              ),
+            ),
 
-              SizedBox(height: logoToSubtitleGap),
+            SizedBox(height: headerToButtonsGap),
 
-              Center(
-                child: Text(
-                  I18n.t("WordKimchi", lang: languageCode),
-                  style: const TextStyle(
-                    fontSize: 27,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFFFFBD59), // yellow
-                    shadows: [Shadow(blurRadius: 6, offset: Offset(0, 1))],
-                  ),
-                  textAlign: TextAlign.center,
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 180),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Audio button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: fadedColor, width: 2),
+                          foregroundColor: fadedColor,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'SourceSerif4',
+                            fontWeight: FontWeight.w600,
+                            color: fadedColor,
+                          ),
+                        ),
+                        onPressed: onAudioTap,
+                        child: Text(I18n.t("audio", lang: languageCode)),
+                      ),
+                    ),
+
+                    SizedBox(height: betweenButtonsGap),
+
+                    // Language button
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: fadedColor, width: 2),
+                          foregroundColor: fadedColor,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'SourceSerif4',
+                            fontWeight: FontWeight.w600,
+                            color: fadedColor,
+                          ),
+                        ),
+                        onPressed: onLanguageTap,
+                        child: Text(I18n.labelFor(languageCode)),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
-              SizedBox(height: subtitleToButtonsGap),
-
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 180),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Audio
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFFFFBD59), width: 2),
-                            foregroundColor: const Color(0xFFFFBD59),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            textStyle: const TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'SourceSerif4',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          onPressed: onAudioTap,
-                          child: Text(I18n.t("audio", lang: languageCode)),
-                        ),
-                      ),
-
-                      SizedBox(height: betweenButtonsGap),
-
-                      // Language
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFFFFBD59), width: 2),
-                            foregroundColor: const Color(0xFFFFBD59),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            textStyle: const TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'SourceSerif4',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          onPressed: onLanguageTap,
-                          child: Text(I18n.labelFor(languageCode)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
