@@ -1,22 +1,20 @@
-// lib/ui/flashcard_tile.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
-import 'flashcard_detail_screen.dart'; // fallback navigation target
 
 class FlashcardTile extends StatelessWidget {
-  final List<Flashcard> cards;
-  final int index;
+  final List<Flashcard> cards;        // authoritative (sorted) list
+  final int index;                    // index within that list
   final AudioService audio;
-  final void Function(int)? onCardSelected;
-  final String languageCode; // 'en', 'fr', 'de', etc.
+  final ValueChanged<int> onCardSelected; // parent-controlled navigation
+  final String languageCode;          // 'en', 'fr', 'de', etc.
 
   const FlashcardTile({
     super.key,
     required this.cards,
     required this.index,
     required this.audio,
-    this.onCardSelected,
+    required this.onCardSelected,   // now required
     this.languageCode = 'en',
   });
 
@@ -25,21 +23,21 @@ class FlashcardTile extends StatelessWidget {
   // --- Typography to match detail screen ---
   static const TextStyle _headwordStyle = TextStyle(
     fontFamily: 'EBGaramond',
-    fontWeight: FontWeight.w600, // SemiBold
-    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    fontSize: 18,
     height: 1.15,
   );
 
   static const TextStyle _phoneticStyle = TextStyle(
     fontFamily: 'CharisSIL',
-    fontSize: 16,
+    fontSize: 18,
     height: 1.2,
     color: Colors.black54,
   );
 
   static const TextStyle _meaningStyle = TextStyle(
     fontFamily: 'SourceSerif4',
-    fontSize: 16,
+    fontSize: 21,
     height: 1.3,
     color: Colors.black87,
   );
@@ -72,68 +70,57 @@ class FlashcardTile extends StatelessWidget {
     final hasPhonetic = card.phonetic.trim().isNotEmpty;
     final hasMeaning = localized.trim().isNotEmpty;
 
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      title: Text(
-        card.scottish,
-        style: _headwordStyle,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (hasPhonetic) const SizedBox(height: 2),
-          if (hasPhonetic)
-            Text(
-              card.phonetic,
-              style: _phoneticStyle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+    return InkWell(
+      onTap: () => onCardSelected(index),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, // 🔑 vertical centering
+          children: [
+            // --- English meaning on the left ---
+            Expanded(
+              child: hasMeaning
+                  ? Text(
+                      localized,
+                      style: _meaningStyle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  : const Text('—', style: _meaningStyle),
             ),
-          if (hasMeaning) const SizedBox(height: 4),
-          if (hasMeaning)
-            Text(
-              localized,
-              style: _meaningStyle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+
+            // --- Korean + phonetic stacked, right aligned ---
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  card.scottish,
+                  style: _headwordStyle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (hasPhonetic)
+                  Text(
+                    card.phonetic,
+                    style: _phoneticStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
             ),
-          if (!hasMeaning)
-            const Padding(
-              padding: EdgeInsets.only(top: 4),
-              child: Text('—', style: _meaningStyle),
+
+            const SizedBox(width: 6),
+
+            // --- Speaker on the far right ---
+            IconButton(
+              icon: const Icon(Icons.volume_up, color: Colors.black38),
+              tooltip: 'Play word',
+              onPressed: () => _playWord(context),
             ),
-        ],
-      ),
-      trailing: Padding(
-        padding: const EdgeInsets.only(right: 24), // nudges speaker inward
-        child: IconButton(
-          icon: const Icon(
-            Icons.volume_up,
-            color: Colors.black38, // faded, less "poppy"
-          ),
-          tooltip: 'Play word',
-          onPressed: () => _playWord(context),
+          ],
         ),
       ),
-      onTap: () {
-        if (onCardSelected != null) {
-          onCardSelected!(index);
-        } else {
-          // Fallback: open detail and pass languageCode through
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => FlashcardDetailScreen(
-                cards: cards,
-                index: index,
-                audio: audio,
-                languageCode: languageCode,
-              ),
-            ),
-          );
-        }
-      },
     );
   }
 }
