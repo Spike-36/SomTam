@@ -1,73 +1,54 @@
-# Flutter/Dart/Pub related
+# Flutter & Dart
 .dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
 .packages
-.pub-cache/
-.pub/
+pubspec.lock
 build/
-flutter_*.png
-linked_*.ds
-unlinked.ds
-coverage/
-.dart_tool/
-
-# Android
-**/android/**/gradle-wrapper.jar
-**/android/.gradle/
-**/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
-**/android/local.properties
-**/android/app/debug
-**/android/app/profile
-**/android/app/release
 
 # iOS
-**/ios/Flutter/.last_build_id
-**/ios/Pods/
-**/ios/.symlinks/
-**/ios/Flutter/Flutter.framework
-**/ios/Flutter/Flutter.podspec
-**/ios/ServiceDefinitions.json
-**/ios/Runner/GeneratedPluginRegistrant.*
-**/ios/build/
+ios/Flutter/.last_build_id
+ios/Pods/
+ios/.symlinks/
+ios/DerivedData/
+ios/Runner.xcworkspace/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
 
-# Xcode
-**/ios/Runner.xcworkspace/
-**/ios/Runner.xcodeproj/project.xcworkspace/
-**/ios/Runner.xcodeproj/xcuserdata/
-**/ios/Runner.xcworkspace/xcuserdata/
-**/ios/DerivedData/
+# Android
+.android/
+gradle-wrapper.jar
+*.iml
+android/.gradle/
+android/app/build/
+android/build/
 
 # macOS
-**/macos/Flutter/ephemeral/
-**/macos/Flutter/Flutter.podspec
-**/macos/Flutter/GeneratedPluginRegistrant.swift
-**/macos/Pods/
-**/macos/build/
+macos/Flutter/ephemeral/
+macos/Pods/
+macos/build/
 
-# Windows
-**/windows/flutter/ephemeral/
-**/windows/flutter/generated_plugin_registrant.cc
-**/windows/flutter/generated_plugin_registrant.h
-**/windows/flutter/CMakeFiles/
-**/windows/build/
+# Web
+web/.dart_tool/
+web/build/
 
-# Linux
-**/linux/flutter/ephemeral/
-**/linux/flutter/generated_plugin_registrant.cc
-**/linux/flutter/generated_plugin_registrant.h
-**/linux/flutter/CMakeFiles/
-**/linux/build/
-
-# VS Code
+# VS Code / IntelliJ / Xcode
 .vscode/
-.history/
-
-# IntelliJ / Android Studio
 .idea/
-*.iml
-
-# Other
-*.lock
 *.log
+*.tmp
 *.DS_Store
+*.swp
+
+# Environment / Signing keys (never commit these!)
+key.properties
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+*.keystore
+*.jks
+
+# Optional: ignore test coverage / temp exports
+coverage/
+exports/
