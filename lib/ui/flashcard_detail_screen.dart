@@ -171,7 +171,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 // --- Thai word (centered) ---
                 Center(
                   child: Text(
-                    card.scottish ?? '',
+                    card.thai ?? '',
                     style: const TextStyle(
                       fontFamily: 'EBGaramond',
                       fontWeight: FontWeight.w600,

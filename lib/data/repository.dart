@@ -22,7 +22,7 @@ class Repository {
 
     // 2) Sort by type; inside each type:
     //    - numbers → by numeric `value`
-    //    - others  → alphabetically by display string (scottish/korean)
+    //    - others  → alphabetically by display string (scottish/thai)
     mapped.sort(_typeAwareMapComparator);
 
     // 3) Parse into model objects in the already-sorted order.
@@ -30,21 +30,21 @@ class Repository {
   }
 }
 
-/// Remap your Korean/English JSON to the legacy keys expected by Flashcard.fromJson.
+/// Remap your Thai/English JSON to the legacy keys expected by Flashcard.fromJson.
 /// We keep original keys and add aliases; nothing is removed.
 Map<String, dynamic> _mapKoreanEnglishToLegacyKeys(Map<String, dynamic> src) {
   final m = Map<String, dynamic>.from(src);
 
   // Display/text fields
-  m['scottish'] = m['korean'];                       // UI display word (alias to Korean)
-  m['phonetic'] = m['koreanPhonetic'] ?? m['phonetic']; // ✅ fallback to plain 'phonetic' if no 'koreanPhonetic'
-  m['meaning']  = m['english'];                      // index-language gloss
+  m['scottish'] = m['thai'];                        // 🔄 display Thai instead of Korean
+  m['phonetic'] = m['phonetic'] ?? m['koreanPhonetic']; // fallback to plain 'phonetic' if no 'koreanPhonetic'
+  m['meaning']  = m['english'];                     // index-language gloss
   // 'context' not present → leave null
 
   // Audio aliases to match existing UI expectations
-  m['audioScottish']        = m['audioKorean'];      // main target audio
-  m['audioScottishSlow']    = m['audioKoreanSlow'];  // slow target audio
-  m['audioScottishContext'] = m['audioEnglish'];     // use English as "context" clip
+  m['audioScottish']        = m['audioThai'];       // 🔄 main target audio now points to Thai
+  m['audioScottishSlow']    = m['audioThai'];       // optional: reuse same clip for slow version
+  m['audioScottishContext'] = m['audioEnglish'];    // use English as "context" clip
 
   // id, image, showIndex, type, value, etc. pass through unchanged
   return m;
@@ -53,7 +53,7 @@ Map<String, dynamic> _mapKoreanEnglishToLegacyKeys(Map<String, dynamic> src) {
 /// Comparator that:
 /// 1) sorts by 'type' (case-insensitive),
 /// 2) if type == 'numbers' → numeric sort by 'value',
-/// 3) otherwise → alphabetical by display term (scottish/korean), with fallbacks.
+/// 3) otherwise → alphabetical by display term (scottish/thai), with fallbacks.
 int _typeAwareMapComparator(Map<String, dynamic> a, Map<String, dynamic> b) {
   final ta = (a['type'] ?? '').toString().toLowerCase();
   final tb = (b['type'] ?? '').toString().toLowerCase();
@@ -79,9 +79,9 @@ int _asInt(dynamic v) {
 }
 
 String _displayString(Map<String, dynamic> m) {
-  // Prefer the remapped 'scottish' (your Korean). Fall back sensibly.
+  // Prefer the remapped 'scottish' (now Thai). Fall back sensibly.
   final s = (m['scottish'] ??
-          m['korean'] ??
+          m['thai'] ??
           m['foreign'] ??   // legacy foreign script if present
           m['meaning'] ??   // English gloss as last resort
           '')

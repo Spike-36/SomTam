@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 class Flashcard {
   final String id;
   final String type;
-  final String scottish;       // target word (non-null, defaults to '')
+  final String scottish;       // target word (legacy / Korean)
+  final String thai;           // 👉 added Thai script field
   final String phonetic;       // romanization
   final String meaning;        // index-language gloss
   final String context;        // optional sentence
@@ -17,7 +18,7 @@ class Flashcard {
   final String? audioScottishContext;
 
   // 👉 New: Thai audio
-  final String? audioThai; // 🔄 added field for Thai audio filename
+  final String? audioThai;
 
   // NEW: numeric value for number words
   final int? value;
@@ -31,6 +32,7 @@ class Flashcard {
     required this.id,
     required this.type,
     this.scottish = '',
+    this.thai = '', // 🔄 added default
     this.phonetic = '',
     this.meaning = '',
     this.context = '',
@@ -39,7 +41,7 @@ class Flashcard {
     this.audioScottish,
     this.audioScottishSlow,
     this.audioScottishContext,
-    this.audioThai, // 🔄 added to constructor
+    this.audioThai,
     this.value,
     this.ipa = '',
     this.showIndex = '',
@@ -51,6 +53,7 @@ class Flashcard {
       id: json['id']?.toString() ?? '',
       type: json['type']?.toString() ?? '',
       scottish: json['scottish']?.toString() ?? '',
+      thai: json['thai']?.toString() ?? '', // 🔄 added mapping
       phonetic: json['phonetic']?.toString() ?? '',
       meaning: json['meaning']?.toString() ?? '',
       context: json['context']?.toString() ?? '',
@@ -59,7 +62,7 @@ class Flashcard {
       audioScottish: json['audioScottish'] as String?,
       audioScottishSlow: json['audioScottishSlow'] as String?,
       audioScottishContext: json['audioScottishContext'] as String?,
-      audioThai: json['audioThai'] as String?, // 🔄 added mapping
+      audioThai: json['audioThai'] as String?,
       value: _asOptInt(json['value']),
       ipa: json['ipa']?.toString() ?? '',
       showIndex: json['showIndex']?.toString() ?? '',
@@ -77,7 +80,6 @@ class Flashcard {
 
   /// Return localized meaning if available, else fallback.
   String meaningFor(String lang) {
-    // Right now just return meaning, could be extended later
     return meaning;
   }
 }
