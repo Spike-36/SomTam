@@ -1,4 +1,3 @@
-// lib/data/card.dart
 import 'package:flutter/foundation.dart';
 
 @immutable
@@ -16,6 +15,9 @@ class Flashcard {
   final String? audioScottish;
   final String? audioScottishSlow;
   final String? audioScottishContext;
+
+  // 👉 New: Thai audio
+  final String? audioThai; // 🔄 added field for Thai audio filename
 
   // NEW: numeric value for number words
   final int? value;
@@ -37,6 +39,7 @@ class Flashcard {
     this.audioScottish,
     this.audioScottishSlow,
     this.audioScottishContext,
+    this.audioThai, // 🔄 added to constructor
     this.value,
     this.ipa = '',
     this.showIndex = '',
@@ -56,6 +59,7 @@ class Flashcard {
       audioScottish: json['audioScottish'] as String?,
       audioScottishSlow: json['audioScottishSlow'] as String?,
       audioScottishContext: json['audioScottishContext'] as String?,
+      audioThai: json['audioThai'] as String?, // 🔄 added mapping
       value: _asOptInt(json['value']),
       ipa: json['ipa']?.toString() ?? '',
       showIndex: json['showIndex']?.toString() ?? '',

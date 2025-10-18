@@ -48,7 +48,7 @@ const FontWeight kMeaningWeight = FontWeight.w700;
 const double kSwipeVelocityThreshold = 300.0;
 
 // 🔧 Manual tweaks for the speaker placement
-const double kSpeakerRightPadding = 00;
+const double kSpeakerRightPadding = 0;
 const double kSpeakerTopGap = 1.0;
 const double kSpeakerBottomGap = 1.0;
 
@@ -56,11 +56,12 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   int? _lastAutoPlayedIndex;
   Flashcard get card => widget.cards[widget.index];
 
+  // 👉 Updated: use Thai audio path
   String _wordPath(String? filename) {
     final f = (filename ?? '').trim();
     if (f.isEmpty) return '';
     if (f.contains('/')) return f;
-    return 'assets/audio/korean/$f';
+    return 'assets/audio/thai/$f';
   }
 
   String _imagePath(String? filename) {
@@ -85,7 +86,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   Future<void> _autoPlayIfNeeded() async {
     if (!widget.autoAudio) return;
     if (_lastAutoPlayedIndex == widget.index) return;
-    final path = _wordPath(card.audioScottish);
+    final path = _wordPath(card.audioThai); // 🔄 changed from audioScottish
     if (path.isEmpty) return;
     _lastAutoPlayedIndex = widget.index;
     await _safePlay(context, path);
@@ -165,7 +166,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
             child: Column(
               children: [
-                // --- Korean word (centered) ---
+                // --- Thai word (centered) ---
                 Center(
                   child: Text(
                     card.scottish ?? '',
@@ -190,10 +191,13 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                         tooltip: 'Play word',
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
-                        icon: const Icon(Icons.volume_up,
-                            color: kSpeakerColor, size: 28),
+                        icon: const Icon(
+                          Icons.volume_up,
+                          color: kSpeakerColor,
+                          size: 28,
+                        ),
                         onPressed: () =>
-                            _safePlay(context, _wordPath(card.audioScottish)),
+                            _safePlay(context, _wordPath(card.audioThai)), // 🔄
                       ),
                     ),
                   ],
@@ -280,7 +284,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 left: 8,
                 bottom: kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
-              child: _floatingButton(Icons.chevron_left, () => _goTo(widget.index - 1)),
+              child: _floatingButton(
+                  Icons.chevron_left, () => _goTo(widget.index - 1)),
             ),
           ),
           Align(
@@ -290,7 +295,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 right: 8,
                 bottom: kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
-              child: _floatingButton(Icons.chevron_right, () => _goTo(widget.index + 1)),
+              child: _floatingButton(
+                  Icons.chevron_right, () => _goTo(widget.index + 1)),
             ),
           ),
         ],

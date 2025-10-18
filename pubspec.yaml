@@ -1,5 +1,7 @@
-name: wordkimchi
-description: WordKimchi – Korean flashcards & phrases
+# 🔄 Updated for SomTam (Thai version, safe build config - with i18n + ui + words image fix)
+
+name: somtam
+description: Somtam – Thai flashcards & phrases
 version: 1.0.0+2
 publish_to: "none"
 
@@ -26,25 +28,13 @@ flutter:
   uses-material-design: true
 
   assets:
-    # Data
     - assets/data/cards.json
-
-    # UI images
-    - assets/images/ui/
-
-    # Word card images
-    - assets/images/words/
-
-    # Audio
-    - assets/audio/korean/
-    - assets/audio/scottish/
+    - assets/images/ui/      # 👉 App logos, splash images
+    - assets/images/words/      # 👉 Word-level images (0001.zero.jpg etc.)
     - assets/audio/context/
-
-    # Video
-    - assets/video/
-
-    # I18n
-    - assets/i18n/
+    - assets/audio/thai/   
+    - assets/fonts/
+    - assets/i18n/               # 👉 Language JSONs (en.json, th.json etc.)
 
   fonts:
     - family: EBGaramond
@@ -56,15 +46,3 @@ flutter:
           weight: 700
         - asset: assets/fonts/EBGaramond/EBGaramond-Italic.ttf
           style: italic
-
-    - family: CharisSIL
-      fonts:
-        - asset: assets/fonts/CharisSIL/CharisSIL-Regular.ttf
-        - asset: assets/fonts/CharisSIL/CharisSIL-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/CharisSIL/CharisSIL-Italic.ttf
-          style: italic
-
-    - family: SourceSerif4
-      fonts:
-        - asset: assets/fonts/SourceSerif4/SourceSerif4-Regular.ttf

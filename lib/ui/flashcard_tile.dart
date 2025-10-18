@@ -42,17 +42,17 @@ class FlashcardTile extends StatelessWidget {
     color: Colors.black87,
   );
 
-  /// Builds a playable asset path for Korean audio.
+  /// Builds a playable asset path for Thai audio.
   String _wordPath(String? filename) {
     if (filename == null) return '';
     final f = filename.trim();
     if (f.isEmpty) return '';
     if (f.contains('/')) return f; // already a path
-    return 'assets/audio/korean/$f';
+    return 'assets/audio/thai/$f'; // 👉 now Thai path
   }
 
   Future<void> _playWord(BuildContext context) async {
-    final path = _wordPath(card.audioScottish);
+    final path = _wordPath(card.audioThai); // 👉 Thai audio key
     if (path.isEmpty) return;
     try {
       await audio.playAsset(path);
@@ -89,13 +89,13 @@ class FlashcardTile extends StatelessWidget {
                   : const Text('—', style: _meaningStyle),
             ),
 
-            // --- Korean + phonetic stacked, right aligned ---
+            // --- Thai + phonetic stacked, right aligned ---
             Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  card.scottish,
+                  card.scottish, // keeping field name unchanged for now
                   style: _headwordStyle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

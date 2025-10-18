@@ -36,7 +36,7 @@ class HomeScreen extends StatelessWidget {
             // --- Combined logo + title image ---
             Center(
               child: Image.asset(
-                'assets/images/ui/wordkimchi_logo.png',
+                'assets/images/ui/somtam_logo.png',
                 width: 260,
                 fit: BoxFit.contain,
               ),

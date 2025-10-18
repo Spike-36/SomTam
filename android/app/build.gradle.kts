@@ -1,13 +1,25 @@
+// android/app/build.gradle.kts
+import java.util.Properties
+import java.io.FileInputStream
+import java.io.File
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Load signing props from android/key.properties (keystore settings)
+val keystoreProperties = Properties()
+val propsFile = rootProject.file("key.properties")
+if (propsFile.exists()) {
+    keystoreProperties.load(FileInputStream(propsFile))
+}
+
 android {
-    namespace = "com.petermilligan.wordkimchi"     // ← match Kotlin package
-    compileSdk = flutter.compileSdkVersion
+    namespace = "com.petermilligan.wordkimchi"
+
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -17,19 +29,41 @@ android {
     kotlinOptions { jvmTarget = JavaVersion.VERSION_11.toString() }
 
     defaultConfig {
-        applicationId = "com.petermilligan.wordkimchi"  // ← match namespace
+        applicationId = "com.petermilligan.wordkimchi"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
-    buildTypes {
-        release {
-            // Use debug signing for now so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+    signingConfigs {
+        create("release") {
+            val storeFilePath = keystoreProperties["storeFile"] as String?
+                ?: error("storeFile missing in key.properties")
+            val storePass = keystoreProperties["storePassword"] as String?
+                ?: error("storePassword missing in key.properties")
+            val alias = keystoreProperties["keyAlias"] as String?
+                ?: error("keyAlias missing in key.properties")
+            val keyPass = keystoreProperties["keyPassword"] as String?
+                ?: error("keyPassword missing in key.properties")
+
+            storeFile = File(rootDir, storeFilePath)
+            storePassword = storePass
+            keyAlias = alias
+            keyPassword = keyPass
         }
+    }
+
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
+        // debug uses default debug signing
     }
 }
 
-flutter { source = "../.." }
+flutter {
+    source = "../.."
+}
