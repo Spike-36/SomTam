@@ -1,4 +1,3 @@
-// lib/ui/flashcard_detail_screen.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
@@ -56,7 +55,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   int? _lastAutoPlayedIndex;
   Flashcard get card => widget.cards[widget.index];
 
-  // 👉 Updated: use Thai audio path
+  // 👉 Thai audio path builder
   String _wordPath(String? filename) {
     final f = (filename ?? '').trim();
     if (f.isEmpty) return '';
@@ -86,7 +85,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   Future<void> _autoPlayIfNeeded() async {
     if (!widget.autoAudio) return;
     if (_lastAutoPlayedIndex == widget.index) return;
-    final path = _wordPath(card.audioThai); // 🔄 changed from audioScottish
+    final path = _wordPath(card.audioThai); // 🔄 Thai dataset
     if (path.isEmpty) return;
     _lastAutoPlayedIndex = widget.index;
     await _safePlay(context, path);
@@ -143,6 +142,9 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     final grammarLabel =
         hasGrammar ? tGrammar(card.grammarType ?? '', langCode: lang) : '';
 
+    // 👉 Debug log to verify phonetic data
+    print('🧩 PHONETIC for ${card.scottish ?? '—'}: ${card.phonetic ?? 'null'}');
+
     final screenHeight = MediaQuery.of(context).size.height;
     final imageHeight = screenHeight * 0.45;
 
@@ -197,7 +199,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                           size: 28,
                         ),
                         onPressed: () =>
-                            _safePlay(context, _wordPath(card.audioThai)), // 🔄
+                            _safePlay(context, _wordPath(card.audioThai)),
                       ),
                     ),
                   ],

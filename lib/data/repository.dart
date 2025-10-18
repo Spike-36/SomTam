@@ -1,4 +1,3 @@
-// lib/services/repository.dart
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import '../data/card.dart'; // ✅ ensure the path is correct
@@ -12,6 +11,14 @@ class Repository {
 
     // 1) Remap incoming JSON to the legacy keys the model/UI expects.
     final mapped = list.map(_mapKoreanEnglishToLegacyKeys).toList();
+
+    // 👉 Simple phonetic log to confirm data integrity
+    for (final m in mapped) {
+      final phon = m['phonetic'] ?? '';
+      if (phon.toString().isNotEmpty) {
+        print('🧩 PHONETIC for ${m['id']}: $phon');
+      }
+    }
 
     // 2) Sort by type; inside each type:
     //    - numbers → by numeric `value`
@@ -29,9 +36,9 @@ Map<String, dynamic> _mapKoreanEnglishToLegacyKeys(Map<String, dynamic> src) {
   final m = Map<String, dynamic>.from(src);
 
   // Display/text fields
-  m['scottish'] = m['korean'];           // UI display word (alias to Korean)
-  m['phonetic'] = m['koreanPhonetic'];   // romanization
-  m['meaning']  = m['english'];          // index-language gloss
+  m['scottish'] = m['korean'];                       // UI display word (alias to Korean)
+  m['phonetic'] = m['koreanPhonetic'] ?? m['phonetic']; // ✅ fallback to plain 'phonetic' if no 'koreanPhonetic'
+  m['meaning']  = m['english'];                      // index-language gloss
   // 'context' not present → leave null
 
   // Audio aliases to match existing UI expectations
