@@ -13,12 +13,12 @@ class Repository {
     final mapped = list.map(_mapKoreanEnglishToLegacyKeys).toList();
 
     // 👉 Simple phonetic log to confirm data integrity
-    for (final m in mapped) {
+  /*   for (final m in mapped) {
       final phon = m['phonetic'] ?? '';
       if (phon.toString().isNotEmpty) {
         print('🧩 PHONETIC for ${m['id']}: $phon');
       }
-    }
+    } */
 
     // 2) Sort by type; inside each type:
     //    - numbers → by numeric `value`
