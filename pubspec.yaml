@@ -1,4 +1,4 @@
-# 🔄 Updated for SomTam (Thai version, safe build config - with i18n + ui + words image fix)
+# 🔄 SomTam – Thai version (safe config with i18n, verified fonts, and image/audio assets)
 
 name: somtam
 description: Somtam – Thai flashcards & phrases
@@ -29,15 +29,26 @@ flutter:
 
   assets:
     - assets/data/cards.json
-    - assets/images/ui/      # 👉 App logos, splash images
-    - assets/images/words/      # 👉 Word-level images (0001.zero.jpg etc.)
+    - assets/images/ui/            # 👉 App logos, splash images
+    - assets/images/words/         # 👉 Word-level images (0001.zero.jpg etc.)
     - assets/audio/context/
-    - assets/audio/thai/   
+    - assets/audio/thai/
     - assets/fonts/
-    - assets/i18n/               # 👉 Language JSONs (en.json, th.json etc.)
+    - assets/i18n/                 # 👉 Language JSONs (en.json, th.json etc.)
 
   fonts:
-    - family: EBGaramond
+    - family: Sarabun              # ✅ Thai primary font
+      fonts:
+        - asset: assets/fonts/Sarabun/Sarabun-Regular.ttf
+        - asset: assets/fonts/Sarabun/Sarabun-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Sarabun/Sarabun-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Sarabun/Sarabun-BoldItalic.ttf
+          weight: 700
+          style: italic
+
+    - family: EBGaramond           # ✅ Latin / English serif
       fonts:
         - asset: assets/fonts/EBGaramond/EBGaramond-Regular.ttf
         - asset: assets/fonts/EBGaramond/EBGaramond-SemiBold.ttf
@@ -45,4 +56,16 @@ flutter:
         - asset: assets/fonts/EBGaramond/EBGaramond-Bold.ttf
           weight: 700
         - asset: assets/fonts/EBGaramond/EBGaramond-Italic.ttf
+          style: italic
+
+    - family: SourceSerif4         # ✅ Alternate body / fallback
+      fonts:
+        - asset: assets/fonts/SourceSerif4/SourceSerif4-Regular.ttf
+
+    - family: CharisSIL            # ✅ IPA / Phonetic
+      fonts:
+        - asset: assets/fonts/CharisSIL/CharisSIL-Regular.ttf
+        - asset: assets/fonts/CharisSIL/CharisSIL-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/CharisSIL/CharisSIL-Italic.ttf
           style: italic

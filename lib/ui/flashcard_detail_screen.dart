@@ -131,6 +131,11 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     );
   }
 
+  // 👉 Helper to detect Thai text
+  bool _containsThai(String text) {
+    return RegExp(r'[\u0E00-\u0E7F]').hasMatch(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = widget.languageCode;
@@ -143,10 +148,13 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
         hasGrammar ? tGrammar(card.grammarType ?? '', langCode: lang) : '';
 
     // 👉 Debug log to verify phonetic data
-    print('🧩 PHONETIC for ${card.scottish ?? '—'}: ${card.phonetic ?? 'null'}');
+    print('🧩 PHONETIC for ${card.thai ?? '—'}: ${card.phonetic ?? 'null'}');
 
     final screenHeight = MediaQuery.of(context).size.height;
     final imageHeight = screenHeight * 0.45;
+
+    final headword = (card.thai ?? '').trim();
+    final headwordFont = _containsThai(headword) ? 'Sarabun' : 'EBGaramond'; // 👉
 
     final scroll = CustomScrollView(
       slivers: [
@@ -171,9 +179,9 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 // --- Thai word (centered) ---
                 Center(
                   child: Text(
-                    card.thai ?? '',
-                    style: const TextStyle(
-                      fontFamily: 'EBGaramond',
+                    headword,
+                    style: TextStyle(
+                      fontFamily: headwordFont, // 👉 Sarabun for Thai
                       fontWeight: FontWeight.w600,
                       fontSize: kHeadwordSize,
                       height: 1.08,

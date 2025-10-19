@@ -15,7 +15,11 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Braw',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.indigo,
+        fontFamily: 'Sarabun', // 👉 Apply Sarabun globally
+      ),
       home: const MainScreen(),
     );
   }

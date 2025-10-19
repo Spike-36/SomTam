@@ -28,6 +28,15 @@ class FlashcardTile extends StatelessWidget {
     height: 1.15,
   );
 
+  // 👉 Thai script font (Sarabun)
+  static const TextStyle _thaiStyle = TextStyle(
+    fontFamily: 'Sarabun',
+    fontWeight: FontWeight.w600,
+    fontSize: 20,
+    height: 1.2,
+    color: Colors.black,
+  );
+
   static const TextStyle _phoneticStyle = TextStyle(
     fontFamily: 'CharisSIL',
     fontSize: 18,
@@ -64,11 +73,21 @@ class FlashcardTile extends StatelessWidget {
     }
   }
 
+  bool _containsThai(String text) {
+    // Unicode range for Thai script
+    return RegExp(r'[\u0E00-\u0E7F]').hasMatch(text);
+  }
+
   @override
   Widget build(BuildContext context) {
     final localized = card.meaningFor(languageCode);
     final hasPhonetic = card.phonetic.trim().isNotEmpty;
     final hasMeaning = localized.trim().isNotEmpty;
+
+    final headword = card.scottish.trim(); // may contain Thai text
+
+    final headwordStyle =
+        _containsThai(headword) ? _thaiStyle : _headwordStyle; // 👉 auto-switch
 
     return InkWell(
       onTap: () => onCardSelected(index),
@@ -95,8 +114,8 @@ class FlashcardTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  card.scottish, // keeping field name unchanged for now
-                  style: _headwordStyle,
+                  headword,
+                  style: headwordStyle, // 👉 Thai uses Sarabun automatically
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
