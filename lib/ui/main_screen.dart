@@ -119,7 +119,6 @@ class _MainScreenState extends State<MainScreen> {
         Center(
           child: Text(I18n.t('words', lang: _languageCode)),
         ),
-      // 👉 Updated SettingsScreen: Under construction
       SettingsScreen(
         autoAudio: _autoAudio,
         onAutoAudioChanged: (v) => setState(() => _autoAudio = v),
@@ -134,7 +133,9 @@ class _MainScreenState extends State<MainScreen> {
       ),
     ];
 
+    // 👉 Added backgroundColor: Colors.white to fix red bleed issue
     return Scaffold(
+      backgroundColor: Colors.white, // 🔄 Added line
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -168,9 +169,9 @@ class _MainScreenState extends State<MainScreen> {
             label: I18n.t('words', lang: _languageCode),
           ),
           BottomNavigationBarItem(
-  icon: const Icon(Icons.search),
-  label: 'Find',
-),
+            icon: const Icon(Icons.search),
+            label: 'Find',
+          ),
         ],
       ),
     );

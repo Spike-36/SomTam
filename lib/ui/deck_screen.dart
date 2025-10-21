@@ -38,11 +38,9 @@ class _Row {
 class _DeckScreenState extends State<DeckScreen> {
   _DeckViewMode _mode = _DeckViewMode.typeIndex;
 
-  // For index-based scrolling
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
 
-  // Flattened model for continuous list + lookup for section starts
   List<_Row> _rows = const [];
   Map<String, int> _sectionStarts = const {};
 
@@ -63,7 +61,6 @@ class _DeckScreenState extends State<DeckScreen> {
     _rebuildRows();
   }
 
-  // ---- Helpers ----
   List<String> _sortedTypes(List<Flashcard> cards) {
     final types = cards
         .map((c) => (c.type).trim())
@@ -115,7 +112,7 @@ class _DeckScreenState extends State<DeckScreen> {
       for (final c in cardsOfType) {
         rows.add(_Row.item(c));
       }
-      rows.add(const _Row.header(null));
+      rows.add(const _Row.header('')); // spacer row
     }
 
     setState(() {
@@ -124,12 +121,10 @@ class _DeckScreenState extends State<DeckScreen> {
     });
   }
 
-  // ---- UI ----
   @override
   Widget build(BuildContext context) {
     if (_mode == _DeckViewMode.typeIndex) {
       final types = _sortedTypes(widget.cards);
-      // 👉 SafeArea ensures content starts below iOS status bar
       return SafeArea(
         top: true,
         bottom: false,
@@ -169,7 +164,7 @@ class _DeckScreenState extends State<DeckScreen> {
       );
     }
 
-    // 👉 Also wrap the scrollable list
+    // 👉 List view (dividers removed)
     return SafeArea(
       top: true,
       bottom: false,
@@ -179,14 +174,15 @@ class _DeckScreenState extends State<DeckScreen> {
         itemCount: _rows.length,
         itemBuilder: (context, i) {
           final row = _rows[i];
+
           if (row.isHeader) {
-            if (row.header == null) return const SizedBox(height: 8);
-            final title = row.header!;
+            final title = row.header ?? '';
+            if (title.isEmpty) return const SizedBox(height: 8);
             return Container(
               color: const Color(0xFFF3F4F6),
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
               child: Text(
-                title.isNotEmpty ? (title[0].toUpperCase() + title.substring(1)) : title,
+                title[0].toUpperCase() + title.substring(1),
                 style: const TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 16,
@@ -198,24 +194,22 @@ class _DeckScreenState extends State<DeckScreen> {
             );
           }
 
-          final card = row.card!;
-          return Column(
-            children: [
-              FlashcardTile(
-                cards: const [],
-                index: 0,
-                audio: widget.audio,
-                languageCode: widget.languageCode,
-                onCardSelected: (_) {
-                  final globalIndex = widget.cards.indexWhere((c) => c.id == card.id);
-                  if (globalIndex != -1) {
-                    widget.onCardSelected?.call(globalIndex);
-                  }
-                },
-              )._withCard(card),
-              const Divider(height: 1),
-            ],
-          );
+          final card = row.card;
+          if (card == null) return const SizedBox.shrink();
+
+          // 👉 render card (divider removed)
+          return FlashcardTile(
+            cards: const [],
+            index: 0,
+            audio: widget.audio,
+            languageCode: widget.languageCode,
+            onCardSelected: (_) {
+              final globalIndex = widget.cards.indexWhere((c) => c.id == card.id);
+              if (globalIndex != -1) {
+                widget.onCardSelected?.call(globalIndex);
+              }
+            },
+          )._withCard(card);
         },
       ),
     );
