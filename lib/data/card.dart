@@ -63,7 +63,8 @@ class Flashcard {
       audioScottishSlow: json['audioScottishSlow'] as String?,
       audioScottishContext: json['audioScottishContext'] as String?,
       audioThai: json['audioThai'] as String?,
-      value: _asOptInt(json['value']),
+      // 🔄 FIX: map either 'value' or 'numeral' to int
+      value: _asOptInt(json['value'] ?? json['numeral']),
       ipa: json['ipa']?.toString() ?? '',
       showIndex: json['showIndex']?.toString() ?? '',
       extra: json,

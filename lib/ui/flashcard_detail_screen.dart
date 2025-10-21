@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import '../I18n/i18n.dart';
-import '../I18n/grammar_i18n.dart'; // tGrammar()
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
@@ -28,12 +27,8 @@ class FlashcardDetailScreen extends StatefulWidget {
 
 // ===================== Styles ======================
 const double kHeadwordSize = 48;
-const double kIpaSize = 20;
 const double kPhoneticSize = 26;
 const double kMeaningSize = 26;
-
-const double kIpaGap = 12;
-const double kSmallGap = 8;
 
 const double kChevronButtonSize = 56.0;
 const double kChevronIconSize = 32.0;
@@ -41,21 +36,14 @@ const double kChevronOuterPad = 12.0;
 
 const Color kMeaningColor = Colors.black;
 const Color kSpeakerColor = Colors.black38;
-const FontWeight kMeaningWeight = FontWeight.w700;
 
 // Swipe tuning
 const double kSwipeVelocityThreshold = 300.0;
-
-// 🔧 Manual tweaks for the speaker placement
-const double kSpeakerRightPadding = 0;
-const double kSpeakerTopGap = 1.0;
-const double kSpeakerBottomGap = 1.0;
 
 class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   int? _lastAutoPlayedIndex;
   Flashcard get card => widget.cards[widget.index];
 
-  // 👉 Thai audio path builder
   String _wordPath(String? filename) {
     final f = (filename ?? '').trim();
     if (f.isEmpty) return '';
@@ -85,7 +73,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   Future<void> _autoPlayIfNeeded() async {
     if (!widget.autoAudio) return;
     if (_lastAutoPlayedIndex == widget.index) return;
-    final path = _wordPath(card.audioThai); // 🔄 Thai dataset
+    final path = _wordPath(card.audioThai);
     if (path.isEmpty) return;
     _lastAutoPlayedIndex = widget.index;
     await _safePlay(context, path);
@@ -131,7 +119,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     );
   }
 
-  // 👉 Helper to detect Thai text
   bool _containsThai(String text) {
     return RegExp(r'[\u0E00-\u0E7F]').hasMatch(text);
   }
@@ -139,22 +126,13 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final lang = widget.languageCode;
-
     final displayMeaning = card.meaningFor(lang);
-    final hasIpa = (card.ipa ?? '').trim().isNotEmpty;
     final hasPhonetic = (card.phonetic ?? '').trim().isNotEmpty;
-    final hasGrammar = (card.grammarType ?? '').trim().isNotEmpty;
-    final grammarLabel =
-        hasGrammar ? tGrammar(card.grammarType ?? '', langCode: lang) : '';
-
-    // 👉 Debug log to verify phonetic data
-    print('🧩 PHONETIC for ${card.thai ?? '—'}: ${card.phonetic ?? 'null'}');
 
     final screenHeight = MediaQuery.of(context).size.height;
     final imageHeight = screenHeight * 0.45;
-
     final headword = (card.thai ?? '').trim();
-    final headwordFont = _containsThai(headword) ? 'Sarabun' : 'EBGaramond'; // 👉
+    final headwordFont = _containsThai(headword) ? 'Sarabun' : 'EBGaramond';
 
     final scroll = CustomScrollView(
       slivers: [
@@ -165,10 +143,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
           flexibleSpace: FlexibleSpaceBar(
             background: ((card.image ?? '').trim().isEmpty)
                 ? Container(color: Colors.black12)
-                : Image.asset(
-                    _imagePath(card.image),
-                    fit: BoxFit.cover,
-                  ),
+                : Image.asset(_imagePath(card.image), fit: BoxFit.cover),
           ),
         ),
         SliverToBoxAdapter(
@@ -176,87 +151,89 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
             child: Column(
               children: [
-                // --- Thai word (centered) ---
-                Center(
-                  child: Text(
-                    headword,
-                    style: TextStyle(
-                      fontFamily: headwordFont, // 👉 Sarabun for Thai
-                      fontWeight: FontWeight.w600,
-                      fontSize: kHeadwordSize,
-                      height: 1.08,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                const SizedBox(height: 12),
 
-                // --- Speaker row ---
-                SizedBox(height: kSpeakerTopGap),
-                Row(
+                // 👉 Combined layout for Thai + Speaker + Phonetic
+                Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Spacer(),
-                    Padding(
-                      padding: EdgeInsets.only(right: kSpeakerRightPadding),
-                      child: IconButton(
-                        tooltip: 'Play word',
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        icon: const Icon(
-                          Icons.volume_up,
-                          color: kSpeakerColor,
-                          size: 28,
+                    GestureDetector(
+                      onTap: () =>
+                          _safePlay(context, _wordPath(card.audioThai)),
+                      child: Center(
+                        child: Text(
+                          headword,
+                          style: TextStyle(
+                            fontFamily: headwordFont,
+                            fontWeight: FontWeight.w600,
+                            fontSize: kHeadwordSize,
+                            height: 1.08,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        onPressed: () =>
-                            _safePlay(context, _wordPath(card.audioThai)),
                       ),
                     ),
+                    const SizedBox(height: 6),
+
+                    // 👉 Subtle animated ripple on icon only
+                    Material(
+                      color: Colors.transparent,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: () =>
+                            _safePlay(context, _wordPath(card.audioThai)),
+                        splashColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.12),
+                        highlightColor: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.06),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.volume_up,
+                            color: kSpeakerColor,
+                            size: 36,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    if (hasPhonetic)
+                      GestureDetector(
+                        onTap: () =>
+                            _safePlay(context, _wordPath(card.audioThai)),
+                        child: Text(
+                          '[${card.phonetic}]',
+                          style: TextStyle(
+                            fontFamily: 'CharisSIL',
+                            fontSize: kPhoneticSize,
+                            fontStyle: FontStyle.italic,
+                            height: 1.2,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                   ],
                 ),
-                SizedBox(height: kSpeakerBottomGap),
-
-                // IPA + Grammar
-                if (hasIpa || (hasGrammar && grammarLabel.isNotEmpty)) ...[
-                  Text(
-                    [
-                      if (hasIpa) (card.ipa ?? ''),
-                      if (hasGrammar) grammarLabel
-                    ].where((e) => e.isNotEmpty).join('   '),
-                    style: const TextStyle(
-                      fontFamily: 'CharisSIL',
-                      fontSize: kIpaSize,
-                      height: 1.2,
-                      color: Colors.black87,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: kIpaGap),
-                ],
-
-                // Phonetic
-                if (hasPhonetic)
-                  Text(
-                    '[${card.phonetic}]',
-                    style: TextStyle(
-                      fontFamily: 'CharisSIL',
-                      fontSize: kPhoneticSize,
-                      fontStyle: FontStyle.italic,
-                      height: 1.2,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
 
                 const SizedBox(height: 16),
 
-                // Meaning
                 Text(
                   displayMeaning.isEmpty ? '—' : displayMeaning,
                   style: const TextStyle(
-                    fontFamily: 'SourceSerif4',
+                    fontFamily: 'Inter',
                     fontSize: kMeaningSize,
                     height: 1.35,
                     color: kMeaningColor,
-                    fontWeight: kMeaningWeight,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -292,7 +269,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             child: Padding(
               padding: EdgeInsets.only(
                 left: 8,
-                bottom: kChevronOuterPad + MediaQuery.of(context).padding.bottom,
+                bottom:
+                    kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
               child: _floatingButton(
                   Icons.chevron_left, () => _goTo(widget.index - 1)),
@@ -303,7 +281,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             child: Padding(
               padding: EdgeInsets.only(
                 right: 8,
-                bottom: kChevronOuterPad + MediaQuery.of(context).padding.bottom,
+                bottom:
+                    kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
               child: _floatingButton(
                   Icons.chevron_right, () => _goTo(widget.index + 1)),

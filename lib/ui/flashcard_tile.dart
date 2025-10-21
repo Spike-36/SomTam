@@ -21,11 +21,14 @@ class FlashcardTile extends StatelessWidget {
   Flashcard get card => cards[index];
 
   // --- Typography to match detail screen ---
+
+  // 👉 English/Latin headword fallback
   static const TextStyle _headwordStyle = TextStyle(
     fontFamily: 'EBGaramond',
     fontWeight: FontWeight.w600,
     fontSize: 18,
     height: 1.15,
+    color: Colors.black,
   );
 
   // 👉 Thai script font (Sarabun)
@@ -37,6 +40,7 @@ class FlashcardTile extends StatelessWidget {
     color: Colors.black,
   );
 
+  // 👉 Phonetic transcription
   static const TextStyle _phoneticStyle = TextStyle(
     fontFamily: 'CharisSIL',
     fontSize: 18,
@@ -44,11 +48,14 @@ class FlashcardTile extends StatelessWidget {
     color: Colors.black54,
   );
 
+  // 👉 Meaning (Inter for English / translations)
   static const TextStyle _meaningStyle = TextStyle(
-    fontFamily: 'SourceSerif4',
+    fontFamily: 'Inter', // ✅ switched from EBGaramond
     fontSize: 21,
     height: 1.3,
     color: Colors.black87,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.2,
   );
 
   /// Builds a playable asset path for Thai audio.
@@ -85,7 +92,6 @@ class FlashcardTile extends StatelessWidget {
     final hasMeaning = localized.trim().isNotEmpty;
 
     final headword = card.scottish.trim(); // may contain Thai text
-
     final headwordStyle =
         _containsThai(headword) ? _thaiStyle : _headwordStyle; // 👉 auto-switch
 
@@ -101,7 +107,7 @@ class FlashcardTile extends StatelessWidget {
               child: hasMeaning
                   ? Text(
                       localized,
-                      style: _meaningStyle,
+                      style: _meaningStyle, // ✅ Inter for English
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     )
@@ -115,7 +121,7 @@ class FlashcardTile extends StatelessWidget {
               children: [
                 Text(
                   headword,
-                  style: headwordStyle, // 👉 Thai uses Sarabun automatically
+                  style: headwordStyle, // 👉 Sarabun for Thai
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

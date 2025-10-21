@@ -1,4 +1,3 @@
-// lib/ui/main_screen.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../data/repository.dart';
@@ -20,7 +19,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   // Tabs: 0 Home, 1 List, 2 Word, 3 Settings
   int _selectedIndex = 0;
-  int _currentIndex = 0;     // index within _sortedCards for Word tab
+  int _currentIndex = 0; // index within _sortedCards for Word tab
   bool _autoAudio = false;
   String _languageCode = 'en';
 
@@ -50,8 +49,8 @@ class _MainScreenState extends State<MainScreen> {
   Future<void> _init() async {
     final repo = Repository();
     final results = await Future.wait([
-      I18n.load(),       // Future<void>
-      repo.load(),       // Future<List<Flashcard>>
+      I18n.load(),
+      repo.load(),
     ]);
 
     I18n.setCurrentLang(_languageCode);
@@ -87,7 +86,9 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     if (!_i18nReady) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
     final pages = <Widget>[
@@ -95,13 +96,15 @@ class _MainScreenState extends State<MainScreen> {
         languageCode: _languageCode,
         onLanguageTap: () => setState(() => _selectedIndex = 3),
         onAudioTap: () => setState(() => _selectedIndex = 3),
+        autoAudio: _autoAudio,
+        onAutoAudioChanged: (v) => setState(() => _autoAudio = v),
       ),
       DeckScreen(
         cards: _sortedCards,
         audio: audio,
         languageCode: _languageCode,
         onCardSelected: _onCardSelected,
-        resetTicker: _listResetTick, // 👈 forces DeckScreen to show type index
+        resetTicker: _listResetTick,
       ),
       if (_sortedCards.isNotEmpty)
         FlashcardDetailScreen(
@@ -113,7 +116,10 @@ class _MainScreenState extends State<MainScreen> {
           languageCode: _languageCode,
         )
       else
-        Center(child: Text(I18n.t('words', lang: _languageCode))),
+        Center(
+          child: Text(I18n.t('words', lang: _languageCode)),
+        ),
+      // 👉 Updated SettingsScreen: Under construction
       SettingsScreen(
         autoAudio: _autoAudio,
         onAutoAudioChanged: (v) => setState(() => _autoAudio = v),
@@ -133,21 +139,21 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (i) {
-          // Always reset the List tab to the type index when the List tab is tapped
           if (i == 1) {
             setState(() {
-              _listResetTick++; // triggers DeckScreen to show type index
+              _listResetTick++;
               _selectedIndex = i;
             });
           } else {
             setState(() => _selectedIndex = i);
           }
         },
-        backgroundColor: const Color(0xFF003478), // Korean flag blue
+        backgroundColor: const Color(0xFF003478),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
         showSelectedLabels: true,
         showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.home),
@@ -162,12 +168,11 @@ class _MainScreenState extends State<MainScreen> {
             label: I18n.t('words', lang: _languageCode),
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
-            label: I18n.t('settings', lang: _languageCode),
-          ),
+  icon: const Icon(Icons.search),
+  label: 'Find',
+),
         ],
-        type: BottomNavigationBarType.fixed,
       ),
     );
-    }
+  }
 }

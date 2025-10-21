@@ -1,4 +1,3 @@
-// lib/ui/home_screen.dart
 import 'package:flutter/material.dart';
 import '../I18n/i18n.dart';
 
@@ -7,23 +6,34 @@ class HomeScreen extends StatelessWidget {
   final VoidCallback onLanguageTap;
   final VoidCallback onAudioTap;
 
-  // 🔧 Gap values (adjust for spacing)
+  // 🔧 New autoplay props
+  final bool autoAudio;
+  final ValueChanged<bool> onAutoAudioChanged;
+
+  // 🔧 Gap values
   static const double topGap = 65;
-  static const double headerToButtonsGap = 120;
-  static const double betweenButtonsGap = 40;
+  static const double autoplayBlockHeight = 100.0; // 🔄 slightly reduced height
+  static const double autoplaySwitchBoxWidth = 80.0;
 
   const HomeScreen({
     super.key,
     required this.languageCode,
     required this.onLanguageTap,
     required this.onAudioTap,
+    required this.autoAudio,
+    required this.onAutoAudioChanged,
   });
+
+  static const TextStyle _labelStyle = TextStyle(
+    fontFamily: 'SourceSerif4',
+    fontSize: 18,
+    fontWeight: FontWeight.w400,
+    height: 1.3,
+    color: Colors.black,
+  );
 
   @override
   Widget build(BuildContext context) {
-    // A single faded color for both text + outline
-    const fadedColor = Colors.black45; // tweak to black45 or black38 if too strong
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -31,9 +41,9 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(height: topGap),
+            const SizedBox(height: topGap),
 
-            // --- Combined logo + title image ---
+            // --- Logo ---
             Center(
               child: Image.asset(
                 'assets/images/ui/somtam_logo.png',
@@ -42,53 +52,53 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: headerToButtonsGap),
+            // --- Beta label ---
+            const SizedBox(height: 8),
+            const Center(
+              child: Text(
+                'beta 1.0',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 17,
+                  color: Color(0xFF003478), // SomTam blue
+                  letterSpacing: 0.6,
+                ),
+              ),
+            ),
 
-            Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 180),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+            const Spacer(),
+
+            // --- Automatic Audio toggle ---
+            SizedBox(
+              height: autoplayBlockHeight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center, // 🔄 centers vertically
                   children: [
-                    // Audio button
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: fadedColor, width: 2),
-                          foregroundColor: fadedColor,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          textStyle: const TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'SourceSerif4',
-                            fontWeight: FontWeight.w600,
-                            color: fadedColor,
-                          ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Automatic Audio',
+                          style: _labelStyle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        onPressed: onAudioTap,
-                        child: Text(I18n.t("audio", lang: languageCode)),
                       ),
                     ),
-
-                    SizedBox(height: betweenButtonsGap),
-
-                    // Language button
                     SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: fadedColor, width: 2),
-                          foregroundColor: fadedColor,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          textStyle: const TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'SourceSerif4',
-                            fontWeight: FontWeight.w600,
-                            color: fadedColor,
-                          ),
+                      width: autoplaySwitchBoxWidth,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Switch.adaptive(
+                          value: autoAudio,
+                          onChanged: onAutoAudioChanged,
+                          activeColor: Colors.black,
+                          inactiveThumbColor: Colors.black54,
+                          inactiveTrackColor: Colors.black26,
                         ),
-                        onPressed: onLanguageTap,
-                        child: Text(I18n.labelFor(languageCode)),
                       ),
                     ),
                   ],

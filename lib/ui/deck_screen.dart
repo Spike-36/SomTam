@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import 'flashcard_tile.dart';
@@ -10,8 +11,7 @@ class DeckScreen extends StatefulWidget {
   final AudioService audio;
   final String languageCode;
   final void Function(int)? onCardSelected;
-
-  final int resetTicker; // used to reset view when parent changes
+  final int resetTicker;
 
   const DeckScreen({
     super.key,
@@ -26,120 +26,211 @@ class DeckScreen extends StatefulWidget {
   State<DeckScreen> createState() => _DeckScreenState();
 }
 
-class _DeckScreenState extends State<DeckScreen> {
-  final ScrollController _scroll = ScrollController();
+// Simple flattened row model: header or item
+class _Row {
+  final String? header;
+  final Flashcard? card;
+  const _Row.header(this.header) : card = null;
+  const _Row.item(this.card) : header = null;
+  bool get isHeader => header != null;
+}
 
+class _DeckScreenState extends State<DeckScreen> {
   _DeckViewMode _mode = _DeckViewMode.typeIndex;
-  String? _currentTypeInList;
+
+  // For index-based scrolling
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+
+  // Flattened model for continuous list + lookup for section starts
+  List<_Row> _rows = const [];
+  Map<String, int> _sectionStarts = const {};
 
   @override
   void didUpdateWidget(covariant DeckScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // when the tick changes, jump back to the index screen
     if (oldWidget.resetTicker != widget.resetTicker) {
-      setState(() {
-        _mode = _DeckViewMode.typeIndex;
-        _currentTypeInList = null;
-      });
-      if (_scroll.hasClients) {
-        _scroll.jumpTo(0);
-      }
+      setState(() => _mode = _DeckViewMode.typeIndex);
+    }
+    if (oldWidget.cards != widget.cards) {
+      _rebuildRows();
     }
   }
 
   @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_mode == _DeckViewMode.typeIndex) {
-      // --- Show the type index (case-insensitive sort) ---
-      final types = widget.cards
-          .map((c) => (c.type ?? '').trim())
-          .where((t) => t.isNotEmpty)
-          .toSet()
-          .toList()
-        ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-
-      return ListView.separated(
-        itemCount: types.length,
-        separatorBuilder: (_, __) => const Divider(height: 1),
-        itemBuilder: (context, i) {
-          final t = types[i];
-          return ListTile(
-            title: Text(
-              t.isNotEmpty ? (t[0].toUpperCase() + t.substring(1)) : t,
-              style: const TextStyle(
-                fontFamily: 'SourceSerif4',
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            onTap: () {
-              setState(() {
-                _mode = _DeckViewMode.listView;
-                _currentTypeInList = t;
-              });
-            },
-          );
-        },
-      );
-    }
-
-    // --- Show the list of words for the selected type (type-aware sort) ---
-    final selectedType = (_currentTypeInList ?? '').trim().toLowerCase();
-
-    final filtered = widget.cards
-        .where((c) => (c.type ?? '').trim().toLowerCase() == selectedType)
-        .toList(growable: false);
-
-    // Make a sortable copy
-    final sorted = [...filtered];
-
-    final isNumbers = selectedType == 'numbers' || selectedType == 'number';
-
-    if (isNumbers) {
-      sorted.sort((a, b) => _asInt(a.value).compareTo(_asInt(b.value)));
-    } else {
-      sorted.sort((a, b) => _display(a).compareTo(_display(b)));
-    }
-
-    return ListView.builder(
-      controller: _scroll,
-      itemCount: sorted.length,
-      itemBuilder: (context, i) {
-        return FlashcardTile(
-          cards: sorted,
-          index: i,
-          audio: widget.audio,
-          languageCode: widget.languageCode,
-          onCardSelected: (_) {
-            final tappedCard = sorted[i];
-            final globalIndex =
-                widget.cards.indexWhere((c) => c.id == tappedCard.id);
-            if (globalIndex != -1) {
-              widget.onCardSelected?.call(globalIndex);
-            }
-          },
-        );
-      },
-    );
+  void initState() {
+    super.initState();
+    _rebuildRows();
   }
 
   // ---- Helpers ----
+  List<String> _sortedTypes(List<Flashcard> cards) {
+    final types = cards
+        .map((c) => (c.type).trim())
+        .where((t) => t.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    return types;
+  }
+
+  String _display(Flashcard c) => c.meaning.toLowerCase().trim();
 
   int _asInt(dynamic v) {
     if (v is int) return v;
     if (v is num) return v.toInt();
     final s = v?.toString() ?? '';
-    return int.tryParse(s) ?? 1 << 30; // push unknowns to end
+    return int.tryParse(s) ?? 1 << 30;
   }
 
-  String _display(Flashcard c) {
-    // 🔑 Always sort alphabetically by English (meaning)
-    return (c.meaning ?? '').toLowerCase().trim();
+  Map<String, List<Flashcard>> _grouped() {
+    final byType = <String, List<Flashcard>>{};
+    for (final c in widget.cards) {
+      final t = c.type.trim();
+      if (t.isEmpty) continue;
+      byType.putIfAbsent(t, () => []).add(c);
+    }
+
+    for (final entry in byType.entries) {
+      final lower = entry.key.toLowerCase();
+      if (lower == 'numbers' || lower == 'number') {
+        entry.value.sort((a, b) => _asInt(a.value).compareTo(_asInt(b.value)));
+      } else {
+        entry.value.sort((a, b) => _display(a).compareTo(_display(b)));
+      }
+    }
+    return byType;
+  }
+
+  void _rebuildRows() {
+    final grouped = _grouped();
+    final typeOrder = _sortedTypes(widget.cards);
+    final rows = <_Row>[];
+    final sectionStarts = <String, int>{};
+
+    for (final type in typeOrder) {
+      sectionStarts[type] = rows.length;
+      rows.add(_Row.header(type));
+      final cardsOfType = grouped[type] ?? const <Flashcard>[];
+      for (final c in cardsOfType) {
+        rows.add(_Row.item(c));
+      }
+      rows.add(const _Row.header(null));
+    }
+
+    setState(() {
+      _rows = rows;
+      _sectionStarts = sectionStarts;
+    });
+  }
+
+  // ---- UI ----
+  @override
+  Widget build(BuildContext context) {
+    if (_mode == _DeckViewMode.typeIndex) {
+      final types = _sortedTypes(widget.cards);
+      // 👉 SafeArea ensures content starts below iOS status bar
+      return SafeArea(
+        top: true,
+        bottom: false,
+        child: ListView.separated(
+          itemCount: types.length,
+          separatorBuilder: (_, __) => const Divider(height: 1),
+          itemBuilder: (context, i) {
+            final t = types[i];
+            return ListTile(
+              title: Text(
+                t.isNotEmpty ? (t[0].toUpperCase() + t.substring(1)) : t,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              onTap: () {
+                if (_rows.isEmpty || _sectionStarts.isEmpty) {
+                  _rebuildRows();
+                }
+                final targetIndex = _sectionStarts[t] ?? 0;
+                setState(() => _mode = _DeckViewMode.listView);
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (_itemScrollController.isAttached) {
+                    _itemScrollController.scrollTo(
+                      index: targetIndex,
+                      duration: const Duration(milliseconds: 450),
+                      curve: Curves.easeInOutCubic,
+                    );
+                  }
+                });
+              },
+            );
+          },
+        ),
+      );
+    }
+
+    // 👉 Also wrap the scrollable list
+    return SafeArea(
+      top: true,
+      bottom: false,
+      child: ScrollablePositionedList.builder(
+        itemScrollController: _itemScrollController,
+        itemPositionsListener: _itemPositionsListener,
+        itemCount: _rows.length,
+        itemBuilder: (context, i) {
+          final row = _rows[i];
+          if (row.isHeader) {
+            if (row.header == null) return const SizedBox(height: 8);
+            final title = row.header!;
+            return Container(
+              color: const Color(0xFFF3F4F6),
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+              child: Text(
+                title.isNotEmpty ? (title[0].toUpperCase() + title.substring(1)) : title,
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            );
+          }
+
+          final card = row.card!;
+          return Column(
+            children: [
+              FlashcardTile(
+                cards: const [],
+                index: 0,
+                audio: widget.audio,
+                languageCode: widget.languageCode,
+                onCardSelected: (_) {
+                  final globalIndex = widget.cards.indexWhere((c) => c.id == card.id);
+                  if (globalIndex != -1) {
+                    widget.onCardSelected?.call(globalIndex);
+                  }
+                },
+              )._withCard(card),
+              const Divider(height: 1),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+// --- Helper ---
+extension _FlashcardTileWithCard on FlashcardTile {
+  Widget _withCard(Flashcard card) {
+    return FlashcardTile(
+      cards: [card],
+      index: 0,
+      audio: audio,
+      onCardSelected: onCardSelected,
+      languageCode: languageCode,
+    );
   }
 }
