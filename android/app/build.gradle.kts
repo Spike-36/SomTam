@@ -1,4 +1,3 @@
-// android/app/build.gradle.kts
 import java.util.Properties
 import java.io.FileInputStream
 import java.io.File
@@ -17,7 +16,7 @@ if (propsFile.exists()) {
 }
 
 android {
-    namespace = "com.petermilligan.wordkimchi"
+    namespace = "com.petermilligan.somtam"
 
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
@@ -29,11 +28,13 @@ android {
     kotlinOptions { jvmTarget = JavaVersion.VERSION_11.toString() }
 
     defaultConfig {
-        applicationId = "com.petermilligan.wordkimchi"
+        applicationId = "com.petermilligan.somtam"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+
+        // 👉 Bumped versionCode for Play Console upload
+        versionCode = 3
+        versionName = "1.0.0"
     }
 
     signingConfigs {
