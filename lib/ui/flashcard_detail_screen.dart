@@ -1,11 +1,10 @@
-// lib/ui/flashcard_detail_screen.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import '../I18n/i18n.dart';
 
 // ==================== Styles ====================
-const double kHeadwordSize = 48;
+const double kHeadwordSize = 42; // 🔄 reduced from 48
 const double kChevronButtonSize = 56.0;
 const double kChevronIconSize = 32.0;
 const double kChevronOuterPad = 12.0;
@@ -14,7 +13,7 @@ const double kSwipeVelocityThreshold = 300.0;
 
 // 👉 Manual fine-tune constants for EN button position & size
 const double kENButtonOffset = 16.0;
-const double kENButtonSize = 48.0;
+const double kENButtonSize = 42.0; // 🔄 smaller circle
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
@@ -41,11 +40,11 @@ class FlashcardDetailScreen extends StatefulWidget {
 class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   int? _lastAutoPlayedIndex;
   bool _revealed = false;
-
   bool _showWord = false;
   bool _showSpeaker = false;
   bool _showPhonetic = false;
   bool _busy = false;
+  bool _showEnglish = false; // 🔄 toggles English/meaning visibility
 
   Flashcard get card => widget.cards[widget.index];
 
@@ -63,7 +62,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     return 'assets/images/words/$f';
   }
 
-  Future<void> _safePlay(BuildContext context, String path, {bool interrupt = true, String channel = 'a'}) async {
+  Future<void> _safePlay(BuildContext context, String path,
+      {bool interrupt = true, String channel = 'a'}) async {
     if (path.isEmpty) return;
     try {
       await widget.audio.playAsset(path, interrupt: interrupt, channel: channel);
@@ -97,6 +97,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
       _revealed = false;
       _showWord = _showSpeaker = _showPhonetic = false;
       _busy = false;
+      _showEnglish = false; // reset between cards
     }
     if (oldWidget.index != widget.index ||
         oldWidget.autoAudio != widget.autoAudio ||
@@ -113,7 +114,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     widget.onIndexChange?.call(wrapped);
   }
 
-  // 👉 Two-audio sequence using separate channels (B then A)
   Future<void> _onRightButtonPressed() async {
     if (_busy) return;
 
@@ -132,26 +132,19 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
 
       try {
         widget.audio.playAsset(path, interrupt: false, channel: 'b');
-        await Future.delayed(const Duration(milliseconds: 2500)); // 🔄 2.5s delay
+        await Future.delayed(const Duration(milliseconds: 2500));
         await _safePlay(context, path, interrupt: true, channel: 'a');
 
         setState(() => _revealed = true);
-
-        // Thai word fade (600 ms)
         Future.delayed(const Duration(milliseconds: 0), () {
           if (mounted) setState(() => _showWord = true);
         });
-
-        // +850 ms → speaker
         Future.delayed(const Duration(milliseconds: 850), () {
           if (mounted) setState(() => _showSpeaker = true);
         });
-
-        // +300 ms after speaker → phonetic
         Future.delayed(const Duration(milliseconds: 1150), () {
           if (mounted) setState(() => _showPhonetic = true);
         });
-
         await Future.delayed(const Duration(milliseconds: 1600));
       } finally {
         if (mounted) setState(() => _busy = false);
@@ -192,6 +185,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     final imageHeight = screenHeight * 0.45;
     final headword = (card.thai ?? '').trim();
     final headwordFont = _containsThai(headword) ? 'Sarabun' : 'EBGaramond';
+    final englishWord = (card.meaning ?? '').trim();
 
     final imageStack = Stack(
       fit: StackFit.expand,
@@ -200,30 +194,61 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             ? Container(color: Colors.black12)
             : Image.asset(_imagePath(card.image), fit: BoxFit.cover),
 
-        // 👉 EN button (always visible)
-        Positioned(
-          left: kENButtonOffset,
-          bottom: kENButtonOffset,
-          child: Container(
-            width: kENButtonSize,
-            height: kENButtonSize,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.6),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Text(
-                'EN',
-                style: TextStyle(
-                  fontFamily: 'EBGaramond',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
+        // 👉 English word visible only when EN button pressed
+        if (_showEnglish && englishWord.isNotEmpty)
+          Positioned(
+            bottom: kENButtonOffset + 4,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  englishWord,
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 22,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center, // 🔄 centered text
                 ),
               ),
             ),
           ),
-        ),
+
+        // 🔄 EN button (only visible until pressed)
+        if (!_showEnglish)
+          Positioned(
+            left: kENButtonOffset,
+            bottom: kENButtonOffset,
+            child: GestureDetector(
+              onTap: () => setState(() => _showEnglish = true),
+              child: Container(
+                width: kENButtonSize,
+                height: kENButtonSize,
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Text(
+                    'EN',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15, // 🔄 slightly smaller
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
 
@@ -258,7 +283,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                               style: TextStyle(
                                 fontFamily: headwordFont,
                                 fontWeight: FontWeight.w600,
-                                fontSize: kHeadwordSize,
+                                fontSize: kHeadwordSize, // 🔄 reduced Thai font
                                 height: 1.08,
                               ),
                               textAlign: TextAlign.center,
