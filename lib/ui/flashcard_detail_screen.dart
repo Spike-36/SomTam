@@ -1,7 +1,20 @@
+// lib/ui/flashcard_detail_screen.dart
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import '../I18n/i18n.dart';
+
+// ==================== Styles ====================
+const double kHeadwordSize = 48;
+const double kChevronButtonSize = 56.0;
+const double kChevronIconSize = 32.0;
+const double kChevronOuterPad = 12.0;
+const Color kSpeakerColor = Colors.black38;
+const double kSwipeVelocityThreshold = 300.0;
+
+// 👉 Manual fine-tune constants for EN button position & size
+const double kENButtonOffset = 16.0;
+const double kENButtonSize = 48.0;
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
@@ -24,14 +37,6 @@ class FlashcardDetailScreen extends StatefulWidget {
   @override
   State<FlashcardDetailScreen> createState() => _FlashcardDetailScreenState();
 }
-
-// ==================== Styles ====================
-const double kHeadwordSize = 48;
-const double kChevronButtonSize = 56.0;
-const double kChevronIconSize = 32.0;
-const double kChevronOuterPad = 12.0;
-const Color kSpeakerColor = Colors.black38;
-const double kSwipeVelocityThreshold = 300.0;
 
 class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   int? _lastAutoPlayedIndex;
@@ -90,7 +95,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     if (oldWidget.index != widget.index) {
       _lastAutoPlayedIndex = null;
       _revealed = false;
-      _showWord = _showSpeaker = _showPhonetic = false; // 👉 reset fades
+      _showWord = _showSpeaker = _showPhonetic = false;
       _busy = false;
     }
     if (oldWidget.index != widget.index ||
@@ -101,7 +106,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   }
 
   void _goTo(int newIndex) {
-    if (_busy) return; // 👉 block during reveal
+    if (_busy) return;
     final n = widget.cards.length;
     if (n == 0) return;
     final wrapped = (newIndex % n + n) % n;
@@ -126,32 +131,27 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
       }
 
       try {
-        // 👉 Audio #1: channel B, non-interrupting
         widget.audio.playAsset(path, interrupt: false, channel: 'b');
-
-        // 500 ms gap
-        await Future.delayed(const Duration(milliseconds: 2000));
-
-        // 👉 Audio #2: channel A (normal)
+        await Future.delayed(const Duration(milliseconds: 2500)); // 🔄 2.5s delay
         await _safePlay(context, path, interrupt: true, channel: 'a');
 
-        // 👉 start reveal visuals
         setState(() => _revealed = true);
 
-        // Thai word fade (600ms)
+        // Thai word fade (600 ms)
         Future.delayed(const Duration(milliseconds: 0), () {
           if (mounted) setState(() => _showWord = true);
         });
-        // +250ms → speaker
+
+        // +850 ms → speaker
         Future.delayed(const Duration(milliseconds: 850), () {
           if (mounted) setState(() => _showSpeaker = true);
         });
-        // +250ms → phonetic placeholder (still hidden content-wise)
-        Future.delayed(const Duration(milliseconds: 1100), () {
+
+        // +300 ms after speaker → phonetic
+        Future.delayed(const Duration(milliseconds: 1150), () {
           if (mounted) setState(() => _showPhonetic = true);
         });
 
-        // keep UI locked until fades done
         await Future.delayed(const Duration(milliseconds: 1600));
       } finally {
         if (mounted) setState(() => _busy = false);
@@ -193,17 +193,47 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     final headword = (card.thai ?? '').trim();
     final headwordFont = _containsThai(headword) ? 'Sarabun' : 'EBGaramond';
 
+    final imageStack = Stack(
+      fit: StackFit.expand,
+      children: [
+        (card.image ?? '').trim().isEmpty
+            ? Container(color: Colors.black12)
+            : Image.asset(_imagePath(card.image), fit: BoxFit.cover),
+
+        // 👉 EN button (always visible)
+        Positioned(
+          left: kENButtonOffset,
+          bottom: kENButtonOffset,
+          child: Container(
+            width: kENButtonSize,
+            height: kENButtonSize,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.6),
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Text(
+                'EN',
+                style: TextStyle(
+                  fontFamily: 'EBGaramond',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
     final scroll = CustomScrollView(
       slivers: [
         SliverAppBar(
           automaticallyImplyLeading: false,
           expandedHeight: imageHeight,
           backgroundColor: Colors.black,
-          flexibleSpace: FlexibleSpaceBar(
-            background: ((card.image ?? '').trim().isEmpty)
-                ? Container(color: Colors.black12)
-                : Image.asset(_imagePath(card.image), fit: BoxFit.cover),
-          ),
+          flexibleSpace: FlexibleSpaceBar(background: imageStack),
         ),
         SliverToBoxAdapter(
           child: Padding(
@@ -215,7 +245,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // 👉 Thai word fade-in
                       AnimatedOpacity(
                         opacity: _showWord ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 600),
@@ -238,8 +267,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 6),
-
-                      // 👉 Speaker fade-in
                       AnimatedOpacity(
                         opacity: _showSpeaker ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 600),
@@ -268,13 +295,22 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 6),
-
-                      // 👉 Phonetic fade-in (placeholder still hidden)
                       AnimatedOpacity(
-                        opacity: _showPhonetic ? 0.0 : 0.0,
+                        opacity: _showPhonetic ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 600),
                         curve: Curves.easeInOut,
-                        child: const SizedBox.shrink(),
+                        child: Center(
+                          child: Text(
+                            card.phonetic ?? '',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: 'EBGaramond',
+                              fontSize: 28,
+                              color: Colors.black54,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
