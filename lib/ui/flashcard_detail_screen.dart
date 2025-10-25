@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import '../I18n/i18n.dart';
@@ -25,7 +26,7 @@ class FlashcardDetailScreen extends StatefulWidget {
   State<FlashcardDetailScreen> createState() => _FlashcardDetailScreenState();
 }
 
-// ============ Styles ============
+// ==================== Styles ====================
 const double kHeadwordSize = 48;
 const double kChevronButtonSize = 56.0;
 const double kChevronIconSize = 32.0;
@@ -33,11 +34,46 @@ const double kChevronOuterPad = 12.0;
 const Color kSpeakerColor = Colors.black38;
 const double kSwipeVelocityThreshold = 300.0;
 
-class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
+class _FlashcardDetailScreenState extends State<FlashcardDetailScreen>
+    with TickerProviderStateMixin {
   int? _lastAutoPlayedIndex;
-  bool _revealed = false; // 🔄 reveal state
+  bool _revealed = false;
+  bool _animating = false; // 👉 lock controls during sequence
+  late AnimationController _wordCtrl;
+  late AnimationController _buttonCtrl;
+  late AnimationController _phoneticCtrl;
+  late Animation<double> _wordFade;
+  late Animation<double> _buttonFade;
+  late Animation<double> _phoneticFade;
 
   Flashcard get card => widget.cards[widget.index];
+
+  @override
+  void initState() {
+    super.initState();
+    _initAnimations();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _autoPlayIfNeeded());
+  }
+
+  void _initAnimations() {
+    _wordCtrl =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _buttonCtrl =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _phoneticCtrl =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _wordFade = CurvedAnimation(parent: _wordCtrl, curve: Curves.easeInOut);
+    _buttonFade = CurvedAnimation(parent: _buttonCtrl, curve: Curves.easeInOut);
+    _phoneticFade = CurvedAnimation(parent: _phoneticCtrl, curve: Curves.easeInOut);
+  }
+
+  @override
+  void dispose() {
+    _wordCtrl.dispose();
+    _buttonCtrl.dispose();
+    _phoneticCtrl.dispose();
+    super.dispose();
+  }
 
   String _wordPath(String? filename) {
     final f = (filename ?? '').trim();
@@ -53,7 +89,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     return 'assets/images/words/$f';
   }
 
-  Future<void> _safePlay(BuildContext context, String path) async {
+  Future<void> _safePlay(String path) async {
     if (path.isEmpty) return;
     try {
       await widget.audio.playAsset(path);
@@ -70,58 +106,62 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     final path = _wordPath(card.audioThai);
     if (path.isEmpty) return;
     _lastAutoPlayedIndex = widget.index;
-    await _safePlay(context, path);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _autoPlayIfNeeded());
-  }
-
-  @override
-  void didUpdateWidget(covariant FlashcardDetailScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.index != widget.index) _revealed = false;
-    if (oldWidget.index != widget.index ||
-        oldWidget.autoAudio != widget.autoAudio ||
-        oldWidget.languageCode != widget.languageCode) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _autoPlayIfNeeded());
-    }
+    await _safePlay(path);
   }
 
   void _goTo(int newIndex) {
+    if (_animating) return;
     final n = widget.cards.length;
     if (n == 0) return;
     final wrapped = (newIndex % n + n) % n;
     widget.onIndexChange?.call(wrapped);
   }
 
-  // 👉 same logic: reveal first, then next
-  void _onRightButtonPressed() async {
-    if (!_revealed) {
+  // 👉 Core Step 5 reveal sequence
+  Future<void> _runRevealSequence() async {
+    if (_animating) return;
+    setState(() => _animating = true);
+    final path = _wordPath(card.audioThai);
+
+    if (path.isEmpty) {
+      // missing audio → reveal immediately
       setState(() => _revealed = true);
-      await _safePlay(context, _wordPath(card.audioThai));
+      _wordCtrl.forward();
+      _buttonCtrl.forward();
+      _phoneticCtrl.forward();
+      setState(() => _animating = false);
+      return;
+    }
+
+    // first Thai audio
+    await _safePlay(path);
+
+    // small delay
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // second Thai audio while fading in elements
+    unawaited(_safePlay(path));
+
+    setState(() => _revealed = true);
+    _wordCtrl.forward();
+
+    // stagger sequence
+    await Future.delayed(const Duration(milliseconds: 300));
+    _buttonCtrl.forward();
+    await Future.delayed(const Duration(milliseconds: 250));
+    _phoneticCtrl.forward();
+
+    await Future.delayed(const Duration(milliseconds: 500));
+    setState(() => _animating = false);
+  }
+
+  void _onRightButtonPressed() {
+    if (_animating) return;
+    if (!_revealed) {
+      _runRevealSequence();
     } else {
       _goTo(widget.index + 1);
     }
-  }
-
-  Widget _floatingButton(IconData icon, VoidCallback onPressed) {
-    return Material(
-      color: Colors.white.withOpacity(0.95),
-      shape: const CircleBorder(),
-      elevation: 3,
-      child: InkWell(
-        customBorder: const CircleBorder(),
-        onTap: onPressed,
-        child: SizedBox(
-          width: kChevronButtonSize,
-          height: kChevronButtonSize,
-          child: Icon(icon, size: kChevronIconSize),
-        ),
-      ),
-    );
   }
 
   bool _containsThai(String text) =>
@@ -133,6 +173,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     final imageHeight = screenHeight * 0.45;
     final headword = (card.thai ?? '').trim();
     final headwordFont = _containsThai(headword) ? 'Sarabun' : 'EBGaramond';
+    final phonetic = (card.phonetic ?? '').trim();
 
     final scroll = CustomScrollView(
       slivers: [
@@ -150,53 +191,65 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const SizedBox(height: 12),
-                if (_revealed)
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () =>
-                            _safePlay(context, _wordPath(card.audioThai)),
-                        child: Center(
-                          child: Text(
-                            headword,
-                            style: TextStyle(
-                              fontFamily: headwordFont,
-                              fontWeight: FontWeight.w600,
-                              fontSize: kHeadwordSize,
-                              height: 1.08,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                FadeTransition(
+                  opacity: _wordFade,
+                  child: GestureDetector(
+                    onTap: () => _safePlay(_wordPath(card.audioThai)),
+                    child: Center(
+                      child: Text(
+                        headword,
+                        style: TextStyle(
+                          fontFamily: headwordFont,
+                          fontWeight: FontWeight.w600,
+                          fontSize: kHeadwordSize,
+                          height: 1.08,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 6),
-                      Material(
-                        color: Colors.transparent,
-                        shape: const CircleBorder(),
-                        child: InkWell(
-                          customBorder: const CircleBorder(),
-                          onTap: () =>
-                              _safePlay(context, _wordPath(card.audioThai)),
-                          splashColor: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.12),
-                          highlightColor: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.06),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(Icons.volume_up,
-                                color: kSpeakerColor, size: 36),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
+                ),
+                const SizedBox(height: 6),
+                FadeTransition(
+                  opacity: _buttonFade,
+                  child: Material(
+                    color: Colors.transparent,
+                    shape: const CircleBorder(),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () => _safePlay(_wordPath(card.audioThai)),
+                      splashColor: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.12),
+                      highlightColor: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.06),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.volume_up,
+                            color: kSpeakerColor, size: 36),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                FadeTransition(
+                  opacity: _phoneticFade,
+                  child: Text(
+                    phonetic,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      color: Colors.black54,
+                      height: 1.3,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 const SizedBox(height: 96),
               ],
             ),
@@ -210,23 +263,22 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
       onHorizontalDragEnd: (details) {
         final v = details.primaryVelocity ?? 0;
         if (v.abs() < kSwipeVelocityThreshold) return;
-        if (v < 0) {
-          _goTo(widget.index + 1);
-        } else {
-          _goTo(widget.index - 1);
-        }
+        _goTo(v < 0 ? widget.index + 1 : widget.index - 1);
       },
       child: scroll,
     );
 
-    // 👉 dynamic right-icon: volume before reveal, chevron after
     final IconData rightIcon =
         _revealed ? Icons.chevron_right : Icons.volume_up;
+    final Color rightColor = _revealed ? Colors.white : Colors.green;
+    final Color rightIconColor = _revealed ? Colors.black87 : Colors.white;
 
     return Scaffold(
       body: Stack(
         children: [
           swipeable,
+
+          // Left chevron
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(
@@ -235,10 +287,16 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 bottom:
                     kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
-              child:
-                  _floatingButton(Icons.chevron_left, () => _goTo(widget.index - 1)),
+              child: _floatingButton(
+                icon: Icons.chevron_left,
+                onPressed: () => _goTo(widget.index - 1),
+                color: Colors.white,
+                iconColor: Colors.black87,
+              ),
             ),
           ),
+
+          // Right dynamic button
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
@@ -247,10 +305,37 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 bottom:
                     kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
-              child: _floatingButton(rightIcon, _onRightButtonPressed),
+              child: _floatingButton(
+                icon: rightIcon,
+                onPressed: _onRightButtonPressed,
+                color: rightColor,
+                iconColor: rightIconColor,
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _floatingButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+    required Color color,
+    required Color iconColor,
+  }) {
+    return Material(
+      color: color,
+      shape: const CircleBorder(),
+      elevation: 3,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onPressed,
+        child: SizedBox(
+          width: kChevronButtonSize,
+          height: kChevronButtonSize,
+          child: Icon(icon, size: kChevronIconSize, color: iconColor),
+        ),
       ),
     );
   }
