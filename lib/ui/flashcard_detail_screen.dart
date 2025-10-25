@@ -25,23 +25,18 @@ class FlashcardDetailScreen extends StatefulWidget {
   State<FlashcardDetailScreen> createState() => _FlashcardDetailScreenState();
 }
 
-// ===================== Styles ======================
+// ============ Styles ============
 const double kHeadwordSize = 48;
-const double kPhoneticSize = 26;
-const double kMeaningSize = 26;
-
 const double kChevronButtonSize = 56.0;
 const double kChevronIconSize = 32.0;
 const double kChevronOuterPad = 12.0;
-
-const Color kMeaningColor = Colors.black;
 const Color kSpeakerColor = Colors.black38;
-
-// Swipe tuning
 const double kSwipeVelocityThreshold = 300.0;
 
 class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   int? _lastAutoPlayedIndex;
+  bool _revealed = false; // 🔄 reveal state
+
   Flashcard get card => widget.cards[widget.index];
 
   String _wordPath(String? filename) {
@@ -64,9 +59,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
       await widget.audio.playAsset(path);
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Audio not available: $path')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Audio not available: $path')));
     }
   }
 
@@ -88,6 +82,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   @override
   void didUpdateWidget(covariant FlashcardDetailScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.index != widget.index) _revealed = false;
     if (oldWidget.index != widget.index ||
         oldWidget.autoAudio != widget.autoAudio ||
         oldWidget.languageCode != widget.languageCode) {
@@ -100,6 +95,16 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     if (n == 0) return;
     final wrapped = (newIndex % n + n) % n;
     widget.onIndexChange?.call(wrapped);
+  }
+
+  // 👉 same logic: reveal first, then next
+  void _onRightButtonPressed() async {
+    if (!_revealed) {
+      setState(() => _revealed = true);
+      await _safePlay(context, _wordPath(card.audioThai));
+    } else {
+      _goTo(widget.index + 1);
+    }
   }
 
   Widget _floatingButton(IconData icon, VoidCallback onPressed) {
@@ -119,16 +124,11 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     );
   }
 
-  bool _containsThai(String text) {
-    return RegExp(r'[\u0E00-\u0E7F]').hasMatch(text);
-  }
+  bool _containsThai(String text) =>
+      RegExp(r'[\u0E00-\u0E7F]').hasMatch(text);
 
   @override
   Widget build(BuildContext context) {
-    final lang = widget.languageCode;
-    final displayMeaning = card.meaningFor(lang);
-    final hasPhonetic = (card.phonetic ?? '').trim().isNotEmpty;
-
     final screenHeight = MediaQuery.of(context).size.height;
     final imageHeight = screenHeight * 0.45;
     final headword = (card.thai ?? '').trim();
@@ -152,92 +152,51 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 12),
-
-                // 👉 Combined layout for Thai + Speaker + Phonetic
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    GestureDetector(
-                      onTap: () =>
-                          _safePlay(context, _wordPath(card.audioThai)),
-                      child: Center(
-                        child: Text(
-                          headword,
-                          style: TextStyle(
-                            fontFamily: headwordFont,
-                            fontWeight: FontWeight.w600,
-                            fontSize: kHeadwordSize,
-                            height: 1.08,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-
-                    // 👉 Subtle animated ripple on icon only
-                    Material(
-                      color: Colors.transparent,
-                      shape: const CircleBorder(),
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        onTap: () =>
-                            _safePlay(context, _wordPath(card.audioThai)),
-                        splashColor: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.12),
-                        highlightColor: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.06),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.volume_up,
-                            color: kSpeakerColor,
-                            size: 36,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 6),
-
-                    if (hasPhonetic)
+                if (_revealed)
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       GestureDetector(
                         onTap: () =>
                             _safePlay(context, _wordPath(card.audioThai)),
-                        child: Text(
-                          '[${card.phonetic}]',
-                          style: TextStyle(
-                            fontFamily: 'CharisSIL',
-                            fontSize: kPhoneticSize,
-                            fontStyle: FontStyle.italic,
-                            height: 1.2,
-                            color: Theme.of(context).colorScheme.primary,
+                        child: Center(
+                          child: Text(
+                            headword,
+                            style: TextStyle(
+                              fontFamily: headwordFont,
+                              fontWeight: FontWeight.w600,
+                              fontSize: kHeadwordSize,
+                              height: 1.08,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                Text(
-                  displayMeaning.isEmpty ? '—' : displayMeaning,
-                  style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: kMeaningSize,
-                    height: 1.35,
-                    color: kMeaningColor,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
+                      const SizedBox(height: 6),
+                      Material(
+                        color: Colors.transparent,
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () =>
+                              _safePlay(context, _wordPath(card.audioThai)),
+                          splashColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.12),
+                          highlightColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.06),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(Icons.volume_up,
+                                color: kSpeakerColor, size: 36),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
-                ),
-
                 const SizedBox(height: 96),
               ],
             ),
@@ -260,6 +219,10 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
       child: scroll,
     );
 
+    // 👉 dynamic right-icon: volume before reveal, chevron after
+    final IconData rightIcon =
+        _revealed ? Icons.chevron_right : Icons.volume_up;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -272,8 +235,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 bottom:
                     kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
-              child: _floatingButton(
-                  Icons.chevron_left, () => _goTo(widget.index - 1)),
+              child:
+                  _floatingButton(Icons.chevron_left, () => _goTo(widget.index - 1)),
             ),
           ),
           Align(
@@ -284,8 +247,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                 bottom:
                     kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
-              child: _floatingButton(
-                  Icons.chevron_right, () => _goTo(widget.index + 1)),
+              child: _floatingButton(rightIcon, _onRightButtonPressed),
             ),
           ),
         ],
