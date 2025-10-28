@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import 'flashcard_tile.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 enum _DeckViewMode { typeIndex, listView }
 
@@ -39,7 +39,8 @@ class _DeckScreenState extends State<DeckScreen> {
   _DeckViewMode _mode = _DeckViewMode.typeIndex;
 
   final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
 
   List<_Row> _rows = const [];
   Map<String, int> _sectionStarts = const {};
@@ -125,92 +126,102 @@ class _DeckScreenState extends State<DeckScreen> {
   Widget build(BuildContext context) {
     if (_mode == _DeckViewMode.typeIndex) {
       final types = _sortedTypes(widget.cards);
-      return SafeArea(
-        top: true,
-        bottom: false,
-        child: ListView.separated(
-          itemCount: types.length,
-          separatorBuilder: (_, __) => const Divider(height: 1),
-          itemBuilder: (context, i) {
-            final t = types[i];
-            return ListTile(
-              title: Text(
-                t.isNotEmpty ? (t[0].toUpperCase() + t.substring(1)) : t,
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+      return Container( // 👉 ensures white background
+        color: Colors.white,
+        child: SafeArea(
+          top: true,
+          bottom: false,
+          child: ListView.separated(
+            itemCount: types.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (context, i) {
+              final t = types[i];
+              return Material(
+                color: Colors.transparent,
+                child: ListTile(
+                  title: Text(
+                    t.isNotEmpty ? (t[0].toUpperCase() + t.substring(1)) : t,
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  onTap: () {
+                    if (_rows.isEmpty || _sectionStarts.isEmpty) {
+                      _rebuildRows();
+                    }
+                    final targetIndex = _sectionStarts[t] ?? 0;
+                    setState(() => _mode = _DeckViewMode.listView);
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (_itemScrollController.isAttached) {
+                        _itemScrollController.scrollTo(
+                          index: targetIndex,
+                          duration: const Duration(milliseconds: 450),
+                          curve: Curves.easeInOutCubic,
+                        );
+                      }
+                    });
+                  },
                 ),
-              ),
-              onTap: () {
-                if (_rows.isEmpty || _sectionStarts.isEmpty) {
-                  _rebuildRows();
-                }
-                final targetIndex = _sectionStarts[t] ?? 0;
-                setState(() => _mode = _DeckViewMode.listView);
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (_itemScrollController.isAttached) {
-                    _itemScrollController.scrollTo(
-                      index: targetIndex,
-                      duration: const Duration(milliseconds: 450),
-                      curve: Curves.easeInOutCubic,
-                    );
-                  }
-                });
-              },
-            );
-          },
+              );
+            },
+          ),
         ),
       );
     }
 
     // 👉 List view (dividers removed)
-    return SafeArea(
-      top: true,
-      bottom: false,
-      child: ScrollablePositionedList.builder(
-        itemScrollController: _itemScrollController,
-        itemPositionsListener: _itemPositionsListener,
-        itemCount: _rows.length,
-        itemBuilder: (context, i) {
-          final row = _rows[i];
+    return Container( // 👉 ensures white background
+      color: Colors.white,
+      child: SafeArea(
+        top: true,
+        bottom: false,
+        child: ScrollablePositionedList.builder(
+          itemScrollController: _itemScrollController,
+          itemPositionsListener: _itemPositionsListener,
+          itemCount: _rows.length,
+          itemBuilder: (context, i) {
+            final row = _rows[i];
 
-          if (row.isHeader) {
-            final title = row.header ?? '';
-            if (title.isEmpty) return const SizedBox(height: 8);
-            return Container(
-              color: const Color(0xFFF3F4F6),
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-              child: Text(
-                title[0].toUpperCase() + title.substring(1),
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black87,
-                  letterSpacing: 0.2,
+            if (row.isHeader) {
+              final title = row.header ?? '';
+              if (title.isEmpty) return const SizedBox(height: 8);
+              return Container(
+                color: const Color(0xFFF3F4F6),
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                child: Text(
+                  title[0].toUpperCase() + title.substring(1),
+                  style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                    letterSpacing: 0.2,
+                  ),
                 ),
-              ),
-            );
-          }
+              );
+            }
 
-          final card = row.card;
-          if (card == null) return const SizedBox.shrink();
+            final card = row.card;
+            if (card == null) return const SizedBox.shrink();
 
-          // 👉 render card (divider removed)
-          return FlashcardTile(
-            cards: const [],
-            index: 0,
-            audio: widget.audio,
-            languageCode: widget.languageCode,
-            onCardSelected: (_) {
-              final globalIndex = widget.cards.indexWhere((c) => c.id == card.id);
-              if (globalIndex != -1) {
-                widget.onCardSelected?.call(globalIndex);
-              }
-            },
-          )._withCard(card);
-        },
+            // 👉 render card (divider removed)
+            return FlashcardTile(
+              cards: const [],
+              index: 0,
+              audio: widget.audio,
+              languageCode: widget.languageCode,
+              onCardSelected: (_) {
+                final globalIndex =
+                    widget.cards.indexWhere((c) => c.id == card.id);
+                if (globalIndex != -1) {
+                  widget.onCardSelected?.call(globalIndex);
+                }
+              },
+            )._withCard(card);
+          },
+        ),
       ),
     );
   }

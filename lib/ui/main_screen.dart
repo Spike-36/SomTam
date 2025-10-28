@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../data/card.dart';
 import '../data/repository.dart';
+import '../data/card.dart'; // ✅ add this so Flashcard type is known
 import '../services/audio_service.dart';
-import '../I18n/i18n.dart';
-import '../utils/sort.dart'; // type+headword sort
+import 'home_screen.dart';
 import 'deck_screen.dart';
 import 'flashcard_detail_screen.dart';
-import 'settings_screen.dart';
-import 'home_screen.dart';
 
+/// Minimal navigation structure:
+/// HomeScreen → DeckScreen → FlashcardDetailScreen
+/// No bottom tab bar. Home button on FlashcardDetailScreen returns to Home.
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -17,163 +17,100 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // Tabs: 0 Home, 1 List, 2 Word, 3 Settings
-  int _selectedIndex = 0;
-  int _currentIndex = 0; // index within _sortedCards for Word tab
-  bool _autoAudio = false;
-  String _languageCode = 'en';
+  late final audio = AudioService();
 
-  final audio = AudioService();
+  // ✅ Explicitly typed as Future<List<Flashcard>>
+  late final Future<List<Flashcard>> cardsFuture = Repository().load();
 
-  /// When this increments, DeckScreen resets to the type index view.
-  int _listResetTick = 0;
-
-  // Data
-  List<Flashcard> _cards = [];
-  List<Flashcard> _sortedCards = [];
-  bool _i18nReady = false;
-
-  void _rebuildSorted() {
-    _sortedCards = sortByTypeThenHeadword(_cards);
-    if (_currentIndex >= _sortedCards.length) {
-      _currentIndex = _sortedCards.isEmpty ? 0 : _sortedCards.length - 1;
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
-    final repo = Repository();
-    final results = await Future.wait([
-      I18n.load(),
-      repo.load(),
-    ]);
-
-    I18n.setCurrentLang(_languageCode);
-    final loaded = results[1] as List<Flashcard>;
-
-    if (!mounted) return;
-    setState(() {
-      _i18nReady = true;
-      _cards = loaded;
-      _rebuildSorted();
-    });
-  }
-
-  @override
-  void dispose() {
-    audio.dispose();
-    super.dispose();
-  }
-
-  // From List tab: user tapped a card in the sorted list
-  void _onCardSelected(int indexInSorted) {
-    setState(() {
-      _currentIndex = indexInSorted;
-      _selectedIndex = 2; // switch to Word tab
-    });
-  }
-
-  // From Word tab: user swiped between cards
-  void _onIndexChange(int newIndex) {
-    setState(() => _currentIndex = newIndex);
-  }
+  bool autoAudio = false;
 
   @override
   Widget build(BuildContext context) {
-    if (!_i18nReady) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    // ✅ Explicitly typed FutureBuilder
+    return FutureBuilder<List<Flashcard>>(
+      future: cardsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
 
-    final pages = <Widget>[
-      HomeScreen(
-        languageCode: _languageCode,
-        onLanguageTap: () => setState(() => _selectedIndex = 3),
-        onAudioTap: () => setState(() => _selectedIndex = 3),
-        autoAudio: _autoAudio,
-        onAutoAudioChanged: (v) => setState(() => _autoAudio = v),
-      ),
-      DeckScreen(
-        cards: _sortedCards,
-        audio: audio,
-        languageCode: _languageCode,
-        onCardSelected: _onCardSelected,
-        resetTicker: _listResetTick,
-      ),
-      if (_sortedCards.isNotEmpty)
-        FlashcardDetailScreen(
-          cards: _sortedCards,
-          index: _currentIndex,
-          audio: audio,
-          onIndexChange: _onIndexChange,
-          autoAudio: _autoAudio,
-          languageCode: _languageCode,
-        )
-      else
-        Center(
-          child: Text(I18n.t('words', lang: _languageCode)),
-        ),
-      SettingsScreen(
-        autoAudio: _autoAudio,
-        onAutoAudioChanged: (v) => setState(() => _autoAudio = v),
-        languageCode: _languageCode,
-        onLanguageChanged: (code) {
-          setState(() {
-            _languageCode = code;
-            I18n.setCurrentLang(code);
-            _rebuildSorted();
-          });
-        },
-      ),
-    ];
+        if (snapshot.hasError) {
+          return MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: Text('Error: ${snapshot.error}'),
+              ),
+            ),
+          );
+        }
 
-    // 👉 Added backgroundColor: Colors.white to fix red bleed issue
-    return Scaffold(
-      backgroundColor: Colors.white, // 🔄 Added line
-      body: pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (i) {
-          if (i == 1) {
-            setState(() {
-              _listResetTick++;
-              _selectedIndex = i;
-            });
-          } else {
-            setState(() => _selectedIndex = i);
-          }
-        },
-        backgroundColor: const Color(0xFF003478),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
-            label: I18n.t('home', lang: _languageCode),
+        final cards = snapshot.data!; // ✅ now correctly typed as List<Flashcard>
+
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'SomTam LinearNav',
+          theme: ThemeData(
+            useMaterial3: true,
+            primarySwatch: Colors.blue,
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.list),
-            label: I18n.t('list', lang: _languageCode),
+          home: Scaffold(
+            body: HomeScreen(
+              languageCode: 'en',
+              autoAudio: autoAudio,
+              onLanguageTap: () {},
+              onAudioTap: () {},
+              onAutoAudioChanged: (val) => setState(() => autoAudio = val),
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF003478),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 36),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DeckScreen(
+                      cards: cards,
+                      audio: audio,
+                      onCardSelected: (index) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FlashcardDetailScreen(
+                              cards: cards,
+                              index: index,
+                              audio: audio,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+              child: const Text(
+                'Start',
+                style: TextStyle(
+                  fontFamily: 'SourceSerif4',
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.book),
-            label: I18n.t('words', lang: _languageCode),
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.search),
-            label: 'Find',
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

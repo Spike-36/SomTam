@@ -4,7 +4,7 @@ import 'ui/main_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await I18n.load(); // ✅ load i18n JSONs from assets
+  await I18n.load(); // ✅ Load i18n JSONs from assets before app runs
   runApp(const App());
 }
 
@@ -14,13 +14,14 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Braw',
+      title: 'SomTam LinearNav',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.indigo,
-        fontFamily: 'Sarabun', // 👉 Apply Sarabun globally
+        fontFamily: 'Sarabun', // ✅ global font
       ),
-      home: const MainScreen(),
+      home: const MainScreen(), // Entry point of the new linear flow
     );
   }
 }

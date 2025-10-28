@@ -119,6 +119,23 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     );
   }
 
+  // 👉 new Home button variant (smaller + square)
+  Widget _homeButton(VoidCallback onPressed) {
+    return Material(
+      color: Colors.white.withOpacity(0.95),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      elevation: 3,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onPressed,
+        child: const Padding(
+          padding: EdgeInsets.all(10),
+          child: Icon(Icons.home, size: 28, color: Colors.black87),
+        ),
+      ),
+    );
+  }
+
   bool _containsThai(String text) {
     return RegExp(r'[\u0E00-\u0E7F]').hasMatch(text);
   }
@@ -174,8 +191,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                       ),
                     ),
                     const SizedBox(height: 6),
-
-                    // 👉 Subtle animated ripple on icon only
                     Material(
                       color: Colors.transparent,
                       shape: const CircleBorder(),
@@ -191,19 +206,14 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                             .colorScheme
                             .primary
                             .withOpacity(0.06),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.volume_up,
-                            color: kSpeakerColor,
-                            size: 36,
-                          ),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(Icons.volume_up,
+                              color: kSpeakerColor, size: 36),
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 6),
-
                     if (hasPhonetic)
                       GestureDetector(
                         onTap: () =>
@@ -222,9 +232,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                       ),
                   ],
                 ),
-
                 const SizedBox(height: 16),
-
                 Text(
                   displayMeaning.isEmpty ? '—' : displayMeaning,
                   style: const TextStyle(
@@ -237,7 +245,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-
                 const SizedBox(height: 96),
               ],
             ),
@@ -264,11 +271,28 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
       body: Stack(
         children: [
           swipeable,
+
+          // 👉 Home button bottom-left over image
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(
               padding: EdgeInsets.only(
-                left: 8,
+                left: 12,
+                bottom:
+                    kChevronOuterPad + MediaQuery.of(context).padding.bottom,
+              ),
+              child: _homeButton(() {
+                Navigator.popUntil(context, (route) => route.isFirst);
+              }),
+            ),
+          ),
+
+          // 👉 Previous
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(
+                left: 72,
                 bottom:
                     kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
@@ -276,6 +300,8 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                   Icons.chevron_left, () => _goTo(widget.index - 1)),
             ),
           ),
+
+          // 👉 Next
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(

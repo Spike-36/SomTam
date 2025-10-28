@@ -14,7 +14,7 @@ class FlashcardTile extends StatelessWidget {
     required this.cards,
     required this.index,
     required this.audio,
-    required this.onCardSelected,   // now required
+    required this.onCardSelected,
     this.languageCode = 'en',
   });
 
@@ -22,7 +22,6 @@ class FlashcardTile extends StatelessWidget {
 
   // --- Typography to match detail screen ---
 
-  // 👉 English/Latin headword fallback
   static const TextStyle _headwordStyle = TextStyle(
     fontFamily: 'EBGaramond',
     fontWeight: FontWeight.w600,
@@ -31,7 +30,6 @@ class FlashcardTile extends StatelessWidget {
     color: Colors.black,
   );
 
-  // 👉 Thai script font (Sarabun)
   static const TextStyle _thaiStyle = TextStyle(
     fontFamily: 'Sarabun',
     fontWeight: FontWeight.w600,
@@ -40,7 +38,6 @@ class FlashcardTile extends StatelessWidget {
     color: Colors.black,
   );
 
-  // 👉 Phonetic transcription
   static const TextStyle _phoneticStyle = TextStyle(
     fontFamily: 'CharisSIL',
     fontSize: 18,
@@ -48,9 +45,8 @@ class FlashcardTile extends StatelessWidget {
     color: Colors.black54,
   );
 
-  // 👉 Meaning (Inter for English / translations)
   static const TextStyle _meaningStyle = TextStyle(
-    fontFamily: 'Inter', // ✅ switched from EBGaramond
+    fontFamily: 'Inter',
     fontSize: 21,
     height: 1.3,
     color: Colors.black87,
@@ -58,17 +54,16 @@ class FlashcardTile extends StatelessWidget {
     letterSpacing: 0.2,
   );
 
-  /// Builds a playable asset path for Thai audio.
   String _wordPath(String? filename) {
     if (filename == null) return '';
     final f = filename.trim();
     if (f.isEmpty) return '';
-    if (f.contains('/')) return f; // already a path
-    return 'assets/audio/thai/$f'; // 👉 now Thai path
+    if (f.contains('/')) return f;
+    return 'assets/audio/thai/$f';
   }
 
   Future<void> _playWord(BuildContext context) async {
-    final path = _wordPath(card.audioThai); // 👉 Thai audio key
+    final path = _wordPath(card.audioThai);
     if (path.isEmpty) return;
     try {
       await audio.playAsset(path);
@@ -81,7 +76,6 @@ class FlashcardTile extends StatelessWidget {
   }
 
   bool _containsThai(String text) {
-    // Unicode range for Thai script
     return RegExp(r'[\u0E00-\u0E7F]').hasMatch(text);
   }
 
@@ -91,59 +85,62 @@ class FlashcardTile extends StatelessWidget {
     final hasPhonetic = card.phonetic.trim().isNotEmpty;
     final hasMeaning = localized.trim().isNotEmpty;
 
-    final headword = card.scottish.trim(); // may contain Thai text
+    final headword = card.scottish.trim();
     final headwordStyle =
-        _containsThai(headword) ? _thaiStyle : _headwordStyle; // 👉 auto-switch
+        _containsThai(headword) ? _thaiStyle : _headwordStyle;
 
-    return InkWell(
-      onTap: () => onCardSelected(index),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center, // 🔑 vertical centering
-          children: [
-            // --- English meaning on the left ---
-            Expanded(
-              child: hasMeaning
-                  ? Text(
-                      localized,
-                      style: _meaningStyle, // ✅ Inter for English
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                  : const Text('—', style: _meaningStyle),
-            ),
+    return Material(
+      type: MaterialType.transparency, // ✅ fixes “No Material widget found”
+      child: InkWell(
+        onTap: () => onCardSelected(index),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // --- Meaning on the left ---
+              Expanded(
+                child: hasMeaning
+                    ? Text(
+                        localized,
+                        style: _meaningStyle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : const Text('—', style: _meaningStyle),
+              ),
 
-            // --- Thai + phonetic stacked, right aligned ---
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  headword,
-                  style: headwordStyle, // 👉 Sarabun for Thai
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (hasPhonetic)
+              // --- Thai / headword + phonetic stacked right ---
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
                   Text(
-                    card.phonetic,
-                    style: _phoneticStyle,
+                    headword,
+                    style: headwordStyle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-              ],
-            ),
+                  if (hasPhonetic)
+                    Text(
+                      card.phonetic,
+                      style: _phoneticStyle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
 
-            const SizedBox(width: 6),
+              const SizedBox(width: 6),
 
-            // --- Speaker on the far right ---
-            IconButton(
-              icon: const Icon(Icons.volume_up, color: Colors.black38),
-              tooltip: 'Play word',
-              onPressed: () => _playWord(context),
-            ),
-          ],
+              // --- Speaker icon ---
+              IconButton(
+                icon: const Icon(Icons.volume_up, color: Colors.black38),
+                tooltip: 'Play word',
+                onPressed: () => _playWord(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

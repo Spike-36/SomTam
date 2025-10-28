@@ -6,13 +6,13 @@ class HomeScreen extends StatelessWidget {
   final VoidCallback onLanguageTap;
   final VoidCallback onAudioTap;
 
-  // 🔧 New autoplay props
+  // 🔧 Autoplay props
   final bool autoAudio;
   final ValueChanged<bool> onAutoAudioChanged;
 
-  // 🔧 Gap values
+  // 🔧 Layout constants
   static const double topGap = 65;
-  static const double autoplayBlockHeight = 100.0; // 🔄 slightly reduced height
+  static const double autoplayBlockHeight = 100.0;
   static const double autoplaySwitchBoxWidth = 80.0;
 
   const HomeScreen({
@@ -52,8 +52,9 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // --- Beta label ---
             const SizedBox(height: 8),
+
+            // --- Beta label ---
             const Center(
               child: Text(
                 'beta 1.0',
@@ -61,8 +62,33 @@ class HomeScreen extends StatelessWidget {
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w400,
                   fontSize: 17,
-                  color: Color(0xFF003478), // SomTam blue
+                  color: Color(0xFF003478),
                   letterSpacing: 0.6,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 40),
+
+            // 👉 Start button moved up here
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF003478),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 36),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: onAudioTap,
+                child: const Text(
+                  'Start',
+                  style: TextStyle(
+                    fontFamily: 'SourceSerif4',
+                    fontSize: 20,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -75,7 +101,7 @@ class HomeScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center, // 🔄 centers vertically
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Align(
