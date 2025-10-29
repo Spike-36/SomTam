@@ -119,7 +119,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     );
   }
 
-  // 👉 new Home button variant (smaller + square)
+  // 👉 small rectangular Home button
   Widget _homeButton(VoidCallback onPressed) {
     return Material(
       color: Colors.white.withOpacity(0.95),
@@ -272,22 +272,16 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
         children: [
           swipeable,
 
-          // 👉 Home button bottom-left over image
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 12,
-                bottom:
-                    kChevronOuterPad + MediaQuery.of(context).padding.bottom,
-              ),
-              child: _homeButton(() {
-                Navigator.popUntil(context, (route) => route.isFirst);
-              }),
-            ),
+          // 🔄 Home button just BELOW the image, left-aligned
+          Positioned(
+            left: 12,
+            top: screenHeight * 0.45 + 12, // imageHeight + equal margin
+            child: _homeButton(() {
+              Navigator.popUntil(context, (route) => route.isFirst);
+            }),
           ),
 
-          // 👉 Previous
+          // 👉 Previous (unchanged)
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
@@ -301,7 +295,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             ),
           ),
 
-          // 👉 Next
+          // 👉 Next (unchanged)
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(

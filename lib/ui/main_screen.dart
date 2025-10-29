@@ -1,14 +1,16 @@
+// 🔄 main_screen.dart — wired Start button + working chevrons via onIndexChange
+
 import 'package:flutter/material.dart';
 import '../data/repository.dart';
-import '../data/card.dart'; // ✅ add this so Flashcard type is known
+import '../data/card.dart';
 import '../services/audio_service.dart';
 import 'home_screen.dart';
 import 'deck_screen.dart';
 import 'flashcard_detail_screen.dart';
 
-/// Minimal navigation structure:
+/// Minimal navigation:
 /// HomeScreen → DeckScreen → FlashcardDetailScreen
-/// No bottom tab bar. Home button on FlashcardDetailScreen returns to Home.
+/// Detail screen chevrons update index via onIndexChange (StatefulBuilder route).
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -17,16 +19,17 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  // 👉 Shared audio service
   late final audio = AudioService();
 
-  // ✅ Explicitly typed as Future<List<Flashcard>>
+  // 👉 Load cards once
   late final Future<List<Flashcard>> cardsFuture = Repository().load();
 
+  // 👉 Home toggle
   bool autoAudio = false;
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Explicitly typed FutureBuilder
     return FutureBuilder<List<Flashcard>>(
       future: cardsFuture,
       builder: (context, snapshot) {
@@ -41,14 +44,12 @@ class _MainScreenState extends State<MainScreen> {
         if (snapshot.hasError) {
           return MaterialApp(
             home: Scaffold(
-              body: Center(
-                child: Text('Error: ${snapshot.error}'),
-              ),
+              body: Center(child: Text('Error: ${snapshot.error}')),
             ),
           );
         }
 
-        final cards = snapshot.data!; // ✅ now correctly typed as List<Flashcard>
+        final cards = snapshot.data!;
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -62,36 +63,44 @@ class _MainScreenState extends State<MainScreen> {
               languageCode: 'en',
               autoAudio: autoAudio,
               onLanguageTap: () {},
-              onAudioTap: () {},
               onAutoAudioChanged: (val) => setState(() => autoAudio = val),
-            ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF003478),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 36),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () {
+
+              // 👉 TOP "Start" button action (now active)
+              onAudioTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => DeckScreen(
                       cards: cards,
                       audio: audio,
-                      onCardSelected: (index) {
+
+                      // 👉 When a card is tapped in Deck, push Detail with live index state
+                      onCardSelected: (startIndex) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => FlashcardDetailScreen(
-                              cards: cards,
-                              index: index,
-                              audio: audio,
-                            ),
+                            builder: (context) {
+                              // 🔧 Local index state for this route
+                              int currentIndex = startIndex;
+
+                              return StatefulBuilder(
+                                builder: (context, setRouteState) {
+                                  return FlashcardDetailScreen(
+                                    cards: cards,
+                                    index: currentIndex,
+                                    audio: audio,
+                                    // 👉 chevrons call this and we just setState the local index
+                                    onIndexChange: (nextIndex) {
+                                      setRouteState(() {
+                                        currentIndex = nextIndex;
+                                      });
+                                    },
+                                    // 👉 forward the Home toggle if you want autoplay behavior
+                                    autoAudio: autoAudio, // optional but harmless
+                                  );
+                                },
+                              );
+                            },
                           ),
                         );
                       },
@@ -99,14 +108,6 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 );
               },
-              child: const Text(
-                'Start',
-                style: TextStyle(
-                  fontFamily: 'SourceSerif4',
-                  fontSize: 20,
-                  color: Colors.white,
-                ),
-              ),
             ),
           ),
         );
