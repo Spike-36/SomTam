@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import '../I18n/i18n.dart';
+import 'widgets/home_button_overlay.dart'; // 👉 added import
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
@@ -119,23 +120,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     );
   }
 
-  // 👉 small rectangular Home button
-  Widget _homeButton(VoidCallback onPressed) {
-    return Material(
-      color: Colors.white.withOpacity(0.95),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      elevation: 3,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onPressed,
-        child: const Padding(
-          padding: EdgeInsets.all(10),
-          child: Icon(Icons.home, size: 28, color: Colors.black87),
-        ),
-      ),
-    );
-  }
-
   bool _containsThai(String text) {
     return RegExp(r'[\u0E00-\u0E7F]').hasMatch(text);
   }
@@ -148,6 +132,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
 
     final screenHeight = MediaQuery.of(context).size.height;
     final imageHeight = screenHeight * 0.45;
+    final statusBarTop = MediaQuery.of(context).padding.top;
     final headword = (card.thai ?? '').trim();
     final headwordFont = _containsThai(headword) ? 'Sarabun' : 'EBGaramond';
 
@@ -169,8 +154,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 12),
-
-                // 👉 Combined layout for Thai + Speaker + Phonetic
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -272,21 +255,19 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
         children: [
           swipeable,
 
-          // 🔄 Home button just BELOW the image, left-aligned
-          Positioned(
+          // 🔄 Home button overlay (replaces old _homeButton)
+          HomeButtonOverlay(
+            top: statusBarTop + 12,
             left: 12,
-            top: screenHeight * 0.45 + 12, // imageHeight + equal margin
-            child: _homeButton(() {
-              Navigator.popUntil(context, (route) => route.isFirst);
-            }),
+            onTap: () => Navigator.popUntil(context, (route) => route.isFirst),
           ),
 
-          // 👉 Previous (unchanged)
+          // 👉 Previous button - bottom-left
           Align(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.bottomLeft,
             child: Padding(
               padding: EdgeInsets.only(
-                left: 72,
+                left: 8,
                 bottom:
                     kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
@@ -295,7 +276,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
             ),
           ),
 
-          // 👉 Next (unchanged)
+          // 👉 Next button - bottom-right
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(

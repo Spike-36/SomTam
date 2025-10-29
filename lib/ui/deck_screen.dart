@@ -62,58 +62,23 @@ class _DeckScreenState extends State<DeckScreen> {
     _rebuildRows();
   }
 
-  List<String> _sortedTypes(List<Flashcard> cards) {
-    final types = cards
-        .map((c) => (c.type).trim())
-        .where((t) => t.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
-    return types;
-  }
-
-  String _display(Flashcard c) => c.meaning.toLowerCase().trim();
-
-  int _asInt(dynamic v) {
-    if (v is int) return v;
-    if (v is num) return v.toInt();
-    final s = v?.toString() ?? '';
-    return int.tryParse(s) ?? 1 << 30;
-  }
-
-  Map<String, List<Flashcard>> _grouped() {
-    final byType = <String, List<Flashcard>>{};
-    for (final c in widget.cards) {
-      final t = c.type.trim();
-      if (t.isEmpty) continue;
-      byType.putIfAbsent(t, () => []).add(c);
-    }
-
-    for (final entry in byType.entries) {
-      final lower = entry.key.toLowerCase();
-      if (lower == 'numbers' || lower == 'number') {
-        entry.value.sort((a, b) => _asInt(a.value).compareTo(_asInt(b.value)));
-      } else {
-        entry.value.sort((a, b) => _display(a).compareTo(_display(b)));
-      }
-    }
-    return byType;
-  }
-
+  // 🔄 Build rows preserving Repository order completely
   void _rebuildRows() {
-    final grouped = _grouped();
-    final typeOrder = _sortedTypes(widget.cards);
     final rows = <_Row>[];
     final sectionStarts = <String, int>{};
+    String? lastType;
 
-    for (final type in typeOrder) {
-      sectionStarts[type] = rows.length;
-      rows.add(_Row.header(type));
-      final cardsOfType = grouped[type] ?? const <Flashcard>[];
-      for (final c in cardsOfType) {
-        rows.add(_Row.item(c));
+    for (final c in widget.cards) {
+      final type = c.type.trim();
+
+      // Whenever the type changes, add a header
+      if (type.isNotEmpty && type != lastType) {
+        sectionStarts[type] = rows.length;
+        rows.add(_Row.header(type));
+        lastType = type;
       }
-      rows.add(const _Row.header('')); // spacer row
+
+      rows.add(_Row.item(c));
     }
 
     setState(() {
@@ -124,23 +89,32 @@ class _DeckScreenState extends State<DeckScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // If showing type index list
     if (_mode == _DeckViewMode.typeIndex) {
-      final types = _sortedTypes(widget.cards);
-      return Container( // 👉 ensures white background
+      // Build unique type list in the order it appears in cards
+      final orderedTypes = <String>[];
+      for (final c in widget.cards) {
+        final t = c.type.trim();
+        if (t.isNotEmpty && !orderedTypes.contains(t)) {
+          orderedTypes.add(t);
+        }
+      }
+
+      return Container(
         color: Colors.white,
         child: SafeArea(
           top: true,
           bottom: false,
           child: ListView.separated(
-            itemCount: types.length,
+            itemCount: orderedTypes.length,
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, i) {
-              final t = types[i];
+              final t = orderedTypes[i];
               return Material(
                 color: Colors.transparent,
                 child: ListTile(
                   title: Text(
-                    t.isNotEmpty ? (t[0].toUpperCase() + t.substring(1)) : t,
+                    t[0].toUpperCase() + t.substring(1),
                     style: const TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 18,
@@ -171,8 +145,8 @@ class _DeckScreenState extends State<DeckScreen> {
       );
     }
 
-    // 👉 List view (dividers removed)
-    return Container( // 👉 ensures white background
+    // 👉 Continuous list view (Repository order)
+    return Container(
       color: Colors.white,
       child: SafeArea(
         top: true,
@@ -183,10 +157,8 @@ class _DeckScreenState extends State<DeckScreen> {
           itemCount: _rows.length,
           itemBuilder: (context, i) {
             final row = _rows[i];
-
             if (row.isHeader) {
               final title = row.header ?? '';
-              if (title.isEmpty) return const SizedBox(height: 8);
               return Container(
                 color: const Color(0xFFF3F4F6),
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
@@ -206,9 +178,8 @@ class _DeckScreenState extends State<DeckScreen> {
             final card = row.card;
             if (card == null) return const SizedBox.shrink();
 
-            // 👉 render card (divider removed)
             return FlashcardTile(
-              cards: const [],
+              cards: [card],
               index: 0,
               audio: widget.audio,
               languageCode: widget.languageCode,
@@ -219,23 +190,10 @@ class _DeckScreenState extends State<DeckScreen> {
                   widget.onCardSelected?.call(globalIndex);
                 }
               },
-            )._withCard(card);
+            );
           },
         ),
       ),
-    );
-  }
-}
-
-// --- Helper ---
-extension _FlashcardTileWithCard on FlashcardTile {
-  Widget _withCard(Flashcard card) {
-    return FlashcardTile(
-      cards: [card],
-      index: 0,
-      audio: audio,
-      onCardSelected: onCardSelected,
-      languageCode: languageCode,
     );
   }
 }

@@ -12,17 +12,9 @@ class Repository {
     // 1) Remap incoming JSON to the legacy keys the model/UI expects.
     final mapped = list.map(_mapKoreanEnglishToLegacyKeys).toList();
 
-    // 👉 Simple phonetic log to confirm data integrity
-  /*   for (final m in mapped) {
-      final phon = m['phonetic'] ?? '';
-      if (phon.toString().isNotEmpty) {
-        print('🧩 PHONETIC for ${m['id']}: $phon');
-      }
-    } */
-
     // 2) Sort by type; inside each type:
-    //    - numbers → by numeric `value`
-    //    - others  → alphabetically by display string (scottish/thai)
+    //    - numbers → by numeric `numeral`
+    //    - others  → alphabetically by English field
     mapped.sort(_typeAwareMapComparator);
 
     // 3) Parse into model objects in the already-sorted order.
@@ -46,14 +38,14 @@ Map<String, dynamic> _mapKoreanEnglishToLegacyKeys(Map<String, dynamic> src) {
   m['audioScottishSlow']    = m['audioThai'];       // optional: reuse same clip for slow version
   m['audioScottishContext'] = m['audioEnglish'];    // use English as "context" clip
 
-  // id, image, showIndex, type, value, etc. pass through unchanged
+  // id, image, showIndex, type, numeral, etc. pass through unchanged
   return m;
 }
 
 /// Comparator that:
 /// 1) sorts by 'type' (case-insensitive),
-/// 2) if type == 'numbers' → numeric sort by 'value',
-/// 3) otherwise → alphabetical by display term (scottish/thai), with fallbacks.
+/// 2) if type == 'numbers' → numeric sort by 'numeral',
+/// 3) otherwise → alphabetical by English field.
 int _typeAwareMapComparator(Map<String, dynamic> a, Map<String, dynamic> b) {
   final ta = (a['type'] ?? '').toString().toLowerCase();
   final tb = (b['type'] ?? '').toString().toLowerCase();
@@ -62,31 +54,18 @@ int _typeAwareMapComparator(Map<String, dynamic> a, Map<String, dynamic> b) {
   if (byType != 0) return byType;
 
   if (ta == 'numbers') {
-    final va = _asInt(a['value']);
-    final vb = _asInt(b['value']);
+    final va = _asInt(a['numeral']);
+    final vb = _asInt(b['numeral']);
     return va.compareTo(vb);
   }
 
-  final sa = _displayString(a);
-  final sb = _displayString(b);
-  return sa.compareTo(sb);
+  final ea = (a['english'] ?? a['meaning'] ?? '').toString().toLowerCase().trim();
+  final eb = (b['english'] ?? b['meaning'] ?? '').toString().toLowerCase().trim();
+  return ea.compareTo(eb);
 }
 
 int _asInt(dynamic v) {
   if (v is int) return v;
   if (v is num) return v.toInt();
   return int.tryParse(v?.toString() ?? '') ?? 0;
-}
-
-String _displayString(Map<String, dynamic> m) {
-  // Prefer the remapped 'scottish' (now Thai). Fall back sensibly.
-  final s = (m['scottish'] ??
-          m['thai'] ??
-          m['foreign'] ??   // legacy foreign script if present
-          m['meaning'] ??   // English gloss as last resort
-          '')
-      .toString()
-      .toLowerCase()
-      .trim();
-  return s;
 }
