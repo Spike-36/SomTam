@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import '../I18n/i18n.dart';
-import 'widgets/home_button_overlay.dart'; // 👉 added import
+import 'widgets/back_button_common.dart'; // 🔄 swapped import
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
@@ -255,11 +255,10 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
         children: [
           swipeable,
 
-          // 🔄 Home button overlay (replaces old _homeButton)
-          HomeButtonOverlay(
-            top: statusBarTop + 12,
-            left: 12,
-            onTap: () => Navigator.popUntil(context, (route) => route.isFirst),
+          // 👉 Replaced home button with back button
+          BackButtonCommon(
+            onPressed: () => Navigator.pop(context),
+            topOffset: statusBarTop + 12,
           ),
 
           // 👉 Previous button - bottom-left

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 /// Floating Home icon overlay.
-/// - White outlined home icon on dark translucent circular background
+/// - Off-white home icon on lighter translucent dark circular background
 /// - Default: top 20, left 20 (below app bar area)
-/// - Small: 44x44 circle, 24px icon
+/// - Small: 44x44 circle, 30px icon
 class HomeButtonOverlay extends StatelessWidget {
   final VoidCallback? onTap;
   final double top;
@@ -31,13 +31,13 @@ class HomeButtonOverlay extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: const BoxDecoration(
-            color: Colors.black54,
+            color: Colors.black38, // 🔄 lighter translucent background
             shape: BoxShape.circle,
           ),
           child: const Icon(
             Icons.home_outlined,
-            color: Colors.white,
-            size: 24,
+            color: Colors.white, // off-white icon
+            size: 30, // 🔄 larger icon
           ),
         ),
       ),

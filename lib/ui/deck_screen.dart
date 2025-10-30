@@ -3,6 +3,7 @@ import '../data/card.dart';
 import '../services/audio_service.dart';
 import 'flashcard_tile.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'widgets/back_button_common.dart'; // 👉 Added import
 
 enum _DeckViewMode { typeIndex, listView }
 
@@ -89,9 +90,8 @@ class _DeckScreenState extends State<DeckScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // If showing type index list
+    // 👉 Type index view
     if (_mode == _DeckViewMode.typeIndex) {
-      // Build unique type list in the order it appears in cards
       final orderedTypes = <String>[];
       for (final c in widget.cards) {
         final t = c.type.trim();
@@ -105,41 +105,54 @@ class _DeckScreenState extends State<DeckScreen> {
         child: SafeArea(
           top: true,
           bottom: false,
-          child: ListView.separated(
-            itemCount: orderedTypes.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (context, i) {
-              final t = orderedTypes[i];
-              return Material(
-                color: Colors.transparent,
-                child: ListTile(
-                  title: Text(
-                    t[0].toUpperCase() + t.substring(1),
-                    style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  onTap: () {
-                    if (_rows.isEmpty || _sectionStarts.isEmpty) {
-                      _rebuildRows();
-                    }
-                    final targetIndex = _sectionStarts[t] ?? 0;
-                    setState(() => _mode = _DeckViewMode.listView);
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (_itemScrollController.isAttached) {
-                        _itemScrollController.scrollTo(
-                          index: targetIndex,
-                          duration: const Duration(milliseconds: 450),
-                          curve: Curves.easeInOutCubic,
-                        );
-                      }
-                    });
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 👉 Inline back button for type list
+              BackButtonCommon(
+                inline: true,
+                onPressed: () => Navigator.pop(context),
+              ),
+              Expanded(
+                child: ListView.separated(
+                  itemCount: orderedTypes.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (context, i) {
+                    final t = orderedTypes[i];
+                    return Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        title: Text(
+                          t[0].toUpperCase() + t.substring(1),
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        onTap: () {
+                          if (_rows.isEmpty || _sectionStarts.isEmpty) {
+                            _rebuildRows();
+                          }
+                          final targetIndex = _sectionStarts[t] ?? 0;
+                          setState(() => _mode = _DeckViewMode.listView);
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (_itemScrollController.isAttached) {
+                              _itemScrollController.scrollTo(
+                                index: targetIndex,
+                                duration:
+                                    const Duration(milliseconds: 450),
+                                curve: Curves.easeInOutCubic,
+                              );
+                            }
+                          });
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
+              ),
+            ],
           ),
         ),
       );
@@ -151,47 +164,61 @@ class _DeckScreenState extends State<DeckScreen> {
       child: SafeArea(
         top: true,
         bottom: false,
-        child: ScrollablePositionedList.builder(
-          itemScrollController: _itemScrollController,
-          itemPositionsListener: _itemPositionsListener,
-          itemCount: _rows.length,
-          itemBuilder: (context, i) {
-            final row = _rows[i];
-            if (row.isHeader) {
-              final title = row.header ?? '';
-              return Container(
-                color: const Color(0xFFF3F4F6),
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-                child: Text(
-                  title[0].toUpperCase() + title.substring(1),
-                  style: const TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-              );
-            }
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 👉 Inline back button for word list view
+            BackButtonCommon(
+              inline: true,
+              onPressed: () => setState(() {
+                _mode = _DeckViewMode.typeIndex;
+              }),
+            ),
+            Expanded(
+              child: ScrollablePositionedList.builder(
+                itemScrollController: _itemScrollController,
+                itemPositionsListener: _itemPositionsListener,
+                itemCount: _rows.length,
+                itemBuilder: (context, i) {
+                  final row = _rows[i];
+                  if (row.isHeader) {
+                    final title = row.header ?? '';
+                    return Container(
+                      color: const Color(0xFFF3F4F6),
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                      child: Text(
+                        title[0].toUpperCase() + title.substring(1),
+                        style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    );
+                  }
 
-            final card = row.card;
-            if (card == null) return const SizedBox.shrink();
+                  final card = row.card;
+                  if (card == null) return const SizedBox.shrink();
 
-            return FlashcardTile(
-              cards: [card],
-              index: 0,
-              audio: widget.audio,
-              languageCode: widget.languageCode,
-              onCardSelected: (_) {
-                final globalIndex =
-                    widget.cards.indexWhere((c) => c.id == card.id);
-                if (globalIndex != -1) {
-                  widget.onCardSelected?.call(globalIndex);
-                }
-              },
-            );
-          },
+                  return FlashcardTile(
+                    cards: [card],
+                    index: 0,
+                    audio: widget.audio,
+                    languageCode: widget.languageCode,
+                    onCardSelected: (_) {
+                      final globalIndex =
+                          widget.cards.indexWhere((c) => c.id == card.id);
+                      if (globalIndex != -1) {
+                        widget.onCardSelected?.call(globalIndex);
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
