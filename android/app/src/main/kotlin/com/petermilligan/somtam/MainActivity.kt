@@ -1,4 +1,4 @@
-package com.petermilligan.wordkimchi
+package com.petermilligan.somtam
 
 import io.flutter.embedding.android.FlutterActivity
 
