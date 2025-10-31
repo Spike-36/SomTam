@@ -15,11 +15,11 @@ class BackButtonCommon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final button = Material(
-      color: Colors.white.withOpacity(0.85),
+      color: Colors.white.withOpacity(0.60),
       shape: const CircleBorder(),
       elevation: 3,
       child: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 32),
+        icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 32),
         onPressed: onPressed,
       ),
     );

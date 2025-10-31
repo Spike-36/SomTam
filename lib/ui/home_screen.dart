@@ -12,8 +12,6 @@ class HomeScreen extends StatelessWidget {
 
   // 🔧 Layout constants
   static const double topGap = 65;
-  static const double autoplayBlockHeight = 100.0;
-  static const double autoplaySwitchBoxWidth = 80.0;
 
   const HomeScreen({
     super.key,
@@ -29,13 +27,13 @@ class HomeScreen extends StatelessWidget {
     fontSize: 18,
     fontWeight: FontWeight.w400,
     height: 1.3,
-    color: Colors.black,
+    color: Colors.white,
   );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF2A11A), // 🟠 Somtam orange
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -46,37 +44,55 @@ class HomeScreen extends StatelessWidget {
             // --- Logo ---
             Center(
               child: Image.asset(
-                'assets/images/ui/somtam_logo.png',
+                'assets/images/ui/somtam_logo_new.png',
                 width: 260,
                 fit: BoxFit.contain,
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 30),
 
             // --- Beta label ---
             const Center(
-              child: Text(
-                'beta 1.0',
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 17,
-                  color: Color(0xFF003478),
-                  letterSpacing: 0.6,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Beta Trial - Chiang Mai',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 17,
+                      color: Colors.white,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'November 2025',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      color: Colors.white,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ],
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 65), // 🔄 Lowered Start button by +25px
 
-            // 👉 Start button moved up here
+            // --- Start button (outlined white) ---
             Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF003478),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 36),
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.white, width: 2),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 27,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -85,7 +101,8 @@ class HomeScreen extends StatelessWidget {
                 child: const Text(
                   'Start',
                   style: TextStyle(
-                    fontFamily: 'SourceSerif4',
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
                     fontSize: 20,
                     color: Colors.white,
                   ),
@@ -93,41 +110,48 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            const Spacer(),
+            const SizedBox(height: 45), // 🔄 halfway between Start and bottom
 
-            // --- Automatic Audio toggle ---
-            SizedBox(
-              height: autoplayBlockHeight,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Automatic Audio',
-                          style: _labelStyle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+            // --- Audio On toggle ---
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 60), // 🔄 tighter, centered
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Audio On',
+                    style: _labelStyle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Transform.scale(
+                    scale: 0.9,
+                    child: Switch.adaptive(
+                      value: autoAudio,
+                      onChanged: onAutoAudioChanged,
+                      activeColor: Colors.white,
+                      inactiveThumbColor: Colors.white70,
+                      inactiveTrackColor: Colors.white30,
                     ),
-                    SizedBox(
-                      width: autoplaySwitchBoxWidth,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Switch.adaptive(
-                          value: autoAudio,
-                          onChanged: onAutoAudioChanged,
-                          activeColor: Colors.black,
-                          inactiveThumbColor: Colors.black54,
-                          inactiveTrackColor: Colors.black26,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 28), // 🔄 gap below Audio On row
+
+            // --- Email label (non-clickable) ---
+            const Center(
+              child: Text(
+                'pete@kumamoto.dev',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15,
+                  color: Colors.white,
+                  letterSpacing: 0.4,
                 ),
               ),
             ),

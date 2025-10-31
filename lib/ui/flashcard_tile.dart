@@ -25,7 +25,7 @@ class FlashcardTile extends StatelessWidget {
   static const TextStyle _headwordStyle = TextStyle(
     fontFamily: 'EBGaramond',
     fontWeight: FontWeight.w600,
-    fontSize: 18,
+    fontSize: 20,
     height: 1.15,
     color: Colors.black,
   );
@@ -33,21 +33,21 @@ class FlashcardTile extends StatelessWidget {
   static const TextStyle _thaiStyle = TextStyle(
     fontFamily: 'Sarabun',
     fontWeight: FontWeight.w600,
-    fontSize: 20,
+    fontSize: 16,
     height: 1.2,
     color: Colors.black,
   );
 
   static const TextStyle _phoneticStyle = TextStyle(
     fontFamily: 'CharisSIL',
-    fontSize: 18,
+    fontSize: 16,
     height: 1.2,
     color: Colors.black54,
   );
 
   static const TextStyle _meaningStyle = TextStyle(
     fontFamily: 'Inter',
-    fontSize: 21,
+    fontSize: 16,
     height: 1.3,
     color: Colors.black87,
     fontWeight: FontWeight.w600,

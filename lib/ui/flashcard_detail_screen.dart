@@ -27,9 +27,9 @@ class FlashcardDetailScreen extends StatefulWidget {
 }
 
 // ===================== Styles ======================
-const double kHeadwordSize = 48;
-const double kPhoneticSize = 26;
-const double kMeaningSize = 26;
+const double kHeadwordSize = 40;
+const double kPhoneticSize = 22;
+const double kMeaningSize = 22;
 
 const double kChevronButtonSize = 56.0;
 const double kChevronIconSize = 32.0;
