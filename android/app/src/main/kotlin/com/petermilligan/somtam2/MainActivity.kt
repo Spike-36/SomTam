@@ -1,4 +1,4 @@
-package com.petermilligan.somtam
+package com.petermilligan.somtam2
 
 import io.flutter.embedding.android.FlutterActivity
 
