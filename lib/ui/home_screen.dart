@@ -4,7 +4,9 @@ import '../I18n/i18n.dart';
 class HomeScreen extends StatelessWidget {
   final String languageCode;
   final VoidCallback onLanguageTap;
-  final VoidCallback onAudioTap;
+
+  // 🔄 RENAMED: onAudioTap → onStart
+  final VoidCallback onStart; // 👉 renamed
 
   // 🔧 Autoplay props
   final bool autoAudio;
@@ -14,7 +16,10 @@ class HomeScreen extends StatelessWidget {
     super.key,
     required this.languageCode,
     required this.onLanguageTap,
-    required this.onAudioTap,
+
+    // 🔄 RENAMED PARAMETER
+    required this.onStart, // 👉 renamed
+
     required this.autoAudio,
     required this.onAutoAudioChanged,
   });
@@ -108,7 +113,10 @@ class HomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: onAudioTap,
+
+                // 🔄 RENAMED: onAudioTap → onStart
+                onPressed: onStart, // 👉
+
                 child: const Text(
                   'Start',
                   style: TextStyle(

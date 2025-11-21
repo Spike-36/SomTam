@@ -1,16 +1,19 @@
-// 🔄 main_screen.dart — wired Start button + working chevrons via onIndexChange
+// 🔄 main_screen.dart — Start → CategoryOverviewScreen + preserved navigation
 
 import 'package:flutter/material.dart';
 import '../data/repository.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
+
+// 👉 NEW IMPORT
+import 'category_overview_screen.dart';
+
 import 'home_screen.dart';
 import 'deck_screen.dart';
 import 'flashcard_detail_screen.dart';
 
-/// Minimal navigation:
-/// HomeScreen → DeckScreen → FlashcardDetailScreen
-/// Detail screen chevrons update index via onIndexChange (StatefulBuilder route).
+/// Navigation flow:
+/// HomeScreen → CategoryOverviewScreen → DeckScreen (filtered) → FlashcardDetailScreen
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -19,13 +22,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // 👉 Shared audio service
+  // Shared audio service
   late final audio = AudioService();
 
-  // 👉 Load cards once
+  // Load card list once
   late final Future<List<Flashcard>> cardsFuture = Repository().load();
 
-  // 👉 Home toggle
+  // Home toggle
   bool autoAudio = false;
 
   @override
@@ -65,42 +68,58 @@ class _MainScreenState extends State<MainScreen> {
               onLanguageTap: () {},
               onAutoAudioChanged: (val) => setState(() => autoAudio = val),
 
-              // 👉 TOP "Start" button action (now active)
-              onAudioTap: () {
+              // 🔄 REPLACED: Start → DeckScreen
+              // 👉 Start → CategoryOverviewScreen
+              onStart: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => DeckScreen(
-                      cards: cards,
-                      audio: audio,
+                    builder: (context) => CategoryOverviewScreen(
+                      onCategorySelected: (selectedCategory) {
+                        // 👉 Filter cards by selected category
+                        final filtered = cards
+                            .where((c) =>
+                                c.type.trim().toLowerCase() ==
+                                selectedCategory.trim().toLowerCase())
+                            .toList();
 
-                      // 👉 When a card is tapped in Deck, push Detail with live index state
-                      onCardSelected: (startIndex) {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) {
-                              // 🔧 Local index state for this route
-                              int currentIndex = startIndex;
+                            builder: (context) => DeckScreen(
+                              cards: filtered,
+                              audio: audio,
 
-                              return StatefulBuilder(
-                                builder: (context, setRouteState) {
-                                  return FlashcardDetailScreen(
-                                    cards: cards,
-                                    index: currentIndex,
-                                    audio: audio,
-                                    // 👉 chevrons call this and we just setState the local index
-                                    onIndexChange: (nextIndex) {
-                                      setRouteState(() {
-                                        currentIndex = nextIndex;
-                                      });
+                              // Card tap → Detail screen
+                              onCardSelected: (startIndex) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      int currentIndex = startIndex;
+
+                                      return StatefulBuilder(
+                                        builder: (context, setRouteState) {
+                                          return FlashcardDetailScreen(
+                                            cards: filtered,
+                                            index: currentIndex,
+                                            audio: audio,
+
+                                            onIndexChange: (nextIndex) {
+                                              setRouteState(() {
+                                                currentIndex = nextIndex;
+                                              });
+                                            },
+
+                                            autoAudio: autoAudio,
+                                          );
+                                        },
+                                      );
                                     },
-                                    // 👉 forward the Home toggle if you want autoplay behavior
-                                    autoAudio: autoAudio, // optional but harmless
-                                  );
-                                },
-                              );
-                            },
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         );
                       },
