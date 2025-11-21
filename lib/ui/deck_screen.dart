@@ -179,7 +179,7 @@ class _DeckScreenState extends State<DeckScreen> {
                       final title = row.header ?? '';
                       return Container(
                         width: double.infinity,
-                        color: const Color(0xFFF2A11A),
+                        color: const Color(0xFFFF6B3D),
                         child: Padding(
                           padding:
                               const EdgeInsets.fromLTRB(16, 14, 16, 10),

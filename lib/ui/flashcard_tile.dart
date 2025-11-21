@@ -47,7 +47,7 @@ class FlashcardTile extends StatelessWidget {
 
   static const TextStyle _meaningStyle = TextStyle(
     fontFamily: 'Inter',
-    fontSize: 16,
+    fontSize: 17,
     height: 1.3,
     color: Colors.black87,
     fontWeight: FontWeight.w600,

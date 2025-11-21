@@ -10,9 +10,6 @@ class HomeScreen extends StatelessWidget {
   final bool autoAudio;
   final ValueChanged<bool> onAutoAudioChanged;
 
-  // 🔧 Layout constants
-  static const double topGap = 65;
-
   const HomeScreen({
     super.key,
     required this.languageCode,
@@ -21,6 +18,13 @@ class HomeScreen extends StatelessWidget {
     required this.autoAudio,
     required this.onAutoAudioChanged,
   });
+
+  // --- Layout controls (clean + predictable) ---
+  static const double topGap = 25;
+  static const double headingGap = 40;
+
+  static const double startButtonBottomSpacing = 40;   // distance between Start and Auto-Audio block
+  static const double autoAudioBottomSpacing = 40;      // gap under the Auto-Audio block
 
   static const TextStyle _labelStyle = TextStyle(
     fontFamily: 'SourceSerif4',
@@ -33,11 +37,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF), // ⚪ White background
+      backgroundColor: const Color(0xFFFFFFFF),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const SizedBox(height: topGap),
 
@@ -45,99 +48,111 @@ class HomeScreen extends StatelessWidget {
             Center(
               child: Image.asset(
                 'assets/images/ui/yumWordsLogo.png',
-                width: 300,
+                width: 375,
                 fit: BoxFit.contain,
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: headingGap),
 
-            // 👉 Thai flag image
+            // --- Thai heading ---
+            const Center(
+              child: Text(
+                'ประเทศไทย',
+                style: TextStyle(
+                  fontFamily: 'Sarabun',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 32,
+                  color: Color(0xFFFF6B3D),
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            // --- Thai flag ---
             Center(
               child: Image.asset(
                 'assets/images/ui/thaiFlag.png',
-                width: 100,
+                width: 80,
                 fit: BoxFit.contain,
               ),
             ),
 
             const SizedBox(height: 14),
 
-            // --- Heading: Thailand ---
+            // --- English heading ---
             const Center(
               child: Text(
                 'Thailand',
                 style: TextStyle(
                   fontFamily: 'Inter',
-                  fontWeight: FontWeight.w600, // Semi-bold
+                  fontWeight: FontWeight.w600,
                   fontSize: 32,
-                  color: Color(0xFFFF6B3D), // 🟠 bright orange
+                  color: Color(0xFFFF6B3D),
                   letterSpacing: 0.5,
                 ),
               ),
             ),
 
-            // --- Spacer to push controls to bottom ---
             const Spacer(),
 
-            // --- Start button (outlined green) ---
-Center(
-  child: OutlinedButton(
-    style: OutlinedButton.styleFrom(
-      side: const BorderSide(color: Color(0xFF7CC576), width: 2), // 🟢 green border
-      padding: const EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 27,
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-    onPressed: onAudioTap,
-    child: const Text(
-      'Start',
-      style: TextStyle(
-        fontFamily: 'Inter',
-        fontWeight: FontWeight.w400,
-        fontSize: 20,
-        color: Color(0xFF7CC576), // 🟢 green text
-      ),
-    ),
-  ),
-),
+            // --- Start button ---
+            Center(
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFF7CC576), width: 2),
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 27),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: onAudioTap,
+                child: const Text(
+                  'Start',
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 20,
+                    color: Color(0xFF7CC576),
+                  ),
+                ),
+              ),
+            ),
 
+            const SizedBox(height: startButtonBottomSpacing),
 
-            const SizedBox(height: 30),
-
-            // --- Audio On toggle ---
+            // --- Auto-Audio toggle block ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 60),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Auto-Audio',
-                    style: _labelStyle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    autoAudio ? 'Auto-Audio On' : 'Auto-Audio Off',
+                    style: _labelStyle.copyWith(
+                      color: autoAudio
+                          ? const Color(0xFF7CC576)
+                          : const Color(0xFFFF6B3D),
+                    ),
                   ),
                   Transform.scale(
                     scale: 0.9,
                     child: Switch.adaptive(
                       value: autoAudio,
                       onChanged: onAutoAudioChanged,
-                      activeColor: Colors.black,
-                      activeTrackColor: Colors.black54,
-                      inactiveThumbColor: Colors.black45,
-                      inactiveTrackColor: Colors.black26,
+                      activeColor: const Color(0xFF7CC576),
+                      activeTrackColor: const Color(0xFF7CC576).withOpacity(0.5),
+                      inactiveThumbColor: const Color(0xFFFF6B3D),
+                      inactiveTrackColor: const Color(0xFFFF6B3D).withOpacity(0.4),
                     ),
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 40), // Gap at bottom
+            const SizedBox(height: autoAudioBottomSpacing),
           ],
         ),
       ),
