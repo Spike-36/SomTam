@@ -5,7 +5,7 @@ import '../data/repository.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 
-// 👉 NEW IMPORT
+// NEW IMPORT
 import 'category_overview_screen.dart';
 
 import 'home_screen.dart';
@@ -68,20 +68,22 @@ class _MainScreenState extends State<MainScreen> {
               onLanguageTap: () {},
               onAutoAudioChanged: (val) => setState(() => autoAudio = val),
 
-              // 🔄 REPLACED: Start → DeckScreen
-              // 👉 Start → CategoryOverviewScreen
+              // Start → CategoryOverviewScreen
               onStart: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => CategoryOverviewScreen(
                       onCategorySelected: (selectedCategory) {
-                        // 👉 Filter cards by selected category
-                        final filtered = cards
-                            .where((c) =>
-                                c.type.trim().toLowerCase() ==
-                                selectedCategory.trim().toLowerCase())
-                            .toList();
+                        final selectedLower =
+                            selectedCategory.trim().toLowerCase();
+
+                        // 🔄 Filter by membership in c.types (multi-category)
+                        final filtered = cards.where((c) {
+                          return c.types
+                              .map((t) => t.trim().toLowerCase())
+                              .contains(selectedLower);
+                        }).toList();
 
                         Navigator.push(
                           context,
@@ -89,6 +91,7 @@ class _MainScreenState extends State<MainScreen> {
                             builder: (context) => DeckScreen(
                               cards: filtered,
                               audio: audio,
+                              categoryLabel: selectedCategory,
 
                               // Card tap → Detail screen
                               onCardSelected: (startIndex) {
@@ -104,13 +107,11 @@ class _MainScreenState extends State<MainScreen> {
                                             cards: filtered,
                                             index: currentIndex,
                                             audio: audio,
-
                                             onIndexChange: (nextIndex) {
                                               setRouteState(() {
                                                 currentIndex = nextIndex;
                                               });
                                             },
-
                                             autoAudio: autoAudio,
                                           );
                                         },

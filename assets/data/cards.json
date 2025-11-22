@@ -1,1202 +1,1 @@
-[
-	{
-		"audioThai" : "0015.three.thai.mp3",
-		"english" : "three",
-		"id" : "0015",
-		"image" : "0015.three.jpg",
-		"numeral" : "3",
-		"phonetic" : "SAAM",
-		"thai" : "สาม",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0052.four.thai.mp3",
-		"english" : "four",
-		"id" : "0052",
-		"image" : "0052.four.jpg",
-		"numeral" : "4",
-		"phonetic" : "SEE",
-		"thai" : "สี่",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0078.yes.thai.mp3",
-		"english" : "yes",
-		"id" : "0078",
-		"image" : "0078.yes.jpg",
-		"numeral" : "",
-		"phonetic" : "CHAI",
-		"thai" : "ใช่",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "0085.no.thai.mp3",
-		"english" : "no",
-		"id" : "0085",
-		"image" : "0085.no.jpg",
-		"numeral" : "",
-		"phonetic" : "MAI-chai",
-		"thai" : "ไม่ใช่",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "0101.thank_you.thai.mp3",
-		"english" : "thank you",
-		"id" : "0101",
-		"image" : "0101.thank_you.jpg",
-		"numeral" : "",
-		"phonetic" : "KHOP-khun",
-		"thai" : "ขอบคุณ",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "0153.two.thai.mp3",
-		"english" : "two",
-		"id" : "0153",
-		"image" : "0153.two.jpg",
-		"numeral" : "2",
-		"phonetic" : "SAWNG",
-		"thai" : "สอง",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0168.five.thai.mp3",
-		"english" : "five",
-		"id" : "0168",
-		"image" : "0168.five.jpg",
-		"numeral" : "5",
-		"phonetic" : "HAA",
-		"thai" : "ห้า",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0180.coffee.thai.mp3",
-		"english" : "coffee",
-		"id" : "0180",
-		"image" : "0180.coffee.jpg",
-		"numeral" : "",
-		"phonetic" : "gaa-FAE",
-		"thai" : "กาแฟ",
-		"type" : "drinks"
-	},
-	{
-		"audioThai" : "0184.hello.thai.mp3",
-		"english" : "hello",
-		"id" : "0184",
-		"image" : "0184.hello.jpg",
-		"numeral" : "",
-		"phonetic" : "sa-wat-DEE",
-		"thai" : "สวัสดี",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "0188.good.thai.mp3",
-		"english" : "good",
-		"id" : "0188",
-		"image" : "0188.good.jpg",
-		"numeral" : "",
-		"phonetic" : "DEE",
-		"thai" : "ดี",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "0438.tea.thai.mp3",
-		"english" : "tea",
-		"id" : "0438",
-		"image" : "0438.tea.jpg",
-		"numeral" : "",
-		"phonetic" : "CHAA",
-		"thai" : "ชา",
-		"type" : "drinks"
-	},
-	{
-		"audioThai" : "1438.sorry.thai.mp3",
-		"english" : "sorry",
-		"id" : "1438",
-		"image" : "1438.sorry.jpg",
-		"numeral" : "",
-		"phonetic" : "KHOR-toht",
-		"thai" : "ขอโทษ",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "1398.toilet.thai.mp3",
-		"english" : "toilet",
-		"id" : "1398",
-		"image" : "1398.toilet.jpg",
-		"numeral" : "",
-		"phonetic" : "HONG-naam",
-		"thai" : "ห้องน้ำ",
-		"type" : "things"
-	},
-	{
-		"audioThai" : "1401.bill.thai.mp3",
-		"english" : "bill",
-		"id" : "1401",
-		"image" : "1401.bill.jpg",
-		"numeral" : "",
-		"phonetic" : "BIN",
-		"thai" : "บิล",
-		"type" : "things"
-	},
-	{
-		"audioThai" : "1403.delicious.thai.mp3",
-		"english" : "delicious",
-		"id" : "1403",
-		"image" : "1403.delicious.jpg",
-		"numeral" : "",
-		"phonetic" : "a-ROY",
-		"thai" : "อร่อย",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "1405.cheers.thai.mp3",
-		"english" : "cheers",
-		"id" : "1405",
-		"image" : "1405.cheers.jpg",
-		"numeral" : "",
-		"phonetic" : "chon-GAEO",
-		"thai" : "ชนแก้ว",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "0081.orange.thai.mp3",
-		"english" : "orange",
-		"id" : "0081",
-		"image" : "0081.orange.jpg",
-		"numeral" : "",
-		"phonetic" : "SOM",
-		"thai" : "ส้ม",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0189.banana.thai.mp3",
-		"english" : "banana",
-		"id" : "0189",
-		"image" : "0189.banana.jpg",
-		"numeral" : "",
-		"phonetic" : "GLUAY",
-		"thai" : "กล้วย",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0209.chicken.thai.mp3",
-		"english" : "chicken",
-		"id" : "0209",
-		"image" : "0209.chicken.jpg",
-		"numeral" : "",
-		"phonetic" : "GAI",
-		"thai" : "ไก่",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0211.beef.thai.mp3",
-		"english" : "beef",
-		"id" : "0211",
-		"image" : "0211.beef.jpg",
-		"numeral" : "",
-		"phonetic" : "NUA-wua",
-		"thai" : "เนื้อวัว",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0414.egg.thai.mp3",
-		"english" : "egg",
-		"id" : "0414",
-		"image" : "0414.egg.jpg",
-		"numeral" : "",
-		"phonetic" : "KAI",
-		"thai" : "ไข่",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0419.apple.thai.mp3",
-		"english" : "apple",
-		"id" : "0419",
-		"image" : "0419.apple.jpg",
-		"numeral" : "",
-		"phonetic" : "AEP-bpeun",
-		"thai" : "แอปเปิ้ล",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0423.rice.thai.mp3",
-		"english" : "rice",
-		"id" : "0423",
-		"image" : "0423.rice.jpg",
-		"numeral" : "",
-		"phonetic" : "KHAO",
-		"thai" : "ข้าว",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0434.sugar.thai.mp3",
-		"english" : "sugar",
-		"id" : "0434",
-		"image" : "0434.sugar.jpg",
-		"numeral" : "",
-		"phonetic" : "NAM-taan",
-		"thai" : "น้ำตาล",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0435.salt.thai.mp3",
-		"english" : "salt",
-		"id" : "0435",
-		"image" : "0435.salt.jpg",
-		"numeral" : "",
-		"phonetic" : "GLUEA",
-		"thai" : "เกลือ",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1013.vegetables.thai.mp3",
-		"english" : "vegetables",
-		"id" : "1013",
-		"image" : "1013.vegetables.jpg",
-		"numeral" : "",
-		"phonetic" : "PAK",
-		"thai" : "ผัก",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1014.meat.thai.mp3",
-		"english" : "meat",
-		"id" : "1014",
-		"image" : "1014.meat.jpg",
-		"numeral" : "",
-		"phonetic" : "NUA",
-		"thai" : "เนื้อ",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1395.menu.thai.mp3",
-		"english" : "menu",
-		"id" : "1395",
-		"image" : "1395.menu.jpg",
-		"numeral" : "",
-		"phonetic" : "MAE-noo",
-		"thai" : "เมนู",
-		"type" : "things"
-	},
-	{
-		"audioThai" : "1501.tomato.thai.mp3",
-		"english" : "tomato",
-		"id" : "1501",
-		"image" : "1501.tomato.jpg",
-		"numeral" : "",
-		"phonetic" : "ma-KHEUA-tet",
-		"thai" : "มะเขือเทศ",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1502.onion.thai.mp3",
-		"english" : "onion",
-		"id" : "1502",
-		"image" : "1502.onion.jpg",
-		"numeral" : "",
-		"phonetic" : "hua-HAWM",
-		"thai" : "หัวหอม",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1503.garlic.thai.mp3",
-		"english" : "garlic",
-		"id" : "1503",
-		"image" : "1503.garlic.jpg",
-		"numeral" : "",
-		"phonetic" : "gra-TIAM",
-		"thai" : "กระเทียม",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1505.chocolate.thai.mp3",
-		"english" : "chocolate",
-		"id" : "1505",
-		"image" : "1505.chocolate.jpg",
-		"numeral" : "",
-		"phonetic" : "CHOK-ko-laet",
-		"thai" : "ช็อกโกแลต",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0232.beer.thai.mp3",
-		"english" : "beer",
-		"id" : "0232",
-		"image" : "0232.beer.jpg",
-		"numeral" : "",
-		"phonetic" : "BIA",
-		"thai" : "เบียร์",
-		"type" : "drinks"
-	},
-	{
-		"audioThai" : "0012.one.thai.mp3",
-		"english" : "one",
-		"id" : "0012",
-		"image" : "0012.one.jpg",
-		"numeral" : "1",
-		"phonetic" : "NEUNG",
-		"thai" : "หนึ่ง",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "1444.fruit.thai.mp3",
-		"english" : "fruit",
-		"id" : "1444",
-		"image" : "1444.fruit.jpg",
-		"numeral" : "",
-		"phonetic" : "pŏn-la-MAI",
-		"thai" : "ผลไม้",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1543.noodle.thai.mp3",
-		"english" : "noodle",
-		"id" : "1543",
-		"image" : "1543.noodle.jpg",
-		"numeral" : "",
-		"phonetic" : "ba-MEE",
-		"thai" : "บะหมี่",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0158.prawn.thai.mp3",
-		"english" : "prawn",
-		"id" : "0158",
-		"image" : "0158.prawn.jpg",
-		"numeral" : "",
-		"phonetic" : "GOONG",
-		"thai" : "กุ้ง",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0178.squid.thai.mp3",
-		"english" : "squid",
-		"id" : "0178",
-		"image" : "0178.squid.jpg",
-		"numeral" : "",
-		"phonetic" : "pla-MUEK",
-		"thai" : "ปลาหมึก",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1556.basil.thai.mp3",
-		"english" : "basil",
-		"id" : "1556",
-		"image" : "1556.basil.jpg",
-		"numeral" : "",
-		"phonetic" : "ho-ra-PAA",
-		"thai" : "โหระพา",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1560.mint.thai.mp3",
-		"english" : "mint",
-		"id" : "1560",
-		"image" : "1560.mint.jpg",
-		"numeral" : "",
-		"phonetic" : "sa-ra-NAE",
-		"thai" : "สะระแหน่",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1564.coriander.thai.mp3",
-		"english" : "coriander",
-		"id" : "1564",
-		"image" : "1564.coriander.jpg",
-		"numeral" : "",
-		"phonetic" : "pak-CHEE",
-		"thai" : "ผักชี",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1571.crab.thai.mp3",
-		"english" : "crab",
-		"id" : "1571",
-		"image" : "1571.crab.jpg",
-		"numeral" : "",
-		"phonetic" : "POO",
-		"thai" : "ปู",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1582.duck.thai.mp3",
-		"english" : "duck",
-		"id" : "1582",
-		"image" : "1582.duck.jpg",
-		"numeral" : "",
-		"phonetic" : "PET",
-		"thai" : "เป็ด",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1595.vinegar.thai.mp3",
-		"english" : "vinegar",
-		"id" : "1595",
-		"image" : "1595.vinegar.jpg",
-		"numeral" : "",
-		"phonetic" : "NAM-SOM-saai-CHOO",
-		"thai" : "น้ำส้มสายชู",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1599.chilli_sauce.thai.mp3",
-		"english" : "chilli sauce",
-		"id" : "1599",
-		"image" : "1599.chilli_sauce.jpg",
-		"numeral" : "",
-		"phonetic" : "SAWT PRIK",
-		"thai" : "ซอสพริก",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0210.pork.thai.mp3",
-		"english" : "pork",
-		"id" : "0210",
-		"image" : "0210.pork.jpg",
-		"numeral" : "",
-		"phonetic" : "MOO",
-		"thai" : "หมู",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1507.pineapple.thai.mp3",
-		"english" : "pineapple",
-		"id" : "1507",
-		"image" : "1507.pineapple.jpg",
-		"numeral" : "",
-		"phonetic" : "sap-pa-ROT",
-		"thai" : "สับปะรด",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1509.mango.thai.mp3",
-		"english" : "mango",
-		"id" : "1509",
-		"image" : "1509.mango.jpg",
-		"numeral" : "",
-		"phonetic" : "ma-MUANG",
-		"thai" : "มะม่วง",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1616.carrot.thai.mp3",
-		"english" : "carrot",
-		"id" : "1616",
-		"image" : "1616.carrot.jpg",
-		"numeral" : "",
-		"phonetic" : "khae-ROT",
-		"thai" : "แครอท",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1619.pepper.thai.mp3",
-		"english" : "pepper",
-		"id" : "1619",
-		"image" : "1619.pepper.jpg",
-		"numeral" : "",
-		"phonetic" : "PRIK-yuak",
-		"thai" : "พริกหยวก",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1620.mushroom.thai.mp3",
-		"english" : "mushroom",
-		"id" : "1620",
-		"image" : "1620.mushroom.jpg",
-		"numeral" : "",
-		"phonetic" : "HET",
-		"thai" : "เห็ด",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1621.aubergine.thai.mp3",
-		"english" : "aubergine",
-		"id" : "1621",
-		"image" : "1621.aubergine.jpg",
-		"numeral" : "",
-		"phonetic" : "ma-KHEUA-MUANG",
-		"thai" : "มะเขือม่วง",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1520.cucumber.thai.mp3",
-		"english" : "cucumber",
-		"id" : "1520",
-		"image" : "1520.cucumber.jpg",
-		"numeral" : "",
-		"phonetic" : "taeng-GWAA",
-		"thai" : "แตงกวา",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1623.lettuce.thai.mp3",
-		"english" : "lettuce",
-		"id" : "1623",
-		"image" : "1623.lettuce.jpg",
-		"numeral" : "",
-		"phonetic" : "pak-GAAT-hawm",
-		"thai" : "ผักกาดหอม",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1522.ginger.thai.mp3",
-		"english" : "ginger",
-		"id" : "1522",
-		"image" : "1522.ginger.jpg",
-		"numeral" : "",
-		"phonetic" : "KHING",
-		"thai" : "ขิง",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1756.offal.thai.mp3",
-		"english" : "offal",
-		"id" : "1756",
-		"image" : "1756.offal.jpg",
-		"numeral" : "",
-		"phonetic" : "KREUANG-nai",
-		"thai" : "เครื่องใน",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1791.star_anise.thai.mp3",
-		"english" : "star anise",
-		"id" : "1791",
-		"image" : "1791.star_anise.jpg",
-		"numeral" : "",
-		"phonetic" : "BOEY-gak",
-		"thai" : "โป๊ยกั๊ก",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0145.water.thai.mp3",
-		"english" : "water",
-		"id" : "0145",
-		"image" : "0145.water.jpg",
-		"numeral" : "",
-		"phonetic" : "NAM",
-		"thai" : "น้ำ",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1829.iced_coffee.thai.mp3",
-		"english" : "iced coffee",
-		"id" : "1829",
-		"image" : "1829.iced_coffee.jpg",
-		"numeral" : "",
-		"phonetic" : "gaa-FAE-YEN",
-		"thai" : "กาแฟเย็น",
-		"type" : "drinks"
-	},
-	{
-		"audioThai" : "0032.seven.thai.mp3",
-		"english" : "seven",
-		"id" : "0032",
-		"image" : "0032.seven.jpg",
-		"numeral" : "7",
-		"phonetic" : "JET",
-		"thai" : "เจ็ด",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0089.nine.thai.mp3",
-		"english" : "nine",
-		"id" : "0089",
-		"image" : "0089.nine.jpg",
-		"numeral" : "9",
-		"phonetic" : "GAO",
-		"thai" : "เก้า",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0152.ten.thai.mp3",
-		"english" : "ten",
-		"id" : "0152",
-		"image" : "0152.ten.jpg",
-		"numeral" : "10",
-		"phonetic" : "SIP",
-		"thai" : "สิบ",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0167.fifty.thai.mp3",
-		"english" : "fifty",
-		"id" : "0167",
-		"image" : "0167.fifty.jpg",
-		"numeral" : "50",
-		"phonetic" : "HAA-sip",
-		"thai" : "ห้าสิบ",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0241.five_hundred.thai.mp3",
-		"english" : "five hundred",
-		"id" : "0241",
-		"image" : "0241.five_hundred.jpg",
-		"numeral" : "500",
-		"phonetic" : "HAA-ROY",
-		"thai" : "ห้าร้อย",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "1918.one_hundred.thai.mp3",
-		"english" : "one hundred",
-		"id" : "1918",
-		"image" : "1918.one_hundred.jpg",
-		"numeral" : "100",
-		"phonetic" : "NEUNG-ROY",
-		"thai" : "หนึ่งร้อย",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "1920.one_thousand.thai.mp3",
-		"english" : "one thousand",
-		"id" : "1920",
-		"image" : "1920.one_thousand.jpg",
-		"numeral" : "1000",
-		"phonetic" : "NEUNG-PAN",
-		"thai" : "หนึ่งพัน",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0031.six.thai.mp3",
-		"english" : "six",
-		"id" : "0031",
-		"image" : "0031.six.jpg",
-		"numeral" : "6",
-		"phonetic" : "HOK",
-		"thai" : "หก",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "0119.eight.thai.mp3",
-		"english" : "eight",
-		"id" : "0119",
-		"image" : "0119.eight.jpg",
-		"numeral" : "8",
-		"phonetic" : "BPAET",
-		"thai" : "แปด",
-		"type" : "numbers"
-	},
-	{
-		"audioThai" : "1977.coconut_milk.thai.mp3",
-		"english" : "coconut milk",
-		"id" : "1977",
-		"image" : "1977.coconut_milk.jpg",
-		"numeral" : "",
-		"phonetic" : "ga-TI",
-		"thai" : "กะทิ",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1978.palm_sugar.thai.mp3",
-		"english" : "palm sugar",
-		"id" : "1978",
-		"image" : "1978.palm_sugar.jpg",
-		"numeral" : "",
-		"phonetic" : "naam-taan-PIIP",
-		"thai" : "น้ำตาลปี๊บ",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1979.galangal.thai.mp3",
-		"english" : "galangal",
-		"id" : "1979",
-		"image" : "1979.galangal.jpg",
-		"numeral" : "",
-		"phonetic" : "KHAA",
-		"thai" : "ข่า",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1980.lemongrass.thai.mp3",
-		"english" : "lemongrass",
-		"id" : "1980",
-		"image" : "1980.lemongrass.jpg",
-		"numeral" : "",
-		"phonetic" : "ta-KRAI",
-		"thai" : "ตะไคร้",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1981.kaffir_lime_leaves.thai.mp3",
-		"english" : "kaffir lime leaves",
-		"id" : "1981",
-		"image" : "1981.kaffir_lime_leaves.jpg",
-		"numeral" : "",
-		"phonetic" : "bai-ma-GRUUT",
-		"thai" : "ใบมะกรูด",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1982.shrimp_paste.thai.mp3",
-		"english" : "shrimp paste",
-		"id" : "1982",
-		"image" : "1982.shrimp_paste.jpg",
-		"numeral" : "",
-		"phonetic" : "ga-PI",
-		"thai" : "กะปิ",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1983.oil.thai.mp3",
-		"english" : "oil",
-		"id" : "1983",
-		"image" : "1983.oil.jpg",
-		"numeral" : "",
-		"phonetic" : "naam-MAN",
-		"thai" : "น้ำมัน",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1986.lime.thai.mp3",
-		"english" : "lime",
-		"id" : "1986",
-		"image" : "1986.lime.jpg",
-		"numeral" : "",
-		"phonetic" : "ma-NAAO",
-		"thai" : "มะนาว",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1989.a_little.thai.mp3",
-		"english" : "a little",
-		"id" : "1989",
-		"image" : "1989.a_little.jpg",
-		"numeral" : "",
-		"phonetic" : "nit-NOYY",
-		"thai" : "นิดหน่อย",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "1990.a_lot.thai.mp3",
-		"english" : "a lot",
-		"id" : "1990",
-		"image" : "1990.a_lot.jpg",
-		"numeral" : "",
-		"phonetic" : "yuh-MAAK",
-		"thai" : "เยอะมาก",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "1993.fish_sauce.thai.mp3",
-		"english" : "fish sauce",
-		"id" : "1993",
-		"image" : "1993.fish_sauce.jpg",
-		"numeral" : "",
-		"phonetic" : "naam-PLAA",
-		"thai" : "น้ำปลา",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1974.coconut.thai.mp3",
-		"english" : "coconut",
-		"id" : "1974",
-		"image" : "1974.coconut.jpg",
-		"numeral" : "",
-		"phonetic" : "ma-PRAAO",
-		"thai" : "มะพร้าว",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "W508.red_curry.thai.mp3",
-		"english" : "Red Curry",
-		"id" : "W508",
-		"image" : "W508.red_curry.jpg",
-		"numeral" : "",
-		"phonetic" : "gaeng pèt",
-		"thai" : "แกงเผ็ด",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W509.sour_curry.thai.mp3",
-		"english" : "Sour Curry",
-		"id" : "W509",
-		"image" : "W509.sour_curry.jpg",
-		"numeral" : "",
-		"phonetic" : "gaeng sôm",
-		"thai" : "แกงส้ม",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W510.grilled_chicken.thai.mp3",
-		"english" : "Grilled Chicken",
-		"id" : "W510",
-		"image" : "W510.grilled_chicken.jpg",
-		"numeral" : "",
-		"phonetic" : "gài yâang",
-		"thai" : "ไก่ย่าง",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W511.green_curry.thai.mp3",
-		"english" : "Green Curry",
-		"id" : "W511",
-		"image" : "W511.green_curry.jpg",
-		"numeral" : "",
-		"phonetic" : "gaeng khĭeow wăan",
-		"thai" : "แกงเขียวหวาน",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W512.steamed_curry_fish.thai.mp3",
-		"english" : "Steamed Curry Fish",
-		"id" : "W512",
-		"image" : "W512.steamed_curry_fish.jpg",
-		"numeral" : "",
-		"phonetic" : "hòr mòk",
-		"thai" : "ห่อหมก",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W513.thai_omelette.thai.mp3",
-		"english" : "Thai Omelette",
-		"id" : "W513",
-		"image" : "W513.thai_omelette.jpg",
-		"numeral" : "",
-		"phonetic" : "kài jiao",
-		"thai" : "ไข่เจียว",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W515.fried_rice.thai.mp3",
-		"english" : "Fried Rice",
-		"id" : "W515",
-		"image" : "W515.fried_rice.jpg",
-		"numeral" : "",
-		"phonetic" : "kâao pàt",
-		"thai" : "ข้าวผัด",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W516.northern_curry_noodles.thai.mp3",
-		"english" : "Northern Curry Noodles",
-		"id" : "W516",
-		"image" : "W516.northern_curry_noodles.jpg",
-		"numeral" : "",
-		"phonetic" : "kâao soi",
-		"thai" : "ข้าวซอย",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W517.boat_noodles.thai.mp3",
-		"english" : "Boat Noodles",
-		"id" : "W517",
-		"image" : "W517.boat_noodles.jpg",
-		"numeral" : "",
-		"phonetic" : "gùai-tĭeow ruea",
-		"thai" : "ก๋วยเตี๋ยวเรือ",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W518.spicy_minced_meat.thai.mp3",
-		"english" : "Spicy Minced Meat",
-		"id" : "W518",
-		"image" : "W518.spicy_minced_meat.jpg",
-		"numeral" : "",
-		"phonetic" : "lâap",
-		"thai" : "ลาบ",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W519.massaman_curry.thai.mp3",
-		"english" : "Massaman Curry",
-		"id" : "W519",
-		"image" : "W519.massaman_curry.jpg",
-		"numeral" : "",
-		"phonetic" : "gaeng mát-sà-màn",
-		"thai" : "แกงมัสมั่น",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W520.grilled_pork_skewers.thai.mp3",
-		"english" : "Grilled Pork Skewers",
-		"id" : "W520",
-		"image" : "W520.grilled_pork_skewers.jpg",
-		"numeral" : "",
-		"phonetic" : "mŏo pîng",
-		"thai" : "หมูปิ้ง",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W521.waterfall_pork_salad.thai.mp3",
-		"english" : "Waterfall Pork Salad",
-		"id" : "W521",
-		"image" : "W521.waterfall_pork_salad.jpg",
-		"numeral" : "",
-		"phonetic" : "nám dtòk mŏo",
-		"thai" : "น้ำตกหมู",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W522.holy_basil_stir_fry.thai.mp3",
-		"english" : "Holy Basil Stir Fry",
-		"id" : "W522",
-		"image" : "W522.holy_basil_stir_fry.jpg",
-		"numeral" : "",
-		"phonetic" : "pàt grà-prao",
-		"thai" : "ผัดกะเพรา",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W523.soy_sauce_noodles.thai.mp3",
-		"english" : "Soy Sauce Noodles",
-		"id" : "W523",
-		"image" : "W523.soy_sauce_noodles.jpg",
-		"numeral" : "",
-		"phonetic" : "pàt si-íw",
-		"thai" : "ผัดซีอิ๊ว",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W524.pad_thai.thai.mp3",
-		"english" : "Pad Thai",
-		"id" : "W524",
-		"image" : "W524.pad_thai.jpg",
-		"numeral" : "",
-		"phonetic" : "pàt tai",
-		"thai" : "ผัดไทย",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W525.panang_curry.thai.mp3",
-		"english" : "Panang Curry",
-		"id" : "W525",
-		"image" : "W525.panang_curry.jpg",
-		"numeral" : "",
-		"phonetic" : "pá-naeng",
-		"thai" : "พะแนง",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W526.banana_roti.thai.mp3",
-		"english" : "Banana Roti",
-		"id" : "W526",
-		"image" : "W526.banana_roti.jpg",
-		"numeral" : "",
-		"phonetic" : "rôt-dtee glûay",
-		"thai" : "โรตีกล้วย",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W528.northern_sausage.thai.mp3",
-		"english" : "Northern Sausage",
-		"id" : "W528",
-		"image" : "W528.northern_sausage.jpg",
-		"numeral" : "",
-		"phonetic" : "sâi ùa",
-		"thai" : "ไส้อั่ว",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W529.papaya_salad.thai.mp3",
-		"english" : "Papaya Salad",
-		"id" : "W529",
-		"image" : "W529.papaya_salad.jpg",
-		"numeral" : "",
-		"phonetic" : "sôm dtam",
-		"thai" : "ส้มตำ",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W530.fish_cakes.thai.mp3",
-		"english" : "Fish Cakes",
-		"id" : "W530",
-		"image" : "W530.fish_cakes.jpg",
-		"numeral" : "",
-		"phonetic" : "tót man bplaa",
-		"thai" : "ทอดมันปลา",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W531.chicken_coconut_soup.thai.mp3",
-		"english" : "Chicken Coconut Soup",
-		"id" : "W531",
-		"image" : "W531.chicken_coconut_soup.jpg",
-		"numeral" : "",
-		"phonetic" : "dtôm khà gài",
-		"thai" : "ต้มข่าไก่",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W532.spicy_shrimp_soup.thai.mp3",
-		"english" : "Spicy Shrimp Soup",
-		"id" : "W532",
-		"image" : "W532.spicy_shrimp_soup.jpg",
-		"numeral" : "",
-		"phonetic" : "dtôm yam gûng",
-		"thai" : "ต้มยำกุ้ง",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "W533.glass_noodle_salad.thai.mp3",
-		"english" : "Glass Noodle Salad",
-		"id" : "W533",
-		"image" : "W533.glass_noodle_salad.jpg",
-		"numeral" : "",
-		"phonetic" : "yam wún sên",
-		"thai" : "ยำวุ้นเส้น",
-		"type" : "local dishes"
-	},
-	{
-		"audioThai" : "0607.hot.thai.mp3",
-		"english" : "hot",
-		"id" : "0607",
-		"image" : "0607.hot.jpg",
-		"numeral" : "",
-		"phonetic" : "rón",
-		"thai" : "ร้อน",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "0608.cold.thai.mp3",
-		"english" : "cold",
-		"id" : "0608",
-		"image" : "0608.cold.jpg",
-		"numeral" : "",
-		"phonetic" : "yen",
-		"thai" : "เย็น",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "0126.ice.thai.mp3",
-		"english" : "ice",
-		"id" : "0126",
-		"image" : "0126.ice.jpg",
-		"numeral" : "",
-		"phonetic" : "nám-khăeng",
-		"thai" : "น้ำแข็ง",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "1995.sweet.thai.mp3",
-		"english" : "sweet",
-		"id" : "1995",
-		"image" : "1995.sweet.jpg",
-		"numeral" : "",
-		"phonetic" : "wǎan",
-		"thai" : "หวาน",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "1996.sour.thai.mp3",
-		"english" : "sour",
-		"id" : "1996",
-		"image" : "1996.sour.jpg",
-		"numeral" : "",
-		"phonetic" : "bprîao",
-		"thai" : "เปรี้ยว",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "1997.bitter.thai.mp3",
-		"english" : "bitter",
-		"id" : "1997",
-		"image" : "1997.bitter.jpg",
-		"numeral" : "",
-		"phonetic" : "khǒm",
-		"thai" : "ขม",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "1998.spicy.thai.mp3",
-		"english" : "spicy",
-		"id" : "1998",
-		"image" : "1998.spicy.jpg",
-		"numeral" : "",
-		"phonetic" : "phèt",
-		"thai" : "เผ็ด",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "1999.not_spicy.thai.mp3",
-		"english" : "not spicy",
-		"id" : "1999",
-		"image" : "1999.not_spicy.jpg",
-		"numeral" : "",
-		"phonetic" : "mâi phèt",
-		"thai" : "ไม่เผ็ด",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "2001.papaya.thai.mp3",
-		"english" : "papaya",
-		"id" : "2001",
-		"image" : "2001.papaya.jpg",
-		"numeral" : "",
-		"phonetic" : "má-lá-gor",
-		"thai" : "มะละกอ",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "0472.bag.thai.mp3",
-		"english" : "bag",
-		"id" : "0472",
-		"image" : "0472.bag.jpg",
-		"numeral" : "",
-		"phonetic" : "grà-bpǎo",
-		"thai" : "กระเป๋า",
-		"type" : "things"
-	},
-	{
-		"audioThai" : "0935.how_much.thai.mp3",
-		"english" : "how much",
-		"id" : "0935",
-		"image" : "0935.how_much.jpg",
-		"numeral" : "",
-		"phonetic" : "tâo-rài",
-		"thai" : "เท่าไหร่",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "2002.excellent.thai.mp3",
-		"english" : "excellent",
-		"id" : "2002",
-		"image" : "2002.excellent.jpg",
-		"numeral" : "",
-		"phonetic" : "yîam mâak",
-		"thai" : "เยี่ยมมาก",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "W547.sticky_rice.thai.mp3",
-		"english" : "sticky rice",
-		"id" : "W547",
-		"image" : "W547.sticky_rice.jpg",
-		"numeral" : "",
-		"phonetic" : "khâao nĭeow",
-		"thai" : "ข้าวเหนียว",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "W548.morning_glory.thai.mp3",
-		"english" : "morning glory",
-		"id" : "W548",
-		"image" : "W548.morning_glory.jpg",
-		"numeral" : "",
-		"phonetic" : "pàk-bûng",
-		"thai" : "ผักบุ้ง",
-		"type" : "ingredients"
-	},
-	{
-		"audioThai" : "W549.just_a_little_spicy.thai.mp3",
-		"english" : "just a little spicy",
-		"id" : "W549",
-		"image" : "W549.just_a_little_spicy.jpg",
-		"numeral" : "",
-		"phonetic" : "phèt nít nòi",
-		"thai" : "เผ็ดนิดหน่อย",
-		"type" : "speech"
-	},
-	{
-		"audioThai" : "W550.nam_ngiaw.thai.mp3",
-		"english" : "Nam Ngiaw",
-		"id" : "W550",
-		"image" : "W550.nam_ngiaw.jpg",
-		"numeral" : "",
-		"phonetic" : "nahm-knee-ow ",
-		"thai" : "น้ำเงี้ยว",
-		"type" : "local dishes"
-	}
-]
+[	{		"audioThai" : "0015.three.thai.mp3",		"english" : "three",		"id" : "0015",		"image" : "0015.three.jpg",		"numeral" : "3",		"phonetic" : "SAAM",		"thai" : "สาม",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0052.four.thai.mp3",		"english" : "four",		"id" : "0052",		"image" : "0052.four.jpg",		"numeral" : "4",		"phonetic" : "SEE",		"thai" : "สี่",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0078.yes.thai.mp3",		"english" : "yes",		"id" : "0078",		"image" : "0078.yes.jpg",		"numeral" : "",		"phonetic" : "CHAI",		"thai" : "ใช่",		"type" : "[\"Core Words\",\"Phrases\"]"	},	{		"audioThai" : "0085.no.thai.mp3",		"english" : "no",		"id" : "0085",		"image" : "0085.no.jpg",		"numeral" : "",		"phonetic" : "MAI-chai",		"thai" : "ไม่ใช่",		"type" : "[\"Core Words\",\"Phrases\"]"	},	{		"audioThai" : "0101.thank_you.thai.mp3",		"english" : "thank you",		"id" : "0101",		"image" : "0101.thank_you.jpg",		"numeral" : "",		"phonetic" : "KHOP-khun",		"thai" : "ขอบคุณ",		"type" : "[\"Core Words\",\"Phrases\"]"	},	{		"audioThai" : "0153.two.thai.mp3",		"english" : "two",		"id" : "0153",		"image" : "0153.two.jpg",		"numeral" : "2",		"phonetic" : "SAWNG",		"thai" : "สอง",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0168.five.thai.mp3",		"english" : "five",		"id" : "0168",		"image" : "0168.five.jpg",		"numeral" : "5",		"phonetic" : "HAA",		"thai" : "ห้า",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0180.coffee.thai.mp3",		"english" : "coffee",		"id" : "0180",		"image" : "0180.coffee.jpg",		"numeral" : "",		"phonetic" : "gaa-FAE",		"thai" : "กาแฟ",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "0184.hello.thai.mp3",		"english" : "hello",		"id" : "0184",		"image" : "0184.hello.jpg",		"numeral" : "",		"phonetic" : "sa-wat-DEE",		"thai" : "สวัสดี",		"type" : "[\"Core Words\",\"Phrases\"]"	},	{		"audioThai" : "0188.good.thai.mp3",		"english" : "good",		"id" : "0188",		"image" : "0188.good.jpg",		"numeral" : "",		"phonetic" : "DEE",		"thai" : "ดี",		"type" : "[\"Phrases\",\"Descriptions\"]"	},	{		"audioThai" : "0237.please.thai.mp3",		"english" : "please",		"id" : "0237",		"image" : "0237.please.jpg",		"numeral" : "",		"phonetic" : "ga-ROO-naa",		"thai" : "กรุณา",		"type" : "[\"Phrases\"]"	},	{		"audioThai" : "0438.tea.thai.mp3",		"english" : "tea",		"id" : "0438",		"image" : "0438.tea.jpg",		"numeral" : "",		"phonetic" : "CHAA",		"thai" : "ชา",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "0439.wine.thai.mp3",		"english" : "wine",		"id" : "0439",		"image" : "0439.wine.jpg",		"numeral" : "",		"phonetic" : "WAI",		"thai" : "ไวน์",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1438.sorry.thai.mp3",		"english" : "sorry",		"id" : "1438",		"image" : "1438.sorry.jpg",		"numeral" : "",		"phonetic" : "KHOR-toht",		"thai" : "ขอโทษ",		"type" : "[\"Phrases\"]"	},	{		"audioThai" : "1398.toilet.thai.mp3",		"english" : "toilet",		"id" : "1398",		"image" : "1398.toilet.jpg",		"numeral" : "",		"phonetic" : "HONG-naam",		"thai" : "ห้องน้ำ",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1401.bill.thai.mp3",		"english" : "bill",		"id" : "1401",		"image" : "1401.bill.jpg",		"numeral" : "",		"phonetic" : "BIN",		"thai" : "บิล",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1402.goodbye.thai.mp3",		"english" : "goodbye",		"id" : "1402",		"image" : "1402.goodbye.jpg",		"numeral" : "",		"phonetic" : "laa-GON",		"thai" : "ลาก่อน",		"type" : "[\"Phrases\"]"	},	{		"audioThai" : "1403.delicious.thai.mp3",		"english" : "delicious",		"id" : "1403",		"image" : "1403.delicious.jpg",		"numeral" : "",		"phonetic" : "a-ROY",		"thai" : "อร่อย",		"type" : "[\"Descriptions\",\"Core Words\",\"Phrases\"]"	},	{		"audioThai" : "1405.cheers.thai.mp3",		"english" : "cheers",		"id" : "1405",		"image" : "1405.cheers.jpg",		"numeral" : "",		"phonetic" : "chon-GAEO",		"thai" : "ชนแก้ว",		"type" : "[\"Phrases\"]"	},	{		"audioThai" : "0081.orange.thai.mp3",		"english" : "orange",		"id" : "0081",		"image" : "0081.orange.jpg",		"numeral" : "",		"phonetic" : "SOM",		"thai" : "ส้ม",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "0189.banana.thai.mp3",		"english" : "banana",		"id" : "0189",		"image" : "0189.banana.jpg",		"numeral" : "",		"phonetic" : "GLUAY",		"thai" : "กล้วย",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "0209.chicken.thai.mp3",		"english" : "chicken",		"id" : "0209",		"image" : "0209.chicken.jpg",		"numeral" : "",		"phonetic" : "GAI",		"thai" : "ไก่",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "0211.beef.thai.mp3",		"english" : "beef",		"id" : "0211",		"image" : "0211.beef.jpg",		"numeral" : "",		"phonetic" : "NUA-wua",		"thai" : "เนื้อวัว",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "0217.ice_cream.thai.mp3",		"english" : "ice cream",		"id" : "0217",		"image" : "0217.ice_cream.jpg",		"numeral" : "",		"phonetic" : "ai-sa-KREEM",		"thai" : "ไอศกรีม",		"type" : "[\"Snacks\"]"	},	{		"audioThai" : "0226.potato.thai.mp3",		"english" : "potato",		"id" : "0226",		"image" : "0226.potato.jpg",		"numeral" : "",		"phonetic" : "man-FA-rang",		"thai" : "มันฝรั่ง",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "0273.fish.thai.mp3",		"english" : "fish",		"id" : "0273",		"image" : "0273.fish.jpg",		"numeral" : "",		"phonetic" : "plaa",		"thai" : "ปลา",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "0414.egg.thai.mp3",		"english" : "egg",		"id" : "0414",		"image" : "0414.egg.jpg",		"numeral" : "",		"phonetic" : "KAI",		"thai" : "ไข่",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "0419.apple.thai.mp3",		"english" : "apple",		"id" : "0419",		"image" : "0419.apple.jpg",		"numeral" : "",		"phonetic" : "AEP-bpeun",		"thai" : "แอปเปิ้ล",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "0421.lemon.thai.mp3",		"english" : "lemon",		"id" : "0421",		"image" : "0421.lemon.jpg",		"numeral" : "",		"phonetic" : "ma-NAAO",		"thai" : "มะนาว",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "0423.rice.thai.mp3",		"english" : "rice",		"id" : "0423",		"image" : "0423.rice.jpg",		"numeral" : "",		"phonetic" : "KHAO",		"thai" : "ข้าว",		"type" : "[\"Rice, Noodles & Grains\"]"	},	{		"audioThai" : "0434.sugar.thai.mp3",		"english" : "sugar",		"id" : "0434",		"image" : "0434.sugar.jpg",		"numeral" : "",		"phonetic" : "NAM-taan",		"thai" : "น้ำตาล",		"type" : "[\"Basics\"]"	},	{		"audioThai" : "0435.salt.thai.mp3",		"english" : "salt",		"id" : "0435",		"image" : "0435.salt.jpg",		"numeral" : "",		"phonetic" : "GLUEA",		"thai" : "เกลือ",		"type" : "[\"Basics\",\"Items\"]"	},	{		"audioThai" : "1395.menu.thai.mp3",		"english" : "menu",		"id" : "1395",		"image" : "1395.menu.jpg",		"numeral" : "",		"phonetic" : "MAE-noo",		"thai" : "เมนู",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1498.grape.thai.mp3",		"english" : "grape",		"id" : "1498",		"image" : "1498.grape.jpg",		"numeral" : "",		"phonetic" : "a-NOON",		"thai" : "องุ่น",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "1499.strawberry.thai.mp3",		"english" : "strawberry",		"id" : "1499",		"image" : "1499.strawberry.jpg",		"numeral" : "",		"phonetic" : "sa-TRAW-ber-REE",		"thai" : "สตรอว์เบอร์รี่",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "1500.watermelon.thai.mp3",		"english" : "watermelon",		"id" : "1500",		"image" : "1500.watermelon.jpg",		"numeral" : "",		"phonetic" : "taeng-MOH",		"thai" : "แตงโม",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "1501.tomato.thai.mp3",		"english" : "tomato",		"id" : "1501",		"image" : "1501.tomato.jpg",		"numeral" : "",		"phonetic" : "ma-KHEUA-tet",		"thai" : "มะเขือเทศ",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1502.onion.thai.mp3",		"english" : "onion",		"id" : "1502",		"image" : "1502.onion.jpg",		"numeral" : "",		"phonetic" : "hua-HAWM",		"thai" : "หัวหอม",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1503.garlic.thai.mp3",		"english" : "garlic",		"id" : "1503",		"image" : "1503.garlic.jpg",		"numeral" : "",		"phonetic" : "gra-TIAM",		"thai" : "กระเทียม",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1505.chocolate.thai.mp3",		"english" : "chocolate",		"id" : "1505",		"image" : "1505.chocolate.jpg",		"numeral" : "",		"phonetic" : "CHOK-ko-laet",		"thai" : "ช็อกโกแลต",		"type" : "[\"Snacks\"]"	},	{		"audioThai" : "0232.beer.thai.mp3",		"english" : "beer",		"id" : "0232",		"image" : "0232.beer.jpg",		"numeral" : "",		"phonetic" : "BIA",		"thai" : "เบียร์",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "0012.one.thai.mp3",		"english" : "one",		"id" : "0012",		"image" : "0012.one.jpg",		"numeral" : "1",		"phonetic" : "NEUNG",		"thai" : "หนึ่ง",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "1541.potato_crisps.thai.mp3",		"english" : "potato crisps",		"id" : "1541",		"image" : "1541.potato_crisps.jpg",		"numeral" : "",		"phonetic" : "man-FA-rang paen",		"thai" : "มันฝรั่งแผ่น",		"type" : "[\"Snacks\"]"	},	{		"audioThai" : "1543.noodle.thai.mp3",		"english" : "noodle",		"id" : "1543",		"image" : "1543.noodle.jpg",		"numeral" : "",		"phonetic" : "ba-MEE",		"thai" : "บะหมี่",		"type" : "[\"Rice, Noodles & Grains\"]"	},	{		"audioThai" : "0158.prawn.thai.mp3",		"english" : "prawn",		"id" : "0158",		"image" : "0158.prawn.jpg",		"numeral" : "",		"phonetic" : "GOONG",		"thai" : "กุ้ง",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "0178.squid.thai.mp3",		"english" : "squid",		"id" : "0178",		"image" : "0178.squid.jpg",		"numeral" : "",		"phonetic" : "pla-MUEK",		"thai" : "ปลาหมึก",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "1556.basil.thai.mp3",		"english" : "basil",		"id" : "1556",		"image" : "1556.basil.jpg",		"numeral" : "",		"phonetic" : "ho-ra-PAA",		"thai" : "โหระพา",		"type" : "[\"Herbs, Aromatics & Spices\"]"	},	{		"audioThai" : "1560.mint.thai.mp3",		"english" : "mint",		"id" : "1560",		"image" : "1560.mint.jpg",		"numeral" : "",		"phonetic" : "sa-ra-NAE",		"thai" : "สะระแหน่",		"type" : "[\"Herbs, Aromatics & Spices\"]"	},	{		"audioThai" : "1564.coriander.thai.mp3",		"english" : "coriander",		"id" : "1564",		"image" : "1564.coriander.jpg",		"numeral" : "",		"phonetic" : "pak-CHEE",		"thai" : "ผักชี",		"type" : "[\"Herbs, Aromatics & Spices\"]"	},	{		"audioThai" : "1569.chilli.thai.mp3",		"english" : "chilli",		"id" : "1569",		"image" : "1569.chilli.jpg",		"numeral" : "",		"phonetic" : "PRIK",		"thai" : "พริก",		"type" : "[\"Herbs, Aromatics & Spices\",\"Vegetables\"]"	},	{		"audioThai" : "1571.crab.thai.mp3",		"english" : "crab",		"id" : "1571",		"image" : "1571.crab.jpg",		"numeral" : "",		"phonetic" : "POO",		"thai" : "ปู",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "1582.duck.thai.mp3",		"english" : "duck",		"id" : "1582",		"image" : "1582.duck.jpg",		"numeral" : "",		"phonetic" : "PET",		"thai" : "เป็ด",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "1593.herbal_tea.thai.mp3",		"english" : "herbal tea",		"id" : "1593",		"image" : "1593.herbal_tea.jpg",		"numeral" : "",		"phonetic" : "CHAA sa-MUN-prai",		"thai" : "ชาสมุนไพร",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1595.vinegar.thai.mp3",		"english" : "vinegar",		"id" : "1595",		"image" : "1595.vinegar.jpg",		"numeral" : "",		"phonetic" : "NAM-SOM-saai-CHOO",		"thai" : "น้ำส้มสายชู",		"type" : "[\"Basics\",\"Sauces & Seasonings\"]"	},	{		"audioThai" : "1598.soya_sauce.thai.mp3",		"english" : "soya sauce",		"id" : "1598",		"image" : "1598.soya_sauce.jpg",		"numeral" : "",		"phonetic" : "SEE-ew",		"thai" : "ซีอิ๊ว",		"type" : "[\"Sauces & Seasonings\",\"Basics\"]"	},	{		"audioThai" : "1599.chilli_sauce.thai.mp3",		"english" : "chilli sauce",		"id" : "1599",		"image" : "1599.chilli_sauce.jpg",		"numeral" : "",		"phonetic" : "SAWT PRIK",		"thai" : "ซอสพริก",		"type" : "[\"Sauces & Seasonings\"]"	},	{		"audioThai" : "0210.pork.thai.mp3",		"english" : "pork",		"id" : "0210",		"image" : "0210.pork.jpg",		"numeral" : "",		"phonetic" : "MOO",		"thai" : "หมู",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "0416.bread.thai.mp3",		"english" : "bread",		"id" : "0416",		"image" : "0416.bread.jpg",		"numeral" : "",		"phonetic" : "ka-NOM-pang",		"thai" : "ขนมปัง",		"type" : "[\"Rice, Noodles & Grains\"]"	},	{		"audioThai" : "1507.pineapple.thai.mp3",		"english" : "pineapple",		"id" : "1507",		"image" : "1507.pineapple.jpg",		"numeral" : "",		"phonetic" : "sap-pa-ROT",		"thai" : "สับปะรด",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "1517.melon.thai.mp3",		"english" : "melon",		"id" : "1517",		"image" : "1517.melon.jpg",		"numeral" : "",		"phonetic" : "may-LON",		"thai" : "เมลอน",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "1510.peach.thai.mp3",		"english" : "peach",		"id" : "1510",		"image" : "1510.peach.jpg",		"numeral" : "",		"phonetic" : "PEET",		"thai" : "พีช",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "1509.mango.thai.mp3",		"english" : "mango",		"id" : "1509",		"image" : "1509.mango.jpg",		"numeral" : "",		"phonetic" : "ma-MUANG",		"thai" : "มะม่วง",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "1616.carrot.thai.mp3",		"english" : "carrot",		"id" : "1616",		"image" : "1616.carrot.jpg",		"numeral" : "",		"phonetic" : "khae-ROT",		"thai" : "แครอท",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1617.leek.thai.mp3",		"english" : "leek",		"id" : "1617",		"image" : "1617.leek.jpg",		"numeral" : "",		"phonetic" : "TON gra-TIAM",		"thai" : "ต้นกระเทียม",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1619.pepper.thai.mp3",		"english" : "pepper",		"id" : "1619",		"image" : "1619.pepper.jpg",		"numeral" : "",		"phonetic" : "PRIK-yuak",		"thai" : "พริกหยวก",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1620.mushroom.thai.mp3",		"english" : "mushroom",		"id" : "1620",		"image" : "1620.mushroom.jpg",		"numeral" : "",		"phonetic" : "HET",		"thai" : "เห็ด",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1621.aubergine.thai.mp3",		"english" : "aubergine",		"id" : "1621",		"image" : "1621.aubergine.jpg",		"numeral" : "",		"phonetic" : "ma-KHEUA-MUANG",		"thai" : "มะเขือม่วง",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1520.cucumber.thai.mp3",		"english" : "cucumber",		"id" : "1520",		"image" : "1520.cucumber.jpg",		"numeral" : "",		"phonetic" : "taeng-GWAA",		"thai" : "แตงกวา",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1623.lettuce.thai.mp3",		"english" : "lettuce",		"id" : "1623",		"image" : "1623.lettuce.jpg",		"numeral" : "",		"phonetic" : "pak-GAAT-hawm",		"thai" : "ผักกาดหอม",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1522.ginger.thai.mp3",		"english" : "ginger",		"id" : "1522",		"image" : "1522.ginger.jpg",		"numeral" : "",		"phonetic" : "KHING",		"thai" : "ขิง",		"type" : "[\"Vegetables\",\"Herbs, Aromatics & Spices\"]"	},	{		"audioThai" : "1708.chicken_thigh.thai.mp3",		"english" : "chicken thigh",		"id" : "1708",		"image" : "1708.chicken_thigh.jpg",		"numeral" : "",		"phonetic" : "sa-POHK-GAI",		"thai" : "สะโพกไก่",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "1709.chicken_drumstick.thai.mp3",		"english" : "chicken drumstick",		"id" : "1709",		"image" : "1709.chicken_drumstick.jpg",		"numeral" : "",		"phonetic" : "naawng-GAI",		"thai" : "น่องไก่",		"type" : "[\"Proteins\"]"	},	{		"audioThai" : "1756.offal.thai.mp3",		"english" : "offal",		"id" : "1756",		"image" : "1756.offal.jpg",		"numeral" : "",		"phonetic" : "KREUANG-nai",		"thai" : "เครื่องใน",		"type" : "[\"Proteins\",\"Dietary Requirements\"]"	},	{		"audioThai" : "1780.honey.thai.mp3",		"english" : "honey",		"id" : "1780",		"image" : "1780.honey.jpg",		"numeral" : "",		"phonetic" : "NAM-PUENG",		"thai" : "น้ำผึ้ง",		"type" : "[\"Basics\"]"	},	{		"audioThai" : "1785.sesame_seed.thai.mp3",		"english" : "sesame seed",		"id" : "1785",		"image" : "1785.sesame_seed.jpg",		"numeral" : "",		"phonetic" : "NGAA",		"thai" : "งา",		"type" : "[\"Dietary Requirements\",\"Nuts & Seeds\"]"	},	{		"audioThai" : "1791.star_anise.thai.mp3",		"english" : "star anise",		"id" : "1791",		"image" : "1791.star_anise.jpg",		"numeral" : "",		"phonetic" : "BOEY-gak",		"thai" : "โป๊ยกั๊ก",		"type" : "[\"Herbs, Aromatics & Spices\"]"	},	{		"audioThai" : "0145.water.thai.mp3",		"english" : "water",		"id" : "0145",		"image" : "0145.water.jpg",		"numeral" : "",		"phonetic" : "NAM",		"thai" : "น้ำ",		"type" : "[\"Basics\",\"Drinks\"]"	},	{		"audioThai" : "1809.lager.thai.mp3",		"english" : "lager",		"id" : "1809",		"image" : "1809.lager.jpg",		"numeral" : "",		"phonetic" : "LAA-ger",		"thai" : "ลาเกอร์",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1816.gin.thai.mp3",		"english" : "gin",		"id" : "1816",		"image" : "1816.gin.jpg",		"numeral" : "",		"phonetic" : "JIN",		"thai" : "จิน",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1817.rum.thai.mp3",		"english" : "rum",		"id" : "1817",		"image" : "1817.rum.jpg",		"numeral" : "",		"phonetic" : "RAM",		"thai" : "รัม",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1824.iced_tea.thai.mp3",		"english" : "iced tea",		"id" : "1824",		"image" : "1824.iced_tea.jpg",		"numeral" : "",		"phonetic" : "CHAA-YEN",		"thai" : "ชาเย็น",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1825.soda.thai.mp3",		"english" : "soda",		"id" : "1825",		"image" : "1825.soda.jpg",		"numeral" : "",		"phonetic" : "SOH-daa",		"thai" : "โซดา",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1826.cola.thai.mp3",		"english" : "cola",		"id" : "1826",		"image" : "1826.cola.jpg",		"numeral" : "",		"phonetic" : "KOH-laa",		"thai" : "โคล่า",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1827.mineral_water.thai.mp3",		"english" : "mineral water",		"id" : "1827",		"image" : "1827.mineral_water.jpg",		"numeral" : "",		"phonetic" : "NAM-rae",		"thai" : "น้ำแร่",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1829.iced_coffee.thai.mp3",		"english" : "iced coffee",		"id" : "1829",		"image" : "1829.iced_coffee.jpg",		"numeral" : "",		"phonetic" : "gaa-FAE-YEN",		"thai" : "กาแฟเย็น",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1830.fresh_fruit_juice.thai.mp3",		"english" : "fresh fruit juice",		"id" : "1830",		"image" : "1830.fresh_fruit_juice.jpg",		"numeral" : "",		"phonetic" : "NAM pŏn-la-MAI sot",		"thai" : "น้ำผลไม้สด",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1832.whisky.thai.mp3",		"english" : "whisky",		"id" : "1832",		"image" : "1832.whisky.jpg",		"numeral" : "",		"phonetic" : "WIS-kee",		"thai" : "วิสกี้",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1833.vodka.thai.mp3",		"english" : "vodka",		"id" : "1833",		"image" : "1833.vodka.jpg",		"numeral" : "",		"phonetic" : "WAWD-gaa",		"thai" : "วอดก้า",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1842.espresso.thai.mp3",		"english" : "espresso",		"id" : "1842",		"image" : "1842.espresso.jpg",		"numeral" : "",		"phonetic" : "ES-pre-soh",		"thai" : "เอสเปรสโซ",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1843.cappuccino.thai.mp3",		"english" : "cappuccino",		"id" : "1843",		"image" : "1843.cappuccino.jpg",		"numeral" : "",		"phonetic" : "kaa-POO-chee-no",		"thai" : "คาปูชิโน",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1844.latte.thai.mp3",		"english" : "latte",		"id" : "1844",		"image" : "1844.latte.jpg",		"numeral" : "",		"phonetic" : "laa-TEH",		"thai" : "ลาเต้",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1845.americano.thai.mp3",		"english" : "americano",		"id" : "1845",		"image" : "1845.americano.jpg",		"numeral" : "",		"phonetic" : "a-me-ri-GAA-no",		"thai" : "อเมริกาโน",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1850.chai_latte.thai.mp3",		"english" : "chai latte",		"id" : "1850",		"image" : "1850.chai_latte.jpg",		"numeral" : "",		"phonetic" : "CHAA-laa-TEH",		"thai" : "ชาลาเต้",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1851.green_tea.thai.mp3",		"english" : "green tea",		"id" : "1851",		"image" : "1851.green_tea.jpg",		"numeral" : "",		"phonetic" : "CHAA-khiao",		"thai" : "ชาเขียว",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "W302.grilled_chicken_skewers.thai.mp3",		"english" : "Grilled Chicken Skewers",		"id" : "W302",		"image" : "W302.grilled_chicken_skewers.jpg",		"numeral" : "",		"phonetic" : "GÀI yâang SÎAP mái",		"thai" : "ไก่ย่างเสียบไม้",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "0032.seven.thai.mp3",		"english" : "seven",		"id" : "0032",		"image" : "0032.seven.jpg",		"numeral" : "7",		"phonetic" : "JET",		"thai" : "เจ็ด",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0089.nine.thai.mp3",		"english" : "nine",		"id" : "0089",		"image" : "0089.nine.jpg",		"numeral" : "9",		"phonetic" : "GAO",		"thai" : "เก้า",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0152.ten.thai.mp3",		"english" : "ten",		"id" : "0152",		"image" : "0152.ten.jpg",		"numeral" : "10",		"phonetic" : "SIP",		"thai" : "สิบ",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0167.fifty.thai.mp3",		"english" : "fifty",		"id" : "0167",		"image" : "0167.fifty.jpg",		"numeral" : "50",		"phonetic" : "HAA-sip",		"thai" : "ห้าสิบ",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0241.five_hundred.thai.mp3",		"english" : "five hundred",		"id" : "0241",		"image" : "0241.five_hundred.jpg",		"numeral" : "500",		"phonetic" : "HAA-ROY",		"thai" : "ห้าร้อย",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "1918.one_hundred.thai.mp3",		"english" : "one hundred",		"id" : "1918",		"image" : "1918.one_hundred.jpg",		"numeral" : "100",		"phonetic" : "NEUNG-ROY",		"thai" : "หนึ่งร้อย",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "1920.one_thousand.thai.mp3",		"english" : "one thousand",		"id" : "1920",		"image" : "1920.one_thousand.jpg",		"numeral" : "1000",		"phonetic" : "NEUNG-PAN",		"thai" : "หนึ่งพัน",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0031.six.thai.mp3",		"english" : "six",		"id" : "0031",		"image" : "0031.six.jpg",		"numeral" : "6",		"phonetic" : "HOK",		"thai" : "หก",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0119.eight.thai.mp3",		"english" : "eight",		"id" : "0119",		"image" : "0119.eight.jpg",		"numeral" : "8",		"phonetic" : "BPAET",		"thai" : "แปด",		"type" : "[\"Numbers\"]"	},	{		"audioThai" : "0442.table.thai.mp3",		"english" : "table",		"id" : "0442",		"image" : "0442.table.jpg",		"numeral" : "",		"phonetic" : "TOH",		"thai" : "โต๊ะ",		"type" : "[\"Items\"]"	},	{		"audioThai" : "0428.fork.thai.mp3",		"english" : "fork",		"id" : "0428",		"image" : "0428.fork.jpg",		"numeral" : "",		"phonetic" : "SAWM",		"thai" : "ส้อม",		"type" : "[\"Items\"]"	},	{		"audioThai" : "0426.knife.thai.mp3",		"english" : "knife",		"id" : "0426",		"image" : "0426.knife.jpg",		"numeral" : "",		"phonetic" : "MEET",		"thai" : "มีด",		"type" : "[\"Items\"]"	},	{		"audioThai" : "0427.spoon.thai.mp3",		"english" : "spoon",		"id" : "0427",		"image" : "0427.spoon.jpg",		"numeral" : "",		"phonetic" : "CHAWN",		"thai" : "ช้อน",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1921.chopsticks.thai.mp3",		"english" : "chopsticks",		"id" : "1921",		"image" : "1921.chopsticks.jpg",		"numeral" : "",		"phonetic" : "ta-GIAP",		"thai" : "ตะเกียบ",		"type" : "[\"Items\"]"	},	{		"audioThai" : "0429.plate.thai.mp3",		"english" : "plate",		"id" : "0429",		"image" : "0429.plate.jpg",		"numeral" : "",		"phonetic" : "JAAN",		"thai" : "จาน",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1000.bowl.thai.mp3",		"english" : "bowl",		"id" : "1000",		"image" : "1000.bowl.jpg",		"numeral" : "",		"phonetic" : "CHAAM",		"thai" : "ชาม",		"type" : "[\"Items\"]"	},	{		"audioThai" : "0430.cup.thai.mp3",		"english" : "cup",		"id" : "0430",		"image" : "0430.cup.jpg",		"numeral" : "",		"phonetic" : "TUAI",		"thai" : "ถ้วย",		"type" : "[\"Items\"]"	},	{		"audioThai" : "0262.glass.thai.mp3",		"english" : "glass",		"id" : "0262",		"image" : "0262.glass.jpg",		"numeral" : "",		"phonetic" : "GAEW",		"thai" : "แก้ว",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1922.napkin.thai.mp3",		"english" : "napkin",		"id" : "1922",		"image" : "1922.napkin.jpg",		"numeral" : "",		"phonetic" : "PAA-CHET-pak",		"thai" : "ผ้าเช็ดปาก",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1923.jug.thai.mp3",		"english" : "jug",		"id" : "1923",		"image" : "1923.jug.jpg",		"numeral" : "",		"phonetic" : "YEUAK",		"thai" : "เหยือก",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1426.the_bill_please.thai.mp3",		"english" : "the bill please",		"id" : "1426",		"image" : "1426.the_bill_please.jpg",		"numeral" : "",		"phonetic" : "KIT-ngoen-DUAI",		"thai" : "คิดเงินด้วย",		"type" : "[\"Phrases\"]"	},	{		"audioThai" : "2004.bank_card.thai.mp3",		"english" : "bank card",		"id" : "2004",		"image" : "2004.bank_card.jpg",		"numeral" : "",		"phonetic" : "BAT-DE-bit",		"thai" : "บัตรเดบิต",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1976.shallot.thai.mp3",		"english" : "shallot",		"id" : "1976",		"image" : "1976.shallot.jpg",		"numeral" : "",		"phonetic" : "hom-DAENG",		"thai" : "หอมแดง",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1977.coconut_milk.thai.mp3",		"english" : "coconut milk",		"id" : "1977",		"image" : "1977.coconut_milk.jpg",		"numeral" : "",		"phonetic" : "ga-TI",		"thai" : "กะทิ",		"type" : "[\"Drinks\"]"	},	{		"audioThai" : "1978.palm_sugar.thai.mp3",		"english" : "palm sugar",		"id" : "1978",		"image" : "1978.palm_sugar.jpg",		"numeral" : "",		"phonetic" : "naam-taan-PIIP",		"thai" : "น้ำตาลปี๊บ",		"type" : "[\"Basics\"]"	},	{		"audioThai" : "1979.galangal.thai.mp3",		"english" : "galangal",		"id" : "1979",		"image" : "1979.galangal.jpg",		"numeral" : "",		"phonetic" : "KHAA",		"thai" : "ข่า",		"type" : "[\"Vegetables\",\"Herbs, Aromatics & Spices\"]"	},	{		"audioThai" : "1980.lemongrass.thai.mp3",		"english" : "lemongrass",		"id" : "1980",		"image" : "1980.lemongrass.jpg",		"numeral" : "",		"phonetic" : "ta-KRAI",		"thai" : "ตะไคร้",		"type" : "[\"Vegetables\",\"Herbs, Aromatics & Spices\"]"	},	{		"audioThai" : "1981.kaffir_lime_leaves.thai.mp3",		"english" : "kaffir lime leaves",		"id" : "1981",		"image" : "1981.kaffir_lime_leaves.jpg",		"numeral" : "",		"phonetic" : "bai-ma-GRUUT",		"thai" : "ใบมะกรูด",		"type" : "[\"Herbs, Aromatics & Spices\"]"	},	{		"audioThai" : "1982.shrimp_paste.thai.mp3",		"english" : "shrimp paste",		"id" : "1982",		"image" : "1982.shrimp_paste.jpg",		"numeral" : "",		"phonetic" : "ga-PI",		"thai" : "กะปิ",		"type" : "[\"Sauces & Seasonings\",\"Basics\"]"	},	{		"audioThai" : "1983.oil.thai.mp3",		"english" : "oil",		"id" : "1983",		"image" : "1983.oil.jpg",		"numeral" : "",		"phonetic" : "naam-MAN",		"thai" : "น้ำมัน",		"type" : "[\"Basics\"]"	},	{		"audioThai" : "1985.sweet_potato.thai.mp3",		"english" : "sweet potato",		"id" : "1985",		"image" : "1985.sweet_potato.jpg",		"numeral" : "",		"phonetic" : "man-THEET",		"thai" : "มันเทศ",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "1986.lime.thai.mp3",		"english" : "lime",		"id" : "1986",		"image" : "1986.lime.jpg",		"numeral" : "",		"phonetic" : "ma-NAAO",		"thai" : "มะนาว",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "1988.cashew.thai.mp3",		"english" : "cashew",		"id" : "1988",		"image" : "1988.cashew.jpg",		"numeral" : "",		"phonetic" : "met-ma-MUANG-him-ma-PAAN",		"thai" : "เม็ดมะม่วงหิมพานต์",		"type" : "[\"Nuts & Seeds\",\"Snacks\"]"	},	{		"audioThai" : "1989.a_little.thai.mp3",		"english" : "a little",		"id" : "1989",		"image" : "1989.a_little.jpg",		"numeral" : "",		"phonetic" : "nit-NOYY",		"thai" : "นิดหน่อย",		"type" : "[\"Phrases\"]"	},	{		"audioThai" : "1990.a_lot.thai.mp3",		"english" : "a lot",		"id" : "1990",		"image" : "1990.a_lot.jpg",		"numeral" : "",		"phonetic" : "yuh-MAAK",		"thai" : "เยอะมาก",		"type" : "[\"Items\"]"	},	{		"audioThai" : "1993.fish_sauce.thai.mp3",		"english" : "fish sauce",		"id" : "1993",		"image" : "1993.fish_sauce.jpg",		"numeral" : "",		"phonetic" : "naam-PLAA",		"thai" : "น้ำปลา",		"type" : "[\"Basics\",\"Sauces & Seasonings\"]"	},	{		"audioThai" : "1974.coconut.thai.mp3",		"english" : "coconut",		"id" : "1974",		"image" : "1974.coconut.jpg",		"numeral" : "",		"phonetic" : "ma-PRAAO",		"thai" : "มะพร้าว",		"type" : "[\"Basics\",\"Fruits\"]"	},	{		"audioThai" : "W508.red_curry.thai.mp3",		"english" : "Red Curry",		"id" : "W508",		"image" : "W508.red_curry.jpg",		"numeral" : "",		"phonetic" : "gaeng pèt",		"thai" : "แกงเผ็ด",		"type" : "[\"Herbs, Aromatics & Spices\",\"Basics\"]"	},	{		"audioThai" : "W509.sour_curry.thai.mp3",		"english" : "Sour Curry",		"id" : "W509",		"image" : "W509.sour_curry.jpg",		"numeral" : "",		"phonetic" : "gaeng sôm",		"thai" : "แกงส้ม",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W510.grilled_chicken.thai.mp3",		"english" : "Grilled Chicken",		"id" : "W510",		"image" : "W510.grilled_chicken.jpg",		"numeral" : "",		"phonetic" : "gài yâang",		"thai" : "ไก่ย่าง",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W511.green_curry.thai.mp3",		"english" : "Green Curry",		"id" : "W511",		"image" : "W511.green_curry.jpg",		"numeral" : "",		"phonetic" : "gaeng khĭeow wăan",		"thai" : "แกงเขียวหวาน",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W512.steamed_curry_fish.thai.mp3",		"english" : "Steamed Curry Fish",		"id" : "W512",		"image" : "W512.steamed_curry_fish.jpg",		"numeral" : "",		"phonetic" : "hòr mòk",		"thai" : "ห่อหมก",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W513.thai_omelette.thai.mp3",		"english" : "Thai Omelette",		"id" : "W513",		"image" : "W513.thai_omelette.jpg",		"numeral" : "",		"phonetic" : "kài jiao",		"thai" : "ไข่เจียว",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W515.fried_rice.thai.mp3",		"english" : "Fried Rice",		"id" : "W515",		"image" : "W515.fried_rice.jpg",		"numeral" : "",		"phonetic" : "kâao pàt",		"thai" : "ข้าวผัด",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W516.northern_curry_noodles.thai.mp3",		"english" : "Northern Curry Noodles",		"id" : "W516",		"image" : "W516.northern_curry_noodles.jpg",		"numeral" : "",		"phonetic" : "kâao soi",		"thai" : "ข้าวซอย",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W517.boat_noodles.thai.mp3",		"english" : "Boat Noodles",		"id" : "W517",		"image" : "W517.boat_noodles.jpg",		"numeral" : "",		"phonetic" : "gùai-tĭeow ruea",		"thai" : "ก๋วยเตี๋ยวเรือ",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W518.spicy_minced_meat.thai.mp3",		"english" : "Spicy Minced Meat",		"id" : "W518",		"image" : "W518.spicy_minced_meat.jpg",		"numeral" : "",		"phonetic" : "lâap",		"thai" : "ลาบ",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W519.massaman_curry.thai.mp3",		"english" : "Massaman Curry",		"id" : "W519",		"image" : "W519.massaman_curry.jpg",		"numeral" : "",		"phonetic" : "gaeng mát-sà-màn",		"thai" : "แกงมัสมั่น",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W520.grilled_pork_skewers.thai.mp3",		"english" : "Grilled Pork Skewers",		"id" : "W520",		"image" : "W520.grilled_pork_skewers.jpg",		"numeral" : "",		"phonetic" : "mŏo pîng",		"thai" : "หมูปิ้ง",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W521.waterfall_pork_salad.thai.mp3",		"english" : "Waterfall Pork Salad",		"id" : "W521",		"image" : "W521.waterfall_pork_salad.jpg",		"numeral" : "",		"phonetic" : "nám dtòk mŏo",		"thai" : "น้ำตกหมู",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W522.holy_basil_stir_fry.thai.mp3",		"english" : "Holy Basil Stir Fry",		"id" : "W522",		"image" : "W522.holy_basil_stir_fry.jpg",		"numeral" : "",		"phonetic" : "pàt grà-prao",		"thai" : "ผัดกะเพรา",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W523.soy_sauce_noodles.thai.mp3",		"english" : "Soy Sauce Noodles",		"id" : "W523",		"image" : "W523.soy_sauce_noodles.jpg",		"numeral" : "",		"phonetic" : "pàt si-íw",		"thai" : "ผัดซีอิ๊ว",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W524.pad_thai.thai.mp3",		"english" : "Pad Thai",		"id" : "W524",		"image" : "W524.pad_thai.jpg",		"numeral" : "",		"phonetic" : "pàt tai",		"thai" : "ผัดไทย",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W525.panang_curry.thai.mp3",		"english" : "Panang Curry",		"id" : "W525",		"image" : "W525.panang_curry.jpg",		"numeral" : "",		"phonetic" : "pá-naeng",		"thai" : "พะแนง",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W526.banana_roti.thai.mp3",		"english" : "Banana Roti",		"id" : "W526",		"image" : "W526.banana_roti.jpg",		"numeral" : "",		"phonetic" : "rôt-dtee glûay",		"thai" : "โรตีกล้วย",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W528.northern_sausage.thai.mp3",		"english" : "Northern Sausage",		"id" : "W528",		"image" : "W528.northern_sausage.jpg",		"numeral" : "",		"phonetic" : "sâi ùa",		"thai" : "ไส้อั่ว",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W529.papaya_salad.thai.mp3",		"english" : "Papaya Salad",		"id" : "W529",		"image" : "W529.papaya_salad.jpg",		"numeral" : "",		"phonetic" : "sôm dtam",		"thai" : "ส้มตำ",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W530.fish_cakes.thai.mp3",		"english" : "Fish Cakes",		"id" : "W530",		"image" : "W530.fish_cakes.jpg",		"numeral" : "",		"phonetic" : "tót man bplaa",		"thai" : "ทอดมันปลา",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W531.chicken_coconut_soup.thai.mp3",		"english" : "Chicken Coconut Soup",		"id" : "W531",		"image" : "W531.chicken_coconut_soup.jpg",		"numeral" : "",		"phonetic" : "dtôm khà gài",		"thai" : "ต้มข่าไก่",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W532.spicy_shrimp_soup.thai.mp3",		"english" : "Spicy Shrimp Soup",		"id" : "W532",		"image" : "W532.spicy_shrimp_soup.jpg",		"numeral" : "",		"phonetic" : "dtôm yam gûng",		"thai" : "ต้มยำกุ้ง",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "W533.glass_noodle_salad.thai.mp3",		"english" : "Glass Noodle Salad",		"id" : "W533",		"image" : "W533.glass_noodle_salad.jpg",		"numeral" : "",		"phonetic" : "yam wún sên",		"thai" : "ยำวุ้นเส้น",		"type" : "[\"Dishes\"]"	},	{		"audioThai" : "0607.hot.thai.mp3",		"english" : "hot",		"id" : "0607",		"image" : "0607.hot.jpg",		"numeral" : "",		"phonetic" : "rón",		"thai" : "ร้อน",		"type" : "[\"Descriptions\"]"	},	{		"audioThai" : "0608.cold.thai.mp3",		"english" : "cold",		"id" : "0608",		"image" : "0608.cold.jpg",		"numeral" : "",		"phonetic" : "yen",		"thai" : "เย็น",		"type" : "[\"Descriptions\"]"	},	{		"audioThai" : "0126.ice.thai.mp3",		"english" : "ice",		"id" : "0126",		"image" : "0126.ice.jpg",		"numeral" : "",		"phonetic" : "nám-khăeng",		"thai" : "น้ำแข็ง",		"type" : "[\"Items\",\"Phrases\",\"Drinks\"]"	},	{		"audioThai" : "1995.sweet.thai.mp3",		"english" : "sweet",		"id" : "1995",		"image" : "1995.sweet.jpg",		"numeral" : "",		"phonetic" : "wǎan",		"thai" : "หวาน",		"type" : "[\"Descriptions\"]"	},	{		"audioThai" : "1996.sour.thai.mp3",		"english" : "sour",		"id" : "1996",		"image" : "1996.sour.jpg",		"numeral" : "",		"phonetic" : "bprîao",		"thai" : "เปรี้ยว",		"type" : "[\"Descriptions\"]"	},	{		"audioThai" : "1997.bitter.thai.mp3",		"english" : "bitter",		"id" : "1997",		"image" : "1997.bitter.jpg",		"numeral" : "",		"phonetic" : "khǒm",		"thai" : "ขม",		"type" : "[\"Descriptions\"]"	},	{		"audioThai" : "1998.spicy.thai.mp3",		"english" : "spicy",		"id" : "1998",		"image" : "1998.spicy.jpg",		"numeral" : "",		"phonetic" : "phèt",		"thai" : "เผ็ด",		"type" : "[\"Descriptions\"]"	},	{		"audioThai" : "1999.not_spicy.thai.mp3",		"english" : "not spicy",		"id" : "1999",		"image" : "1999.not_spicy.jpg",		"numeral" : "",		"phonetic" : "mâi phèt",		"thai" : "ไม่เผ็ด",		"type" : "[\"Descriptions\",\"Phrases\",\"Dietary Requirements\"]"	},	{		"audioThai" : "2001.papaya.thai.mp3",		"english" : "papaya",		"id" : "2001",		"image" : "2001.papaya.jpg",		"numeral" : "",		"phonetic" : "má-lá-gor",		"thai" : "มะละกอ",		"type" : "[\"Fruits\"]"	},	{		"audioThai" : "0472.bag.thai.mp3",		"english" : "bag",		"id" : "0472",		"image" : "0472.bag.jpg",		"numeral" : "",		"phonetic" : "grà-bpǎo",		"thai" : "กระเป๋า",		"type" : "[\"Items\"]"	},	{		"audioThai" : "0935.how_much.thai.mp3",		"english" : "how much",		"id" : "0935",		"image" : "0935.how_much.jpg",		"numeral" : "",		"phonetic" : "tâo-rài",		"thai" : "เท่าไหร่",		"type" : "[\"Phrases\"]"	},	{		"audioThai" : "2002.excellent.thai.mp3",		"english" : "excellent",		"id" : "2002",		"image" : "2002.excellent.jpg",		"numeral" : "",		"phonetic" : "yîam mâak",		"thai" : "เยี่ยมมาก",		"type" : "[\"Phrases\",\"Descriptions\"]"	},	{		"audioThai" : "W547.sticky_rice.thai.mp3",		"english" : "sticky rice",		"id" : "W547",		"image" : "W547.sticky_rice.jpg",		"numeral" : "",		"phonetic" : "khâao nĭeow",		"thai" : "ข้าวเหนียว",		"type" : "[\"Rice, Noodles & Grains\"]"	},	{		"audioThai" : "W548.morning_glory.thai.mp3",		"english" : "morning glory",		"id" : "W548",		"image" : "W548.morning_glory.jpg",		"numeral" : "",		"phonetic" : "pàk-bûng",		"thai" : "ผักบุ้ง",		"type" : "[\"Vegetables\"]"	},	{		"audioThai" : "W549.just_a_little_spicy.thai.mp3",		"english" : "just a little spicy",		"id" : "W549",		"image" : "W549.just_a_little_spicy.jpg",		"numeral" : "",		"phonetic" : "phèt nít nòi",		"thai" : "เผ็ดนิดหน่อย",		"type" : "[\"Phrases\",\"Descriptions\"]"	},	{		"audioThai" : "W550.nam_ngiaw.thai.mp3",		"english" : "Nam Ngiaw",		"id" : "W550",		"image" : "W550.nam_ngiaw.jpg",		"numeral" : "",		"phonetic" : "nahm-knee-ow ",		"thai" : "น้ำเงี้ยว",		"type" : "[\"Dishes\"]"	}]

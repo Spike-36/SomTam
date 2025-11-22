@@ -14,10 +14,14 @@ class DeckScreen extends StatefulWidget {
   final void Function(int)? onCardSelected;
   final int resetTicker;
 
+  // 👉 NEW: the category label we show in the coral header
+  final String categoryLabel;
+
   const DeckScreen({
     super.key,
     required this.cards,
     required this.audio,
+    required this.categoryLabel,
     this.languageCode = 'en',
     this.onCardSelected,
     this.resetTicker = 0,
@@ -36,7 +40,7 @@ class _Row {
 }
 
 class _DeckScreenState extends State<DeckScreen> {
-  _DeckViewMode _mode = _DeckViewMode.typeIndex;
+  _DeckViewMode _mode = _DeckViewMode.listView; // 👉 start directly in list view
 
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
@@ -55,9 +59,11 @@ class _DeckScreenState extends State<DeckScreen> {
   void didUpdateWidget(covariant DeckScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.resetTicker != widget.resetTicker) {
-      setState(() => _mode = _DeckViewMode.typeIndex);
+      // still honour the reset if you ever need it again
+      setState(() => _mode = _DeckViewMode.listView);
     }
-    if (oldWidget.cards != widget.cards) {
+    if (oldWidget.cards != widget.cards ||
+        oldWidget.categoryLabel != widget.categoryLabel) {
       _rebuildRows();
     }
   }
@@ -65,15 +71,15 @@ class _DeckScreenState extends State<DeckScreen> {
   void _rebuildRows() {
     final rows = <_Row>[];
     final sectionStarts = <String, int>{};
-    String? lastType;
+
+    final type = widget.categoryLabel.trim();
+
+    if (type.isNotEmpty) {
+      sectionStarts[type] = rows.length;
+      rows.add(_Row.header(type));
+    }
 
     for (final c in widget.cards) {
-      final type = c.type.trim();
-      if (type.isNotEmpty && type != lastType) {
-        sectionStarts[type] = rows.length;
-        rows.add(_Row.header(type));
-        lastType = type;
-      }
       rows.add(_Row.item(c));
     }
 
@@ -85,13 +91,11 @@ class _DeckScreenState extends State<DeckScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TYPE INDEX VIEW
+    // TYPE INDEX VIEW (kept, but it's now effectively a single entry)
     if (_mode == _DeckViewMode.typeIndex) {
       final orderedTypes = <String>[];
-      for (final c in widget.cards) {
-        final t = c.type.trim();
-        if (t.isNotEmpty && !orderedTypes.contains(t)) orderedTypes.add(t);
-      }
+      final t = widget.categoryLabel.trim();
+      if (t.isNotEmpty) orderedTypes.add(t);
 
       return Container(
         color: Colors.white,
@@ -132,7 +136,8 @@ class _DeckScreenState extends State<DeckScreen> {
                             if (_itemScrollController.isAttached) {
                               _itemScrollController.scrollTo(
                                 index: targetIndex,
-                                duration: const Duration(milliseconds: 450),
+                                duration:
+                                    const Duration(milliseconds: 450),
                                 curve: Curves.easeInOutCubic,
                               );
                             }
@@ -160,10 +165,31 @@ class _DeckScreenState extends State<DeckScreen> {
           children: [
             BackButtonCommon(
               inline: true,
-              onPressed: () =>
-                  setState(() => _mode = _DeckViewMode.typeIndex),
+              onPressed: () => Navigator.pop(context),
             ),
-            // 👉 Flatten header + list painting to remove seam
+
+            // 👉 Coral header – ALWAYS the selected category label
+            if (_rows.isNotEmpty && _rows.first.isHeader)
+              Container(
+                width: double.infinity,
+                color: const Color(0xFFFF6B3D),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                  child: Text(
+                    widget.categoryLabel[0].toUpperCase() +
+                        widget.categoryLabel.substring(1),
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ),
+              ),
+
+            // 👉 List of cards
             Expanded(
               child: Container(
                 color: Colors.white,
@@ -174,46 +200,28 @@ class _DeckScreenState extends State<DeckScreen> {
                   itemBuilder: (context, i) {
                     final row = _rows[i];
 
-                    // --- HEADER ROWS ---
+                    // We already render the header above; skip header rows here
                     if (row.isHeader) {
-                      final title = row.header ?? '';
-                      return Container(
-                        width: double.infinity,
-                        color: const Color(0xFFFF6B3D),
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.fromLTRB(16, 14, 16, 10),
-                          child: Text(
-                            title[0].toUpperCase() + title.substring(1),
-                            style: const TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                              letterSpacing: 0.2,
-                            ),
-                          ),
-                        ),
-                      );
+                      return const SizedBox.shrink();
                     }
 
-                    // --- CARD ROWS ---
                     final card = row.card;
                     if (card == null) return const SizedBox.shrink();
+
+                    final localIndex = widget.cards.indexWhere(
+                      (c) => c.id == card.id,
+                    );
+                    final idx = localIndex == -1 ? 0 : localIndex;
 
                     return Container(
                       color: Colors.white,
                       child: FlashcardTile(
-                        cards: [card],
-                        index: 0,
+                        cards: widget.cards,
+                        index: idx,
                         audio: widget.audio,
                         languageCode: widget.languageCode,
-                        onCardSelected: (_) {
-                          final globalIndex = widget.cards
-                              .indexWhere((c) => c.id == card.id);
-                          if (globalIndex != -1) {
-                            widget.onCardSelected?.call(globalIndex);
-                          }
+                        onCardSelected: (selectedIndex) {
+                          widget.onCardSelected?.call(selectedIndex);
                         },
                       ),
                     );

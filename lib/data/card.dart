@@ -2,13 +2,16 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class Flashcard {
+  // 🔄 CHANGED: type → types (multiple categories)
+  // 👉 Every card can now belong to multiple categories.
+  final List<String> types;
+
   final String id;
-  final String type;
   final String scottish;       // target word (legacy / Korean)
-  final String thai;           // 👉 added Thai script field
-  final String phonetic;       // romanization
-  final String meaning;        // index-language gloss
-  final String context;        // optional sentence
+  final String thai;           
+  final String phonetic;       
+  final String meaning;        
+  final String context;        
   final String grammarType;
   final String image;
 
@@ -17,22 +20,22 @@ class Flashcard {
   final String? audioScottishSlow;
   final String? audioScottishContext;
 
-  // 👉 New: Thai audio
+  // Thai audio
   final String? audioThai;
 
-  // NEW: numeric value for number words
+  // numeric value for number words
   final int? value;
 
-  // extra fields from legacy data
+  // legacy extras
   final String ipa;
   final String showIndex;
   final Map<String, dynamic>? extra;
 
   const Flashcard({
     required this.id,
-    required this.type,
+    required this.types,  // 👉 NEW LIST FIELD
     this.scottish = '',
-    this.thai = '', // 🔄 added default
+    this.thai = '',
     this.phonetic = '',
     this.meaning = '',
     this.context = '',
@@ -48,12 +51,50 @@ class Flashcard {
     this.extra,
   });
 
+  // 🔧 helper: parse "['A','B']" or "A" into a List<String>
+  static List<String> _parseTypes(dynamic raw) {
+    if (raw == null) return [];
+
+    if (raw is List) {
+      // Already a real list
+      return raw.map((e) => e.toString()).toList();
+    }
+
+    if (raw is String) {
+      final s = raw.trim();
+
+      // Case 1: JSON-style stringified list: ["A","B"]
+      if (s.startsWith('[') && s.endsWith(']')) {
+        try {
+          final cleaned = s
+              .replaceAll('[', '')
+              .replaceAll(']', '')
+              .split(',')
+              .map((e) => e.trim().replaceAll('"', '').replaceAll("'", ''))
+              .where((e) => e.isNotEmpty)
+              .toList();
+          return cleaned;
+        } catch (_) {
+          // fall through to single-value fallback
+        }
+      }
+
+      // Case 2: plain string
+      if (s.isNotEmpty) return [s];
+    }
+
+    return [];
+  }
+
   factory Flashcard.fromJson(Map<String, dynamic> json) {
     return Flashcard(
       id: json['id']?.toString() ?? '',
-      type: json['type']?.toString() ?? '',
+
+      // 🔄 CHANGED: convert JSON 'type' → List<String> types
+      types: _parseTypes(json['type']),   // 👉 NEW BEHAVIOUR
+
       scottish: json['scottish']?.toString() ?? '',
-      thai: json['thai']?.toString() ?? '', // 🔄 added mapping
+      thai: json['thai']?.toString() ?? '',
       phonetic: json['phonetic']?.toString() ?? '',
       meaning: json['meaning']?.toString() ?? '',
       context: json['context']?.toString() ?? '',
@@ -63,7 +104,6 @@ class Flashcard {
       audioScottishSlow: json['audioScottishSlow'] as String?,
       audioScottishContext: json['audioScottishContext'] as String?,
       audioThai: json['audioThai'] as String?,
-      // 🔄 FIX: map either 'value' or 'numeral' to int
       value: _asOptInt(json['value'] ?? json['numeral']),
       ipa: json['ipa']?.toString() ?? '',
       showIndex: json['showIndex']?.toString() ?? '',
@@ -79,7 +119,6 @@ class Flashcard {
     return int.tryParse(v.toString());
   }
 
-  /// Return localized meaning if available, else fallback.
   String meaningFor(String lang) {
     return meaning;
   }
