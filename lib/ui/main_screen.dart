@@ -13,7 +13,7 @@ import 'deck_screen.dart';
 import 'flashcard_detail_screen.dart';
 
 /// Navigation flow:
-/// HomeScreen → CategoryOverviewScreen → DeckScreen (filtered) → FlashcardDetailScreen
+/// HomeScreen → CategoryOverviewScreen → DeckScreen (filtered + sorted) → FlashcardDetailScreen
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -84,6 +84,49 @@ class _MainScreenState extends State<MainScreen> {
                               .map((t) => t.trim().toLowerCase())
                               .contains(selectedLower);
                         }).toList();
+
+                        // =====================================================
+                        // ⭐ SORTING RULES
+                        // =====================================================
+
+                        // ⭐ Custom order for Core Words
+                        if (selectedLower == "core words") {
+                          const coreOrder = {
+                            "hello": 0,
+                            "yes": 1,
+                            "no": 2,
+                            "delicious": 3,
+                            "thank you": 4,
+                          };
+
+                          filtered.sort((a, b) {
+                            final keyA = a.meaning.trim().toLowerCase();
+                            final keyB = b.meaning.trim().toLowerCase();
+
+                            // Lookup or push to end
+                            final orderA = coreOrder[keyA] ?? 9999;
+                            final orderB = coreOrder[keyB] ?? 9999;
+
+                            return orderA.compareTo(orderB);
+                          });
+
+                        } else if (selectedLower == "numbers") {
+                          // ⭐ Numerical sort using card.value
+                          filtered.sort((a, b) {
+                            final intA = a.value ?? 0;
+                            final intB = b.value ?? 0;
+                            return intA.compareTo(intB);
+                          });
+
+                        } else {
+                          // ⭐ Default alphabetical sort (English meaning)
+                          filtered.sort((a, b) =>
+                              a.meaning.trim().toLowerCase().compareTo(
+                                    b.meaning.trim().toLowerCase(),
+                                  ));
+                        }
+
+                        // =====================================================
 
                         Navigator.push(
                           context,

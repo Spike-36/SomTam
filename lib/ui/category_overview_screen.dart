@@ -39,7 +39,7 @@ class CategoryOverviewScreen extends StatelessWidget {
     ],
     "Extras": [
       "Numbers",
-      "Dietary Requirements",
+      // "Dietary Requirements", // temporarily hidden
     ],
   };
 
@@ -121,4 +121,3 @@ class CategoryOverviewScreen extends StatelessWidget {
     );
   }
 }
-

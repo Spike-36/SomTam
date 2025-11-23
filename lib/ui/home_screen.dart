@@ -6,7 +6,7 @@ class HomeScreen extends StatelessWidget {
   final VoidCallback onLanguageTap;
 
   // 🔄 RENAMED: onAudioTap → onStart
-  final VoidCallback onStart; // 👉 renamed
+  final VoidCallback onStart;
 
   // 🔧 Autoplay props
   final bool autoAudio;
@@ -16,20 +16,16 @@ class HomeScreen extends StatelessWidget {
     super.key,
     required this.languageCode,
     required this.onLanguageTap,
-
-    // 🔄 RENAMED PARAMETER
-    required this.onStart, // 👉 renamed
-
+    required this.onStart,
     required this.autoAudio,
     required this.onAutoAudioChanged,
   });
 
-  // --- Layout controls (clean + predictable) ---
   static const double topGap = 25;
   static const double headingGap = 40;
 
-  static const double startButtonBottomSpacing = 40;   // distance between Start and Auto-Audio block
-  static const double autoAudioBottomSpacing = 40;      // gap under the Auto-Audio block
+  static const double startButtonBottomSpacing = 40;
+  static const double autoAudioBottomSpacing = 40;
 
   static const TextStyle _labelStyle = TextStyle(
     fontFamily: 'SourceSerif4',
@@ -49,7 +45,6 @@ class HomeScreen extends StatelessWidget {
           children: [
             const SizedBox(height: topGap),
 
-            // --- Logo ---
             Center(
               child: Image.asset(
                 'assets/images/ui/yumWordsLogo.png',
@@ -60,7 +55,6 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: headingGap),
 
-            // --- Thai heading ---
             const Center(
               child: Text(
                 'ประเทศไทย',
@@ -76,7 +70,6 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // --- Thai flag ---
             Center(
               child: Image.asset(
                 'assets/images/ui/thaiFlag.png',
@@ -87,7 +80,6 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 14),
 
-            // --- English heading ---
             const Center(
               child: Text(
                 'Thailand',
@@ -103,64 +95,103 @@ class HomeScreen extends StatelessWidget {
 
             const Spacer(),
 
-            // --- Start button ---
-            Center(
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF7CC576), width: 2),
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 27),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-
-                // 🔄 RENAMED: onAudioTap → onStart
-                onPressed: onStart, // 👉
-
-                child: const Text(
-                  'Start',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 20,
-                    color: Color(0xFF7CC576),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: startButtonBottomSpacing),
-
-            // --- Auto-Audio toggle block ---
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 60),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // ============================================================
+            //   MOVE BOTH CONTROLS UP 50px (existing behaviour)
+            //   THEN move ONLY the Auto-Audio block an ADDITIONAL 50px
+            // ============================================================
+            Transform.translate(
+              offset: const Offset(0, -50),
+              child: Column(
                 children: [
-                  Text(
-                    autoAudio ? 'Auto-Audio On' : 'Auto-Audio Off',
-                    style: _labelStyle.copyWith(
-                      color: autoAudio
-                          ? const Color(0xFF7CC576)
-                          : const Color(0xFFFF6B3D),
+
+                  // ======================================================
+                  // AUTO-AUDIO BLOCK — MOVED UP AN ADDITIONAL 50px
+                  // + SUBTITLE ADDED
+                  // ======================================================
+                  Transform.translate(
+                    offset: const Offset(0, -50),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 60),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                autoAudio ? 'Auto-Audio On' : 'Auto-Audio Off',
+                                style: _labelStyle.copyWith(
+                                  color: autoAudio
+                                      ? const Color(0xFF7CC576)
+                                      : const Color(0xFFFF6B3D),
+                                ),
+                              ),
+                              Transform.scale(
+                                scale: 0.9,
+                                child: Switch.adaptive(
+                                  value: autoAudio,
+                                  onChanged: onAutoAudioChanged,
+                                  activeColor: const Color(0xFF7CC576),
+                                  activeTrackColor:
+                                      const Color(0xFF7CC576).withOpacity(0.5),
+                                  inactiveThumbColor: const Color(0xFFFF6B3D),
+                                  inactiveTrackColor:
+                                      const Color(0xFFFF6B3D).withOpacity(0.4),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 6),
+
+                        // 👉 NEW SUBTITLE
+                        const Text(
+                          '(Turn on to enable audio while browsing.)',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 13,
+                            color: Colors.black54,
+                            height: 1.3,
+                          ),
+                        ),
+
+                        const SizedBox(height: autoAudioBottomSpacing),
+                      ],
                     ),
                   ),
-                  Transform.scale(
-                    scale: 0.9,
-                    child: Switch.adaptive(
-                      value: autoAudio,
-                      onChanged: onAutoAudioChanged,
-                      activeColor: const Color(0xFF7CC576),
-                      activeTrackColor: const Color(0xFF7CC576).withOpacity(0.5),
-                      inactiveThumbColor: const Color(0xFFFF6B3D),
-                      inactiveTrackColor: const Color(0xFFFF6B3D).withOpacity(0.4),
+
+                  // ======================================================
+                  // START BUTTON (UNCHANGED)
+                  // ======================================================
+                  Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF7CC576),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 27),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      onPressed: onStart,
+                      child: const Text(
+                        'Start',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 20,
+                        ),
+                      ),
                     ),
                   ),
+
+                  const SizedBox(height: startButtonBottomSpacing),
                 ],
               ),
             ),
-
-            const SizedBox(height: autoAudioBottomSpacing),
           ],
         ),
       ),
