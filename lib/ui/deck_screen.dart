@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import 'flashcard_tile.dart';
@@ -14,8 +16,7 @@ class DeckScreen extends StatefulWidget {
   final void Function(int)? onCardSelected;
   final int resetTicker;
 
-  // 👉 NEW: the category label we show in the coral header
-  final String categoryLabel;
+  final String categoryLabel; // 👉 category header
 
   const DeckScreen({
     super.key,
@@ -34,13 +35,15 @@ class DeckScreen extends StatefulWidget {
 class _Row {
   final String? header;
   final Flashcard? card;
+
   const _Row.header(this.header) : card = null;
   const _Row.item(this.card) : header = null;
+
   bool get isHeader => header != null;
 }
 
 class _DeckScreenState extends State<DeckScreen> {
-  _DeckViewMode _mode = _DeckViewMode.listView; // 👉 start directly in list view
+  _DeckViewMode _mode = _DeckViewMode.listView;
 
   final ItemScrollController _itemScrollController = ItemScrollController();
   final ItemPositionsListener _itemPositionsListener =
@@ -49,22 +52,46 @@ class _DeckScreenState extends State<DeckScreen> {
   List<_Row> _rows = const [];
   Map<String, int> _sectionStarts = const {};
 
-  @override
-  void initState() {
-    super.initState();
-    _rebuildRows();
+  bool _showTapTip = false; // 👉 onboarding banner visible?
+
+  // 👉 DEV RESET FUNCTION — now forces banner ON immediately
+  Future<void> _devResetTip() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('hideDeckTapTip');
+
+    // 👉 Immediately re-show banner without needing a restart
+    setState(() {
+      _showTapTip = true;
+    });
   }
 
   @override
-  void didUpdateWidget(covariant DeckScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.resetTicker != widget.resetTicker) {
-      // still honour the reset if you ever need it again
-      setState(() => _mode = _DeckViewMode.listView);
+  void initState() {
+    super.initState();
+
+    // 👉 DEV ONLY — uncomment this line to force-reset the banner instantly
+    _devResetTip(); // 👉 ALWAYS SHOWS BANNER NOW DURING TESTING
+
+    _rebuildRows();
+    _loadTapTipPreference();
+  }
+
+  Future<void> _loadTapTipPreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hideTip = prefs.getBool('hideDeckTapTip') ?? false;
+
+    // 🔄 Only show the banner if not hidden AND the dev override isn’t active
+    if (!hideTip && mounted) {
+      setState(() => _showTapTip = true);
     }
-    if (oldWidget.cards != widget.cards ||
-        oldWidget.categoryLabel != widget.categoryLabel) {
-      _rebuildRows();
+  }
+
+  Future<void> _dismissTapTip() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('hideDeckTapTip', true);
+
+    if (mounted) {
+      setState(() => _showTapTip = false);
     }
   }
 
@@ -89,9 +116,78 @@ class _DeckScreenState extends State<DeckScreen> {
     });
   }
 
+  Widget _buildTapTipBanner() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF5EC),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFFFFC7A3),
+            width: 1,
+          ),
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Tap a word to view the image, pronunciation, and audio.',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: _dismissTapTip,
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 4),
+                      minimumSize: const Size(0, 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text(
+                      "Don't show again",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFFFF6B3D),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 12),
+
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/images/ui/card_preview.png',
+                width: 120,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TYPE INDEX VIEW (kept, but it's now effectively a single entry)
+    // TYPE INDEX VIEW (single header)
     if (_mode == _DeckViewMode.typeIndex) {
       final orderedTypes = <String>[];
       final t = widget.categoryLabel.trim();
@@ -130,8 +226,11 @@ class _DeckScreenState extends State<DeckScreen> {
                           if (_rows.isEmpty || _sectionStarts.isEmpty) {
                             _rebuildRows();
                           }
+
                           final targetIndex = _sectionStarts[t] ?? 0;
+
                           setState(() => _mode = _DeckViewMode.listView);
+
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (_itemScrollController.isAttached) {
                               _itemScrollController.scrollTo(
@@ -154,7 +253,7 @@ class _DeckScreenState extends State<DeckScreen> {
       );
     }
 
-    // CONTINUOUS LIST VIEW
+    // LIST VIEW
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -168,7 +267,6 @@ class _DeckScreenState extends State<DeckScreen> {
               onPressed: () => Navigator.pop(context),
             ),
 
-            // 👉 Coral header – ALWAYS the selected category label
             if (_rows.isNotEmpty && _rows.first.isHeader)
               Container(
                 width: double.infinity,
@@ -181,15 +279,13 @@ class _DeckScreenState extends State<DeckScreen> {
                     style: const TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      letterSpacing: 0.2,
-                    ),
+                      fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
 
-            // 👉 List of cards
+            if (_showTapTip) _buildTapTipBanner(),
+
             Expanded(
               child: Container(
                 color: Colors.white,
@@ -200,17 +296,13 @@ class _DeckScreenState extends State<DeckScreen> {
                   itemBuilder: (context, i) {
                     final row = _rows[i];
 
-                    // We already render the header above; skip header rows here
-                    if (row.isHeader) {
-                      return const SizedBox.shrink();
-                    }
+                    if (row.isHeader) return const SizedBox.shrink();
 
                     final card = row.card;
                     if (card == null) return const SizedBox.shrink();
 
-                    final localIndex = widget.cards.indexWhere(
-                      (c) => c.id == card.id,
-                    );
+                    final localIndex =
+                        widget.cards.indexWhere((c) => c.id == card.id);
                     final idx = localIndex == -1 ? 0 : localIndex;
 
                     return Container(

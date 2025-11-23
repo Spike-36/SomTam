@@ -5,10 +5,8 @@ class HomeScreen extends StatelessWidget {
   final String languageCode;
   final VoidCallback onLanguageTap;
 
-  // 🔄 RENAMED: onAudioTap → onStart
   final VoidCallback onStart;
 
-  // 🔧 Autoplay props
   final bool autoAudio;
   final ValueChanged<bool> onAutoAudioChanged;
 
@@ -96,20 +94,18 @@ class HomeScreen extends StatelessWidget {
             const Spacer(),
 
             // ============================================================
-            //   MOVE BOTH CONTROLS UP 50px (existing behaviour)
-            //   THEN move ONLY the Auto-Audio block an ADDITIONAL 50px
+            // FIXED VERSION — identical spacing, correct hitboxes
             // ============================================================
-            Transform.translate(
-              offset: const Offset(0, -50),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 50), // replaces outer Transform
               child: Column(
                 children: [
 
                   // ======================================================
-                  // AUTO-AUDIO BLOCK — MOVED UP AN ADDITIONAL 50px
-                  // + SUBTITLE ADDED
+                  // Auto-Audio block (moved up additional 50px)
                   // ======================================================
-                  Transform.translate(
-                    offset: const Offset(0, -50),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 50), // replaces inner Transform
                     child: Column(
                       children: [
                         Padding(
@@ -144,7 +140,6 @@ class HomeScreen extends StatelessWidget {
 
                         const SizedBox(height: 6),
 
-                        // 👉 NEW SUBTITLE
                         const Text(
                           '(Turn on to enable audio while browsing.)',
                           textAlign: TextAlign.center,
@@ -162,7 +157,7 @@ class HomeScreen extends StatelessWidget {
                   ),
 
                   // ======================================================
-                  // START BUTTON (UNCHANGED)
+                  // START BUTTON
                   // ======================================================
                   Center(
                     child: ElevatedButton(
@@ -170,7 +165,9 @@ class HomeScreen extends StatelessWidget {
                         backgroundColor: const Color(0xFF7CC576),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 27),
+                          vertical: 12,
+                          horizontal: 27,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

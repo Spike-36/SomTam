@@ -1,14 +1,17 @@
+// lib/ui/flashcard_detail_screen.dart
+
 import 'package:flutter/material.dart';
 import '../data/card.dart';
 import '../services/audio_service.dart';
 import '../I18n/i18n.dart';
-import 'widgets/back_button_common.dart'; // 🔄 swapped import
+import 'widgets/back_button_common.dart';
 
 class FlashcardDetailScreen extends StatefulWidget {
   final List<Flashcard> cards;
   final int index;
   final AudioService audio;
   final ValueChanged<int>? onIndexChange;
+
   final bool autoAudio;
   final String languageCode;
 
@@ -72,10 +75,14 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   }
 
   Future<void> _autoPlayIfNeeded() async {
+    // ⭐ RESPECT TOGGLE (Option A)
     if (!widget.autoAudio) return;
+
     if (_lastAutoPlayedIndex == widget.index) return;
+
     final path = _wordPath(card.audioThai);
     if (path.isEmpty) return;
+
     _lastAutoPlayedIndex = widget.index;
     await _safePlay(context, path);
   }
@@ -83,12 +90,15 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   @override
   void initState() {
     super.initState();
+
+    // Play after first layout
     WidgetsBinding.instance.addPostFrameCallback((_) => _autoPlayIfNeeded());
   }
 
   @override
   void didUpdateWidget(covariant FlashcardDetailScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     if (oldWidget.index != widget.index ||
         oldWidget.autoAudio != widget.autoAudio ||
         oldWidget.languageCode != widget.languageCode) {
@@ -100,7 +110,11 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
     final n = widget.cards.length;
     if (n == 0) return;
     final wrapped = (newIndex % n + n) % n;
+
     widget.onIndexChange?.call(wrapped);
+
+    // Trigger autoplay after parent finishes rebuilding
+    WidgetsBinding.instance.addPostFrameCallback((_) => _autoPlayIfNeeded());
   }
 
   Widget _floatingButton(IconData icon, VoidCallback onPressed) {
@@ -255,34 +269,29 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
         children: [
           swipeable,
 
-          // 👉 Replaced home button with back button
           BackButtonCommon(
             onPressed: () => Navigator.pop(context),
             topOffset: statusBarTop + 12,
           ),
 
-          // 👉 Previous button - bottom-left
           Align(
             alignment: Alignment.bottomLeft,
             child: Padding(
               padding: EdgeInsets.only(
                 left: 8,
-                bottom:
-                    kChevronOuterPad + MediaQuery.of(context).padding.bottom,
+                bottom: kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
               child: _floatingButton(
                   Icons.chevron_left, () => _goTo(widget.index - 1)),
             ),
           ),
 
-          // 👉 Next button - bottom-right
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
               padding: EdgeInsets.only(
                 right: 8,
-                bottom:
-                    kChevronOuterPad + MediaQuery.of(context).padding.bottom,
+                bottom: kChevronOuterPad + MediaQuery.of(context).padding.bottom,
               ),
               child: _floatingButton(
                   Icons.chevron_right, () => _goTo(widget.index + 1)),
