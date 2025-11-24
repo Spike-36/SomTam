@@ -54,21 +54,9 @@ class _DeckScreenState extends State<DeckScreen> {
 
   bool _showTapTip = false;
 
-  Future<void> _devResetTip() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('hideDeckTapTip');
-    setState(() {
-      _showTapTip = true;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-
-    // 👉 DEV ONLY — disabled for production
-    // _devResetTip();
-
     _rebuildRows();
     _loadTapTipPreference();
   }
@@ -90,7 +78,7 @@ class _DeckScreenState extends State<DeckScreen> {
   }
 
   // ============================================================
-  // BUILD SUBCATEGORY GROUPS
+  // BUILD ROWS WITH SUBCATEGORY GROUPING
   // ============================================================
   void _rebuildRows() {
     final rows = <_Row>[];
@@ -98,19 +86,33 @@ class _DeckScreenState extends State<DeckScreen> {
 
     final mainType = widget.categoryLabel.trim().toLowerCase();
 
-    // main header
+    bool fuzzyMatch(String category, List<String> needles) {
+      return needles.any((n) => category.contains(n));
+    }
+
+    final isDrinks = fuzzyMatch(mainType, [
+      "drink",
+      "drinks",
+      "drinks & herbs",
+    ]);
+
+    final isProteins = fuzzyMatch(mainType, [
+      "protein",
+      "proteins",
+    ]);
+
+    final isHerbs = fuzzyMatch(mainType, [
+      "herbs",
+      "aromatics",
+      "spices",
+      "herbs, aromatics & spices",
+    ]);
+
+    // Add primary header
     sectionStarts[mainType] = rows.length;
     rows.add(_Row.header(widget.categoryLabel));
 
     final cards = widget.cards;
-
-    final isDrinks =
-        mainType == "drinks" || mainType == "drinks & herbs";
-
-    final isProteins = mainType == "proteins";
-
-    // 👉 FIXED: herb detection now robust
-    final isHerbs = mainType.contains("herb");
 
     const drinksOrder = [
       "Soft Drinks",
@@ -132,12 +134,11 @@ class _DeckScreenState extends State<DeckScreen> {
       "Spices",
     ];
 
-    // If no grouping — list flat
+    // If no grouping applies → flat list
     if (!isDrinks && !isProteins && !isHerbs) {
       for (final c in cards) {
         rows.add(_Row.item(c));
       }
-
       setState(() {
         _rows = rows;
         _sectionStarts = sectionStarts;
@@ -145,7 +146,7 @@ class _DeckScreenState extends State<DeckScreen> {
       return;
     }
 
-    // otherwise grouped
+    // Build grouped structure
     final Map<String, List<Flashcard>> groups = {};
 
     for (final c in cards) {
@@ -156,7 +157,6 @@ class _DeckScreenState extends State<DeckScreen> {
       if (isHerbs) sub = c.hasTypes;
 
       sub = (sub ?? "").trim();
-
       if (sub.isEmpty) continue;
 
       groups.putIfAbsent(sub, () => []);
@@ -183,7 +183,7 @@ class _DeckScreenState extends State<DeckScreen> {
   }
 
   // ============================================================
-  // TAP TIP OVERLAY
+  // TIP OVERLAY
   // ============================================================
   Widget _buildTapTipOverlay(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -242,8 +242,8 @@ class _DeckScreenState extends State<DeckScreen> {
                       child: Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(18),
-                          child: Image.asset(
-                              'assets/images/ui/card_preview.png'),
+                          child:
+                              Image.asset('assets/images/ui/card_preview.png'),
                         ),
                       ),
                     ),
@@ -322,7 +322,6 @@ class _DeckScreenState extends State<DeckScreen> {
                     itemBuilder: (context, i) {
                       final row = _rows[i];
 
-                      // subheaders
                       if (row.isHeader &&
                           row.header != widget.categoryLabel) {
                         return Column(

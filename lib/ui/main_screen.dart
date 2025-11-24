@@ -34,7 +34,6 @@ class _MainScreenState extends State<MainScreen> {
         primarySwatch: Colors.blue,
       ),
 
-      // The home is now a wrapper that handles async loading
       home: FutureBuilder<List<Flashcard>>(
         future: cardsFuture,
         builder: (context, snapshot) {
@@ -59,7 +58,6 @@ class _MainScreenState extends State<MainScreen> {
             autoAudio: autoAudio,
             onLanguageTap: () {},
 
-            // FIX: This now updates properly everywhere
             onAutoAudioChanged: (val) {
               setState(() => autoAudio = val);
             },
@@ -73,18 +71,19 @@ class _MainScreenState extends State<MainScreen> {
                       final selectedLower =
                           selectedCategory.trim().toLowerCase();
 
-                      // Filter by type
+                      // =====================================================
+                      // EXACT MATCH FIX — No contains()
+                      // =====================================================
                       final filtered = cards.where((c) {
                         return c.types
                             .map((t) => t.trim().toLowerCase())
-                            .contains(selectedLower);
+                            .any((t) => t == selectedLower);   // ← FIXED
                       }).toList();
 
                       // =====================================================
                       // SORTING RULES
                       // =====================================================
 
-                      // Custom order — Core Words
                       if (selectedLower == "core words") {
                         const coreOrder = {
                           "hello": 0,
@@ -103,7 +102,6 @@ class _MainScreenState extends State<MainScreen> {
                         });
 
                       } else if (selectedLower == "numbers") {
-                        // Numerical sort
                         filtered.sort((a, b) {
                           final intA = a.value ?? 0;
                           final intB = b.value ?? 0;
@@ -111,14 +109,11 @@ class _MainScreenState extends State<MainScreen> {
                         });
 
                       } else {
-                        // Default alphabetical
                         filtered.sort((a, b) =>
                             a.meaning.trim().toLowerCase().compareTo(
                                   b.meaning.trim().toLowerCase(),
                                 ));
                       }
-
-                      // =====================================================
 
                       Navigator.push(
                         context,
@@ -127,18 +122,15 @@ class _MainScreenState extends State<MainScreen> {
                             cards: filtered,
                             audio: audio,
                             categoryLabel: selectedCategory,
-
                             onCardSelected: (startIndex) {
-                              // 🔄 REPLACED the broken StatefulBuilder with a proper wrapper
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => _FlashcardDetailRoute(
-                                    // 👉 Pass-through params
                                     cards: filtered,
                                     startIndex: startIndex,
                                     audio: audio,
-                                    autoAudio: autoAudio, // stays reactive
+                                    autoAudio: autoAudio,
                                   ),
                                 ),
                               );
@@ -159,16 +151,13 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 // ============================================================================
-// 👉 NEW TINY WRAPPER WIDGET
-//    Safely replaces the broken StatefulBuilder.
-//    Rebuilds when MainScreen rebuilds → autoAudio stays in sync.
+//  Wrapper to keep index state isolated & autoAudio in sync
 // ============================================================================
-
 class _FlashcardDetailRoute extends StatefulWidget {
   final List<Flashcard> cards;
   final int startIndex;
   final AudioService audio;
-  final bool autoAudio; // 👉 dynamic toggle
+  final bool autoAudio; 
 
   const _FlashcardDetailRoute({
     required this.cards,
@@ -197,14 +186,10 @@ class _FlashcardDetailRouteState extends State<_FlashcardDetailRoute> {
       index: currentIndex,
       audio: widget.audio,
 
-      // 👉 Keeps scroll/swipe navigation working
       onIndexChange: (nextIndex) {
         setState(() => currentIndex = nextIndex);
       },
 
-      // 👉 The CRITICAL FIX:
-      // When MainScreen toggles autoAudio and rebuilds,
-      // this widget rebuilds too → updated value flows in.
       autoAudio: widget.autoAudio,
     );
   }

@@ -1,3 +1,5 @@
+// lib/data/card.dart
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 @immutable
@@ -61,29 +63,38 @@ class Flashcard {
     this.extra,
   });
 
+  // ============================================================
+  // FIXED TYPE PARSER — handles JSON strings with commas safely
+  // ============================================================
   static List<String> _parseTypes(dynamic raw) {
     if (raw == null) return [];
 
+    // Already a List
     if (raw is List) {
-      return raw.map((e) => e.toString()).toList();
+      return raw.map((e) => e.toString().trim()).toList();
     }
 
+    // String case
     if (raw is String) {
       final s = raw.trim();
 
+      // Case: string looks like JSON list → decode properly
       if (s.startsWith('[') && s.endsWith(']')) {
         try {
-          final cleaned = s
-              .replaceAll('[', '')
-              .replaceAll(']', '')
-              .split(',')
-              .map((e) => e.trim().replaceAll('"', '').replaceAll("'", ''))
-              .where((e) => e.isNotEmpty)
-              .toList();
-          return cleaned;
-        } catch (_) {}
+          final decoded = jsonDecode(s);
+
+          if (decoded is List) {
+            return decoded
+                .map((e) => e.toString().trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
+          }
+        } catch (_) {
+          // fallback below
+        }
       }
 
+      // fallback: treat as a single category
       if (s.isNotEmpty) return [s];
     }
 
