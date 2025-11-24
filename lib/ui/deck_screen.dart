@@ -1,3 +1,5 @@
+// lib/ui/deck_screen.dart
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,14 +54,12 @@ class _DeckScreenState extends State<DeckScreen> {
   List<_Row> _rows = const [];
   Map<String, int> _sectionStarts = const {};
 
-  bool _showTapTip = false; // 👉 onboarding banner visible?
+  bool _showTapTip = false; // 👉 onboarding overlay visible?
 
-  // 👉 DEV RESET FUNCTION — now forces banner ON immediately
+  // 👉 DEV RESET FUNCTION — now forces banner/overlay ON immediately
   Future<void> _devResetTip() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('hideDeckTapTip');
-
-    // 👉 Immediately re-show banner without needing a restart
     setState(() {
       _showTapTip = true;
     });
@@ -69,8 +69,7 @@ class _DeckScreenState extends State<DeckScreen> {
   void initState() {
     super.initState();
 
-    // 👉 DEV ONLY — uncomment this line to force-reset the banner instantly
-    _devResetTip(); // 👉 ALWAYS SHOWS BANNER NOW DURING TESTING
+    _devResetTip(); // ALWAYS shows banner during testing
 
     _rebuildRows();
     _loadTapTipPreference();
@@ -80,7 +79,6 @@ class _DeckScreenState extends State<DeckScreen> {
     final prefs = await SharedPreferences.getInstance();
     final hideTip = prefs.getBool('hideDeckTapTip') ?? false;
 
-    // 🔄 Only show the banner if not hidden AND the dev override isn’t active
     if (!hideTip && mounted) {
       setState(() => _showTapTip = true);
     }
@@ -95,19 +93,98 @@ class _DeckScreenState extends State<DeckScreen> {
     }
   }
 
+  // ===================================================================================
+  // 👉 UPDATED: Sub-category grouping for Drinks, Proteins, Herbs/Aromatics/Spices
+  // ===================================================================================
   void _rebuildRows() {
     final rows = <_Row>[];
     final sectionStarts = <String, int>{};
 
-    final type = widget.categoryLabel.trim();
+    final mainType = widget.categoryLabel.trim();
 
-    if (type.isNotEmpty) {
-      sectionStarts[type] = rows.length;
-      rows.add(_Row.header(type));
+    // Add main category header
+    if (mainType.isNotEmpty) {
+      sectionStarts[mainType] = rows.length;
+      rows.add(_Row.header(mainType));
     }
 
-    for (final c in widget.cards) {
-      rows.add(_Row.item(c));
+    final List<Flashcard> cards = widget.cards;
+
+    // Determine if this category has subcategories
+    final isDrinks = mainType.toLowerCase() == "drinks" || mainType.toLowerCase() == "drinks & herbs";
+    final isProteins = mainType.toLowerCase() == "proteins";
+    final isHerbs = mainType.toLowerCase() == "herbs" || mainType.toLowerCase() == "herbs & aromatics";
+
+    // 👉 Sub-category order maps
+    const drinksOrder = [
+      "Local Drinks",
+      "Soft Drinks",
+      "Coffee",
+      "Tea",
+      "Other Hot Drinks",
+      "Alcoholic Drinks"
+    ];
+
+    const proteinOrder = [
+      "Meat",
+      "Seafood",
+      "Other Proteins",
+    ];
+
+    const herbsOrder = [
+      "Herbs",
+      "Aromatics",
+      "Spices",
+    ];
+
+    // If the category does NOT have subcategories, keep existing behaviour
+    if (!isDrinks && !isProteins && !isHerbs) {
+      for (final c in cards) {
+        rows.add(_Row.item(c));
+      }
+
+      setState(() {
+        _rows = rows;
+        _sectionStarts = sectionStarts;
+      });
+      return;
+    }
+
+    // 👉 Build grouping map dynamically from card fields
+    final Map<String, List<Flashcard>> groups = {};
+
+    for (final c in cards) {
+      String? sub;
+
+      if (isDrinks) sub = c.drinksType;        // field from JSON
+      if (isProteins) sub = c.proteinTypes;
+      if (isHerbs) sub = c.hasTypes;
+
+      sub = (sub ?? "").trim();
+
+      if (sub.isEmpty) continue; // ignore missing data
+
+      groups.putIfAbsent(sub, () => []);
+      groups[sub]!.add(c);
+    }
+
+    // 👉 Ordered grouping output
+    List<String> order;
+
+    if (isDrinks) order = drinksOrder;
+    else if (isProteins) order = proteinOrder;
+    else order = herbsOrder;
+
+    for (final sub in order) {
+      if (!groups.containsKey(sub)) continue;
+
+      // 👉 Add subheader
+      rows.add(_Row.header(sub));
+
+      // 👉 Add all cards under this subheader
+      for (final c in groups[sub]!) {
+        rows.add(_Row.item(c));
+      }
     }
 
     setState(() {
@@ -116,70 +193,93 @@ class _DeckScreenState extends State<DeckScreen> {
     });
   }
 
-  Widget _buildTapTipBanner() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+  // ===================================================================================
+
+  Widget _buildTapTipOverlay(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Positioned.fill(
       child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFF5EC),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFFFC7A3),
-            width: 1,
-          ),
-        ),
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Tap a word to view the image, pronunciation, and audio.',
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                      height: 1.3,
+        color: Colors.black.withOpacity(0.45),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: size.width * 0.85,
+              maxHeight: size.height * 0.8,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFDEFE3),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.lightbulb_outline,
+                            size: 26, color: Colors.black87),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Tip',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.close,
+                              size: 22, color: Colors.black87),
+                          onPressed: _dismissTapTip,
+                        )
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: _dismissTapTip,
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 4),
-                      minimumSize: const Size(0, 0),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      "Don't show again",
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Tap a word to view the image,\npronunciation and audio',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        fontSize: 13,
+                        fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFFFF6B3D),
+                        color: Colors.black87,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(18),
+                          child: Image.asset(
+                              'assets/images/ui/card_preview.png'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: _dismissTapTip,
+                      child: const Text(
+                        "Don't show again",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFFF6B3D),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
-
-            const SizedBox(width: 12),
-
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                'assets/images/ui/card_preview.png',
-                width: 120,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -187,7 +287,6 @@ class _DeckScreenState extends State<DeckScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // TYPE INDEX VIEW (single header)
     if (_mode == _DeckViewMode.typeIndex) {
       final orderedTypes = <String>[];
       final t = widget.categoryLabel.trim();
@@ -196,53 +295,39 @@ class _DeckScreenState extends State<DeckScreen> {
       return Container(
         color: Colors.white,
         child: SafeArea(
-          top: true,
-          bottom: false,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              BackButtonCommon(
-                inline: true,
-                onPressed: () => Navigator.pop(context),
-              ),
+              BackButtonCommon(inline: true, onPressed: () => Navigator.pop(context)),
               Expanded(
                 child: ListView.separated(
                   itemCount: orderedTypes.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (context, i) {
                     final t = orderedTypes[i];
-                    return Material(
-                      color: Colors.transparent,
-                      child: ListTile(
-                        title: Text(
-                          t[0].toUpperCase() + t.substring(1),
-                          style: const TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
+                    return ListTile(
+                      title: Text(
+                        t[0].toUpperCase() + t.substring(1),
+                        style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
                         ),
-                        onTap: () {
-                          if (_rows.isEmpty || _sectionStarts.isEmpty) {
-                            _rebuildRows();
-                          }
-
-                          final targetIndex = _sectionStarts[t] ?? 0;
-
-                          setState(() => _mode = _DeckViewMode.listView);
-
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (_itemScrollController.isAttached) {
-                              _itemScrollController.scrollTo(
-                                index: targetIndex,
-                                duration:
-                                    const Duration(milliseconds: 450),
-                                curve: Curves.easeInOutCubic,
-                              );
-                            }
-                          });
-                        },
                       ),
+                      onTap: () {
+                        final targetIndex = _sectionStarts[t] ?? 0;
+
+                        setState(() => _mode = _DeckViewMode.listView);
+
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (_itemScrollController.isAttached) {
+                            _itemScrollController.scrollTo(
+                              index: targetIndex,
+                              duration: const Duration(milliseconds: 450),
+                              curve: Curves.easeInOutCubic,
+                            );
+                          }
+                        });
+                      },
                     );
                   },
                 ),
@@ -257,57 +342,72 @@ class _DeckScreenState extends State<DeckScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        top: true,
-        bottom: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            BackButtonCommon(
-              inline: true,
-              onPressed: () => Navigator.pop(context),
-            ),
+            Column(
+              children: [
+                BackButtonCommon(inline: true, onPressed: () => Navigator.pop(context)),
 
-            if (_rows.isNotEmpty && _rows.first.isHeader)
-              Container(
-                width: double.infinity,
-                color: const Color(0xFFFF6B3D),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-                  child: Text(
-                    widget.categoryLabel[0].toUpperCase() +
-                        widget.categoryLabel.substring(1),
-                    style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700),
+                if (_rows.isNotEmpty && _rows.first.isHeader)
+                  Container(
+                    width: double.infinity,
+                    color: const Color(0xFFFF6B3D),
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                    child: Text(
+                      widget.categoryLabel[0].toUpperCase() +
+                          widget.categoryLabel.substring(1),
+                      style: const TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
-                ),
-              ),
 
-            if (_showTapTip) _buildTapTipBanner(),
+                Expanded(
+                  child: ScrollablePositionedList.builder(
+                    itemScrollController: _itemScrollController,
+                    itemPositionsListener: _itemPositionsListener,
+                    itemCount: _rows.length,
+                    itemBuilder: (context, i) {
+                      final row = _rows[i];
 
-            Expanded(
-              child: Container(
-                color: Colors.white,
-                child: ScrollablePositionedList.builder(
-                  itemScrollController: _itemScrollController,
-                  itemPositionsListener: _itemPositionsListener,
-                  itemCount: _rows.length,
-                  itemBuilder: (context, i) {
-                    final row = _rows[i];
+                      if (row.isHeader) {
+                        // 👉 Sub-category header UI
+                        if (row.header != widget.categoryLabel) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 16),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                child: Text(
+                                  row.header!,
+                                  style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const Divider(
+                                thickness: 1,
+                                color: Colors.black12,
+                              ),
+                            ],
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }
 
-                    if (row.isHeader) return const SizedBox.shrink();
+                      final card = row.card;
+                      if (card == null) return const SizedBox.shrink();
 
-                    final card = row.card;
-                    if (card == null) return const SizedBox.shrink();
+                      final localIndex =
+                          widget.cards.indexWhere((c) => c.id == card.id);
+                      final idx = localIndex == -1 ? 0 : localIndex;
 
-                    final localIndex =
-                        widget.cards.indexWhere((c) => c.id == card.id);
-                    final idx = localIndex == -1 ? 0 : localIndex;
-
-                    return Container(
-                      color: Colors.white,
-                      child: FlashcardTile(
+                      return FlashcardTile(
                         cards: widget.cards,
                         index: idx,
                         audio: widget.audio,
@@ -315,12 +415,14 @@ class _DeckScreenState extends State<DeckScreen> {
                         onCardSelected: (selectedIndex) {
                           widget.onCardSelected?.call(selectedIndex);
                         },
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
+              ],
             ),
+
+            if (_showTapTip) _buildTapTipOverlay(context),
           ],
         ),
       ),
