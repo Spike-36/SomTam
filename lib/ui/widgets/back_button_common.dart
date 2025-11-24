@@ -14,6 +14,7 @@ class BackButtonCommon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 👉 Core button UI (unchanged)
     final button = Material(
       color: Colors.white.withOpacity(0.60),
       shape: const CircleBorder(),
@@ -24,15 +25,18 @@ class BackButtonCommon extends StatelessWidget {
       ),
     );
 
+    // 🔄 OPTION A:
+    // 🔄 inline=false no longer returns a Positioned
+    // 🔄 Both modes return a safe padding wrapper
     if (inline) {
       return Padding(
         padding: const EdgeInsets.only(left: 8.0, top: 8.0, bottom: 4.0),
         child: button,
       );
     } else {
-      return Positioned(
-        top: topOffset,
-        left: 12.0,
+      // 👉 Formerly used Positioned — now normal padding to avoid crashes
+      return Padding(
+        padding: EdgeInsets.only(left: 8.0, top: topOffset),
         child: button,
       );
     }

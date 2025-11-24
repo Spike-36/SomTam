@@ -1,5 +1,3 @@
-// lib/ui/deck_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,7 +16,7 @@ class DeckScreen extends StatefulWidget {
   final void Function(int)? onCardSelected;
   final int resetTicker;
 
-  final String categoryLabel; // 👉 category header
+  final String categoryLabel;
 
   const DeckScreen({
     super.key,
@@ -54,9 +52,8 @@ class _DeckScreenState extends State<DeckScreen> {
   List<_Row> _rows = const [];
   Map<String, int> _sectionStarts = const {};
 
-  bool _showTapTip = false; // 👉 onboarding overlay visible?
+  bool _showTapTip = false;
 
-  // 👉 DEV RESET FUNCTION — now forces banner/overlay ON immediately
   Future<void> _devResetTip() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('hideDeckTapTip');
@@ -69,7 +66,8 @@ class _DeckScreenState extends State<DeckScreen> {
   void initState() {
     super.initState();
 
-    _devResetTip(); // ALWAYS shows banner during testing
+    // 👉 DEV ONLY — disabled for production
+    // _devResetTip();
 
     _rebuildRows();
     _loadTapTipPreference();
@@ -78,7 +76,6 @@ class _DeckScreenState extends State<DeckScreen> {
   Future<void> _loadTapTipPreference() async {
     final prefs = await SharedPreferences.getInstance();
     final hideTip = prefs.getBool('hideDeckTapTip') ?? false;
-
     if (!hideTip && mounted) {
       setState(() => _showTapTip = true);
     }
@@ -87,37 +84,35 @@ class _DeckScreenState extends State<DeckScreen> {
   Future<void> _dismissTapTip() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('hideDeckTapTip', true);
-
     if (mounted) {
       setState(() => _showTapTip = false);
     }
   }
 
-  // ===================================================================================
-  // 👉 UPDATED: Sub-category grouping for Drinks, Proteins, Herbs/Aromatics/Spices
-  // ===================================================================================
+  // ============================================================
+  // BUILD SUBCATEGORY GROUPS
+  // ============================================================
   void _rebuildRows() {
     final rows = <_Row>[];
     final sectionStarts = <String, int>{};
 
-    final mainType = widget.categoryLabel.trim();
+    final mainType = widget.categoryLabel.trim().toLowerCase();
 
-    // Add main category header
-    if (mainType.isNotEmpty) {
-      sectionStarts[mainType] = rows.length;
-      rows.add(_Row.header(mainType));
-    }
+    // main header
+    sectionStarts[mainType] = rows.length;
+    rows.add(_Row.header(widget.categoryLabel));
 
-    final List<Flashcard> cards = widget.cards;
+    final cards = widget.cards;
 
-    // Determine if this category has subcategories
-    final isDrinks = mainType.toLowerCase() == "drinks" || mainType.toLowerCase() == "drinks & herbs";
-    final isProteins = mainType.toLowerCase() == "proteins";
-    final isHerbs = mainType.toLowerCase() == "herbs" || mainType.toLowerCase() == "herbs & aromatics";
+    final isDrinks =
+        mainType == "drinks" || mainType == "drinks & herbs";
 
-    // 👉 Sub-category order maps
+    final isProteins = mainType == "proteins";
+
+    // 👉 FIXED: herb detection now robust
+    final isHerbs = mainType.contains("herb");
+
     const drinksOrder = [
-      "Local Drinks",
       "Soft Drinks",
       "Coffee",
       "Tea",
@@ -137,7 +132,7 @@ class _DeckScreenState extends State<DeckScreen> {
       "Spices",
     ];
 
-    // If the category does NOT have subcategories, keep existing behaviour
+    // If no grouping — list flat
     if (!isDrinks && !isProteins && !isHerbs) {
       for (final c in cards) {
         rows.add(_Row.item(c));
@@ -150,38 +145,32 @@ class _DeckScreenState extends State<DeckScreen> {
       return;
     }
 
-    // 👉 Build grouping map dynamically from card fields
+    // otherwise grouped
     final Map<String, List<Flashcard>> groups = {};
 
     for (final c in cards) {
       String? sub;
 
-      if (isDrinks) sub = c.drinksType;        // field from JSON
+      if (isDrinks) sub = c.drinksType;
       if (isProteins) sub = c.proteinTypes;
       if (isHerbs) sub = c.hasTypes;
 
       sub = (sub ?? "").trim();
 
-      if (sub.isEmpty) continue; // ignore missing data
+      if (sub.isEmpty) continue;
 
       groups.putIfAbsent(sub, () => []);
       groups[sub]!.add(c);
     }
 
-    // 👉 Ordered grouping output
-    List<String> order;
-
-    if (isDrinks) order = drinksOrder;
-    else if (isProteins) order = proteinOrder;
-    else order = herbsOrder;
+    final List<String> order =
+        isDrinks ? drinksOrder : isProteins ? proteinOrder : herbsOrder;
 
     for (final sub in order) {
       if (!groups.containsKey(sub)) continue;
 
-      // 👉 Add subheader
       rows.add(_Row.header(sub));
 
-      // 👉 Add all cards under this subheader
       for (final c in groups[sub]!) {
         rows.add(_Row.item(c));
       }
@@ -193,13 +182,14 @@ class _DeckScreenState extends State<DeckScreen> {
     });
   }
 
-  // ===================================================================================
-
+  // ============================================================
+  // TAP TIP OVERLAY
+  // ============================================================
   Widget _buildTapTipOverlay(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Positioned.fill(
       child: Container(
-        color: Colors.black.withOpacity(0.45),
+        color: Colors.black45,
         child: Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(
@@ -215,7 +205,6 @@ class _DeckScreenState extends State<DeckScreen> {
                 ),
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Row(
                       children: [
@@ -228,13 +217,10 @@ class _DeckScreenState extends State<DeckScreen> {
                             fontFamily: 'Inter',
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
-                            color: Colors.black87,
                           ),
                         ),
                         const Spacer(),
                         IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
                           icon: const Icon(Icons.close,
                               size: 22, color: Colors.black87),
                           onPressed: _dismissTapTip,
@@ -249,7 +235,6 @@ class _DeckScreenState extends State<DeckScreen> {
                         fontFamily: 'Inter',
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -274,7 +259,7 @@ class _DeckScreenState extends State<DeckScreen> {
                           color: Color(0xFFFF6B3D),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -285,60 +270,11 @@ class _DeckScreenState extends State<DeckScreen> {
     );
   }
 
+  // ============================================================
+  // UI
+  // ============================================================
   @override
   Widget build(BuildContext context) {
-    if (_mode == _DeckViewMode.typeIndex) {
-      final orderedTypes = <String>[];
-      final t = widget.categoryLabel.trim();
-      if (t.isNotEmpty) orderedTypes.add(t);
-
-      return Container(
-        color: Colors.white,
-        child: SafeArea(
-          child: Column(
-            children: [
-              BackButtonCommon(inline: true, onPressed: () => Navigator.pop(context)),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: orderedTypes.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (context, i) {
-                    final t = orderedTypes[i];
-                    return ListTile(
-                      title: Text(
-                        t[0].toUpperCase() + t.substring(1),
-                        style: const TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      onTap: () {
-                        final targetIndex = _sectionStarts[t] ?? 0;
-
-                        setState(() => _mode = _DeckViewMode.listView);
-
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (_itemScrollController.isAttached) {
-                            _itemScrollController.scrollTo(
-                              index: targetIndex,
-                              duration: const Duration(milliseconds: 450),
-                              curve: Curves.easeInOutCubic,
-                            );
-                          }
-                        });
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    // LIST VIEW
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -346,75 +282,88 @@ class _DeckScreenState extends State<DeckScreen> {
           children: [
             Column(
               children: [
-                BackButtonCommon(inline: true, onPressed: () => Navigator.pop(context)),
+                const SizedBox(height: 12),
+
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 4),
+                    child: BackButtonCommon(
+                      inline: false,
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 8),
 
                 if (_rows.isNotEmpty && _rows.first.isHeader)
                   Container(
                     width: double.infinity,
                     color: const Color(0xFFFF6B3D),
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+                    padding:
+                        const EdgeInsets.fromLTRB(16, 14, 16, 12),
                     child: Text(
-                      widget.categoryLabel[0].toUpperCase() +
-                          widget.categoryLabel.substring(1),
+                      widget.categoryLabel,
                       style: const TextStyle(
                         fontFamily: 'Inter',
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
+                        color: Colors.white,
                       ),
                     ),
                   ),
 
                 Expanded(
                   child: ScrollablePositionedList.builder(
+                    itemCount: _rows.length,
                     itemScrollController: _itemScrollController,
                     itemPositionsListener: _itemPositionsListener,
-                    itemCount: _rows.length,
                     itemBuilder: (context, i) {
                       final row = _rows[i];
 
-                      if (row.isHeader) {
-                        // 👉 Sub-category header UI
-                        if (row.header != widget.categoryLabel) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 16),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text(
-                                  row.header!,
-                                  style: const TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                      // subheaders
+                      if (row.isHeader &&
+                          row.header != widget.categoryLabel) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 22),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                row.header!,
+                                style: const TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
                                 ),
                               ),
-                              const Divider(
-                                thickness: 1,
-                                color: Colors.black12,
-                              ),
-                            ],
-                          );
-                        }
-                        return const SizedBox.shrink();
+                            ),
+                            const SizedBox(height: 6),
+                            const Divider(
+                              thickness: 1.4,
+                              color: Colors.black26,
+                            ),
+                          ],
+                        );
                       }
 
-                      final card = row.card;
-                      if (card == null) return const SizedBox.shrink();
+                      if (row.isHeader) return const SizedBox.shrink();
 
-                      final localIndex =
+                      final card = row.card!;
+                      final idx =
                           widget.cards.indexWhere((c) => c.id == card.id);
-                      final idx = localIndex == -1 ? 0 : localIndex;
 
                       return FlashcardTile(
                         cards: widget.cards,
                         index: idx,
                         audio: widget.audio,
                         languageCode: widget.languageCode,
-                        onCardSelected: (selectedIndex) {
-                          widget.onCardSelected?.call(selectedIndex);
-                        },
+                        onCardSelected:
+                            widget.onCardSelected ?? (_) {},
                       );
                     },
                   ),
