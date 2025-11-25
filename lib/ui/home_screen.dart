@@ -20,10 +20,11 @@ class HomeScreen extends StatelessWidget {
   });
 
   static const double topGap = 25;
-  static const double headingGap = 40;
+  static const double headingGap = 20;
 
-  static const double startButtonBottomSpacing = 40;
-  static const double autoAudioBottomSpacing = 40;
+  // REDUCED to raise Start button
+  static const double startButtonBottomSpacing = 20;  
+  static const double autoAudioBottomSpacing = 20;   
 
   static const TextStyle _labelStyle = TextStyle(
     fontFamily: 'SourceSerif4',
@@ -59,14 +60,14 @@ class HomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Sarabun',
                   fontWeight: FontWeight.w600,
-                  fontSize: 32,
+                  fontSize: 26,
                   color: Color(0xFFFF6B3D),
                   letterSpacing: 0.5,
                 ),
               ),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
 
             Center(
               child: Image.asset(
@@ -76,7 +77,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
 
             const Center(
               child: Text(
@@ -84,7 +85,7 @@ class HomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w600,
-                  fontSize: 32,
+                  fontSize: 24,
                   color: Color(0xFFFF6B3D),
                   letterSpacing: 0.5,
                 ),
@@ -93,19 +94,16 @@ class HomeScreen extends StatelessWidget {
 
             const Spacer(),
 
-            // ============================================================
-            // FIXED VERSION — identical spacing, correct hitboxes
-            // ============================================================
+            // ============================
+            // TIGHTER FOOTER (Option A)
+            // ============================
             Padding(
-              padding: const EdgeInsets.only(bottom: 50), // replaces outer Transform
+              padding: const EdgeInsets.only(bottom: 20), // was 50
               child: Column(
                 children: [
 
-                  // ======================================================
-                  // Auto-Audio block (moved up additional 50px)
-                  // ======================================================
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 50), // replaces inner Transform
+                    padding: const EdgeInsets.only(bottom: 20), // was 50
                     child: Column(
                       children: [
                         Padding(
@@ -156,9 +154,6 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // ======================================================
-                  // START BUTTON
-                  // ======================================================
                   Center(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(

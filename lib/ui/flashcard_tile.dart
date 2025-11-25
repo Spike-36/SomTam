@@ -3,11 +3,11 @@ import '../data/card.dart';
 import '../services/audio_service.dart';
 
 class FlashcardTile extends StatelessWidget {
-  final List<Flashcard> cards;        // authoritative (sorted) list
-  final int index;                    // index within that list
+  final List<Flashcard> cards;
+  final int index;
   final AudioService audio;
-  final ValueChanged<int> onCardSelected; // parent-controlled navigation
-  final String languageCode;          // 'en', 'fr', 'de', etc.
+  final ValueChanged<int> onCardSelected;
+  final String languageCode;
 
   const FlashcardTile({
     super.key,
@@ -19,8 +19,6 @@ class FlashcardTile extends StatelessWidget {
   });
 
   Flashcard get card => cards[index];
-
-  // --- Typography to match detail screen ---
 
   static const TextStyle _headwordStyle = TextStyle(
     fontFamily: 'EBGaramond',
@@ -90,50 +88,56 @@ class FlashcardTile extends StatelessWidget {
         _containsThai(headword) ? _thaiStyle : _headwordStyle;
 
     return Material(
-      type: MaterialType.transparency, // ✅ fixes “No Material widget found”
+      type: MaterialType.transparency,
       child: InkWell(
         onTap: () => onCardSelected(index),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- Meaning on the left ---
+              /// LEFT — ENGLISH
               Expanded(
-                child: hasMeaning
-                    ? Text(
-                        localized,
-                        style: _meaningStyle,
+                flex: 4,
+                child: Text(
+                  hasMeaning ? localized : '—',
+                  style: _meaningStyle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              /// MIDDLE — THAI + PHONETIC
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      headword,
+                      style: headwordStyle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      softWrap: true,
+                    ),
+                    if (hasPhonetic)
+                      Text(
+                        card.phonetic,
+                        style: _phoneticStyle,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                      )
-                    : const Text('—', style: _meaningStyle),
+                        softWrap: true,
+                      ),
+                  ],
+                ),
               ),
 
-              // --- Thai / headword + phonetic stacked right ---
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    headword,
-                    style: headwordStyle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (hasPhonetic)
-                    Text(
-                      card.phonetic,
-                      style: _phoneticStyle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                ],
-              ),
+              const SizedBox(width: 8),
 
-              const SizedBox(width: 6),
-
-              // --- Speaker icon ---
+              /// RIGHT — AUDIO BUTTON
               IconButton(
                 icon: const Icon(Icons.volume_up, color: Colors.black38),
                 tooltip: 'Play word',

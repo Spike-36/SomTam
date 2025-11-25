@@ -69,6 +69,12 @@ class _DeckScreenState extends State<DeckScreen> {
     }
   }
 
+  Future<void> _closeTapTipTemporarily() async {
+    if (mounted) {
+      setState(() => _showTapTip = false);
+    }
+  }
+
   Future<void> _dismissTapTip() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('hideDeckTapTip', true);
@@ -134,7 +140,6 @@ class _DeckScreenState extends State<DeckScreen> {
       "Spices",
     ];
 
-    // If no grouping applies → flat list
     if (!isDrinks && !isProteins && !isHerbs) {
       for (final c in cards) {
         rows.add(_Row.item(c));
@@ -146,7 +151,6 @@ class _DeckScreenState extends State<DeckScreen> {
       return;
     }
 
-    // Build grouped structure
     final Map<String, List<Flashcard>> groups = {};
 
     for (final c in cards) {
@@ -170,7 +174,6 @@ class _DeckScreenState extends State<DeckScreen> {
       if (!groups.containsKey(sub)) continue;
 
       rows.add(_Row.header(sub));
-
       for (final c in groups[sub]!) {
         rows.add(_Row.item(c));
       }
@@ -223,10 +226,11 @@ class _DeckScreenState extends State<DeckScreen> {
                         IconButton(
                           icon: const Icon(Icons.close,
                               size: 22, color: Colors.black87),
-                          onPressed: _dismissTapTip,
-                        )
+                          onPressed: _closeTapTipTemporarily,
+                        ),
                       ],
                     ),
+
                     const SizedBox(height: 16),
                     const Text(
                       'Tap a word to view the image,\npronunciation and audio',
@@ -237,16 +241,19 @@ class _DeckScreenState extends State<DeckScreen> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
+
                     const SizedBox(height: 16),
                     Expanded(
                       child: Center(
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(18),
-                          child:
-                              Image.asset('assets/images/ui/card_preview.png'),
+                          child: Image.asset(
+                            'assets/images/ui/card_preview.png',
+                          ),
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: _dismissTapTip,
@@ -284,12 +291,14 @@ class _DeckScreenState extends State<DeckScreen> {
               children: [
                 const SizedBox(height: 12),
 
+                /// 🔄 MATCH CATEGORY_OVERVIEW EXACTLY
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8, top: 4),
-                    child: BackButtonCommon(
-                      inline: false,
+                    padding: const EdgeInsets.only(left: 1, top: 0),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back, size: 26),
+                      color: Colors.black87,
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
@@ -301,8 +310,7 @@ class _DeckScreenState extends State<DeckScreen> {
                   Container(
                     width: double.infinity,
                     color: const Color(0xFFFF6B3D),
-                    padding:
-                        const EdgeInsets.fromLTRB(16, 14, 16, 12),
+                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
                     child: Text(
                       widget.categoryLabel,
                       style: const TextStyle(

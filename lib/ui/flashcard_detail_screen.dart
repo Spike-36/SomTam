@@ -30,8 +30,14 @@ class FlashcardDetailScreen extends StatefulWidget {
 }
 
 // ===================== Styles ======================
-const double kHeadwordSize = 40;
-const double kPhoneticSize = 22;
+// ORIGINAL: kHeadwordSize = 40
+// 👉 REDUCED BY 25%
+const double kHeadwordSize = 30;
+
+// ORIGINAL: kPhoneticSize = 22
+// 👉 REDUCED BY 25%
+const double kPhoneticSize = 17;
+
 const double kMeaningSize = 22;
 
 const double kChevronButtonSize = 56.0;
@@ -41,7 +47,6 @@ const double kChevronOuterPad = 12.0;
 const Color kMeaningColor = Colors.black;
 const Color kSpeakerColor = Colors.black38;
 
-// Swipe tuning
 const double kSwipeVelocityThreshold = 300.0;
 
 class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
@@ -75,9 +80,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   }
 
   Future<void> _autoPlayIfNeeded() async {
-    // ⭐ RESPECT TOGGLE (Option A)
     if (!widget.autoAudio) return;
-
     if (_lastAutoPlayedIndex == widget.index) return;
 
     final path = _wordPath(card.audioThai);
@@ -90,8 +93,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Play after first layout
     WidgetsBinding.instance.addPostFrameCallback((_) => _autoPlayIfNeeded());
   }
 
@@ -113,7 +114,6 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
 
     widget.onIndexChange?.call(wrapped);
 
-    // Trigger autoplay after parent finishes rebuilding
     WidgetsBinding.instance.addPostFrameCallback((_) => _autoPlayIfNeeded());
   }
 
@@ -180,7 +180,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                           style: TextStyle(
                             fontFamily: headwordFont,
                             fontWeight: FontWeight.w600,
-                            fontSize: kHeadwordSize,
+                            fontSize: kHeadwordSize, // 👉 reduced
                             height: 1.08,
                           ),
                           textAlign: TextAlign.center,
@@ -219,7 +219,7 @@ class _FlashcardDetailScreenState extends State<FlashcardDetailScreen> {
                           '[${card.phonetic}]',
                           style: TextStyle(
                             fontFamily: 'CharisSIL',
-                            fontSize: kPhoneticSize,
+                            fontSize: kPhoneticSize, // 👉 reduced
                             fontStyle: FontStyle.italic,
                             height: 1.2,
                             color: Theme.of(context).colorScheme.primary,

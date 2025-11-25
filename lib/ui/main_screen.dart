@@ -1,5 +1,4 @@
-// main_screen.dart — Clean architecture version
-// MaterialApp moved OUTSIDE the FutureBuilder so app-wide state works properly.
+// main_screen.dart — Option A-1 (Minimal change: Fix navigation only)
 
 import 'package:flutter/material.dart';
 import '../data/repository.dart';
@@ -22,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
   late final AudioService audio = AudioService();
   late final Future<List<Flashcard>> cardsFuture = Repository().load();
 
-  bool autoAudio = false;   // ← Global toggle works everywhere
+  bool autoAudio = false;
 
   @override
   Widget build(BuildContext context) {
@@ -71,19 +70,14 @@ class _MainScreenState extends State<MainScreen> {
                       final selectedLower =
                           selectedCategory.trim().toLowerCase();
 
-                      // =====================================================
-                      // EXACT MATCH FIX — No contains()
-                      // =====================================================
+                      // FILTER FULL LIST BY TOP-LEVEL CATEGORY
                       final filtered = cards.where((c) {
                         return c.types
                             .map((t) => t.trim().toLowerCase())
-                            .any((t) => t == selectedLower);   // ← FIXED
+                            .contains(selectedLower);
                       }).toList();
 
-                      // =====================================================
-                      // SORTING RULES
-                      // =====================================================
-
+                      // STANDARD CATEGORY SORTS
                       if (selectedLower == "core words") {
                         const coreOrder = {
                           "hello": 0,
@@ -96,17 +90,13 @@ class _MainScreenState extends State<MainScreen> {
                         filtered.sort((a, b) {
                           final keyA = a.meaning.trim().toLowerCase();
                           final keyB = b.meaning.trim().toLowerCase();
-                          final orderA = coreOrder[keyA] ?? 9999;
-                          final orderB = coreOrder[keyB] ?? 9999;
-                          return orderA.compareTo(orderB);
+                          return (coreOrder[keyA] ?? 9999)
+                              .compareTo(coreOrder[keyB] ?? 9999);
                         });
 
                       } else if (selectedLower == "numbers") {
-                        filtered.sort((a, b) {
-                          final intA = a.value ?? 0;
-                          final intB = b.value ?? 0;
-                          return intA.compareTo(intB);
-                        });
+                        filtered.sort((a, b) =>
+                            (a.value ?? 0).compareTo(b.value ?? 0));
 
                       } else {
                         filtered.sort((a, b) =>
@@ -115,6 +105,9 @@ class _MainScreenState extends State<MainScreen> {
                                 ));
                       }
 
+                      // ------------------------------------------------------------------
+                      // DECK SCREEN
+                      // ------------------------------------------------------------------
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -122,16 +115,50 @@ class _MainScreenState extends State<MainScreen> {
                             cards: filtered,
                             audio: audio,
                             categoryLabel: selectedCategory,
+
+                            // ON CARD SELECTED — Option A-1 Fix
                             onCardSelected: (startIndex) {
+                              final Flashcard tapped = filtered[startIndex];
+
+                              // Detect sub-category
+                              String? subgroup;
+                              if ((tapped.drinksType ?? "").isNotEmpty) {
+                                subgroup = tapped.drinksType;
+                              } else if ((tapped.proteinTypes ?? "").isNotEmpty) {
+                                subgroup = tapped.proteinTypes;
+                              } else if ((tapped.hasTypes ?? "").isNotEmpty) {
+                                subgroup = tapped.hasTypes;
+                              }
+
+                              List<Flashcard> finalList;
+
+                              if (subgroup == null || subgroup.trim().isEmpty) {
+                                // No sub-category: use full category list
+                                finalList = filtered;
+                              } else {
+                                // Only items from this subgroup
+                                finalList = filtered.where((c) {
+                                  return (c.drinksType == subgroup) ||
+                                         (c.proteinTypes == subgroup) ||
+                                         (c.hasTypes == subgroup);
+                                }).toList();
+                              }
+
+                              // Preserve alphabetical order already applied
+                              // Find tapped index inside subgroup
+                              final newIndex = finalList.indexWhere(
+                                  (c) => c.id == tapped.id);
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => _FlashcardDetailRoute(
-                                    cards: filtered,
-                                    startIndex: startIndex,
-                                    audio: audio,
-                                    autoAudio: autoAudio,
-                                  ),
+                                  builder: (context) =>
+                                      _FlashcardDetailRoute(
+                                        cards: finalList,
+                                        startIndex: newIndex,
+                                        audio: audio,
+                                        autoAudio: autoAudio,
+                                      ),
                                 ),
                               );
                             },
@@ -151,13 +178,13 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 // ============================================================================
-//  Wrapper to keep index state isolated & autoAudio in sync
+//  Isolated DetailScreen wrapper (unchanged)
 // ============================================================================
 class _FlashcardDetailRoute extends StatefulWidget {
   final List<Flashcard> cards;
   final int startIndex;
   final AudioService audio;
-  final bool autoAudio; 
+  final bool autoAudio;
 
   const _FlashcardDetailRoute({
     required this.cards,
@@ -185,11 +212,9 @@ class _FlashcardDetailRouteState extends State<_FlashcardDetailRoute> {
       cards: widget.cards,
       index: currentIndex,
       audio: widget.audio,
-
       onIndexChange: (nextIndex) {
         setState(() => currentIndex = nextIndex);
       },
-
       autoAudio: widget.autoAudio,
     );
   }

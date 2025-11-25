@@ -2,7 +2,7 @@
 
 name: somtam
 description: Somtam – Thai flashcards & phrases
-version: 1.0.0+8
+version: 1.0.1+1
 publish_to: "none"
 
 environment:
